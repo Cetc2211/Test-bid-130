@@ -6,112 +6,69 @@
 <title>Centro de Evaluación - CBTa 130</title>
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
-    
     .card { background: white; max-width: 600px; width: 100%; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    
     h1 { color: #1a237e; margin: 0 0 5px 0; font-size: 1.6rem; text-align: center; }
     p.subtitle { color: #666; margin-bottom: 25px; text-align: center; font-size: 0.9rem; }
-    
-    /* SECCIÓN 1: ACCESO RÁPIDO */
     .section-title { font-size: 0.9rem; text-transform: uppercase; color: #888; letter-spacing: 1px; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-    
     .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
-    
     .btn-access { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; color: white; transition: transform 0.2s; text-align: center; height: 80px; }
-    .btn-access:active { transform: scale(0.95); }
-    
     .btn-ansiedad { background: linear-gradient(135deg, #2E7d32 0%, #43a047 100%); }
     .btn-depresion { background: linear-gradient(135deg, #1565C0 0%, #1976D2 100%); }
-
-    /* SECCIÓN 2: GENERADOR DE ENVIOS */
     .sender-box { background-color: #f8f9fa; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; }
-    
     .checklist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    
     .check-item { display: flex; align-items: center; background: white; padding: 12px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; }
     .check-item input { transform: scale(1.5); margin-right: 15px; }
     .check-item span { font-weight: 500; color: #333; }
-    
     .btn-whatsapp { width: 100%; background-color: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.2); }
-    .btn-whatsapp:active { transform: scale(0.98); }
-
-    /* Footer Admin Link - ESTILO DEL CANDADO */
     .admin-footer { margin-top: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
     .admin-link { color: #ccc; text-decoration: none; font-size: 0.8rem; transition: color 0.3s; }
     .admin-link:hover { color: #1a237e; }
-
 </style>
 </head>
 <body>
-
 <div class="card">
     <h1>CBTa No.130</h1>
     <p class="subtitle">Panel de Control de Evaluaciones</p>
-
     <div class="section-title">Abrir Tests (Uso personal)</div>
     <div class="grid-buttons">
         <a href="ansiedadbeck.html" class="btn-access btn-ansiedad">🧠<br>Ansiedad (BAI)</a>
         <a href="depbeck.html" class="btn-access btn-depresion">💙<br>Depresión (BDI-II)</a>
     </div>
-
     <div class="section-title">Enviar Tests al Paciente</div>
     <div class="sender-box">
         <p style="margin-top:0; font-size:0.9em; color:#555;">Seleccione los tests que desea aplicar y presione enviar:</p>
-        
         <div class="checklist">
-            <label class="check-item">
-                <input type="checkbox" id="checkBAI" value="BAI">
-                <span>🧠 Inventario de Ansiedad (BAI)</span>
-            </label>
-            <label class="check-item">
-                <input type="checkbox" id="checkBDI" value="BDI">
-                <span>💙 Inventario de Depresión (BDI-II)</span>
-            </label>
+            <label class="check-item"><input type="checkbox" id="checkBAI" value="BAI"><span>🧠 Inventario de Ansiedad (BAI)</span></label>
+            <label class="check-item"><input type="checkbox" id="checkBDI" value="BDI"><span>💙 Inventario de Depresión (BDI-II)</span></label>
         </div>
-
-        <button class="btn-whatsapp" onclick="generarMensaje()">
-            📲 Enviar Paquete por WhatsApp
-        </button>
+        <button class="btn-whatsapp" onclick="generarMensaje()">📲 Enviar Paquete por WhatsApp</button>
     </div>
-
-    <!-- AQUÍ ESTÁ EL ENLACE AL ADMIN -->
     <div class="admin-footer">
-        <div style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">Versión 2.5 - Multi-Test Linker</div>
-        <a href="admin.html" class="admin-link">🔒 Acceso Administrativo (Generar Informes)</a>
+        <div style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">Versión 3.0 Safe - CBTa 130</div>
+        <a href="admin.html" class="admin-link">🔒 Acceso Administrativo (Solo Personal)</a>
     </div>
 </div>
-
 <script>
     function generarMensaje() {
-        // ACTUALIZA ESTA PARTE PARA QUE LOS LINKS SEAN AUTOMÁTICOS
         const baseURL = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-        
         const linkBAI = baseURL + "ansiedadbeck.html";
         const linkBDI = baseURL + "depbeck.html";
-        
         let seleccionados = [];
         let mensaje = "Hola, por favor contesta las siguientes evaluaciones del CBTa 130:%0A%0A";
-
         if (document.getElementById('checkBAI').checked) {
             seleccionados.push(true);
             mensaje += "🧠 *1. Test de Ansiedad (BAI):*%0A" + linkBAI + "%0A%0A";
         }
-        
         if (document.getElementById('checkBDI').checked) {
             seleccionados.push(true);
             mensaje += "💙 *2. Test de Depresión (BDI-II):*%0A" + linkBDI + "%0A%0A";
         }
-
-        mensaje += "Al finalizar cada uno, presiona el botón verde para enviarme los resultados. ¡Gracias!";
-
-        if (seleccionados.length === 0) {
-            alert("⚠️ Por favor selecciona al menos un test para enviar.");
-            return;
-        }
-
+        mensaje += "Al finalizar cada uno, presiona el botón verde para enviarme los datos. ¡Gracias!";
+        if (seleccionados.length === 0) { alert("⚠️ Por favor selecciona al menos un test."); return; }
         window.open(`https://wa.me/?text=${mensaje}`, '_blank');
     }
 </script>
-
 </body>
 </html>
+
+
