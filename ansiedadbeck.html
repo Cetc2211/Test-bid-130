@@ -4,94 +4,146 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evaluación BAI - CBTa 130</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f2f2f7; color: #1c1c1e; }
-    /* Encabezado Verde Institucional */
     header { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #2e7d32; text-align: center; margin-top: 0; border-bottom: 2px solid #e8f5e9; padding-bottom: 10px; }
+    
     .input-group { margin-bottom: 15px; }
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
-    th { background-color: #e8f5e9; color: #1b5e20; padding: 10px; text-align: center; font-size: 0.9em; position: sticky; top: 0; }
+    
+    /* Tabla Responsiva */
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; min-width: 600px; }
+    th { background-color: #e8f5e9; color: #1b5e20; padding: 10px; text-align: center; position: sticky; top: 0; }
     td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
-    td:first-child { text-align: left; font-weight: 500; width: 45%; }
+    td:first-child { text-align: left; font-weight: 500; width: 40%; padding-left: 10px; }
     tr:nth-child(even) { background-color: #fafafa; }
+    
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s; }
+    button:active { transform: scale(0.98); }
+    
     .whatsapp { background-color: #25D366; }
-    .pdf { background-color: #2e7d32; }
     .reset { background-color: #757575; }
-    input[type="radio"] { transform: scale(1.4); margin: 5px; }
+    
+    input[type="radio"] { transform: scale(1.5); cursor: pointer; }
+    
+    /* Ocultar resultados hasta terminar */
+    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 10px; }
 </style>
 </head>
 <body>
-<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Inventario de Ansiedad de Beck (BAI)</span></header>
+<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Inventario de Ansiedad (BAI)</span></header>
+
 <div class="container">
-    <h2>Datos del Paciente</h2>
-    <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
-    <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
-    <p style="text-align:center; font-style:italic;">Instrucciones: Marque cuánto le ha molestado cada síntoma la última semana.</p>
-    <table>
-        <thead><tr><th>Síntoma</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead>
-        <tbody id="tabla-preguntas"></tbody>
-    </table>
-    <div class="buttons">
-        <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Resultados</button>
-        <button type="button" class="pdf" onclick="generarPDF()">📄 Descargar PDF</button>
-        <button type="button" class="reset" onclick="location.reload()">🔄 Limpiar</button>
+    <div id="test-form">
+        <h2>Datos del Alumno</h2>
+        <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
+        <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
+        
+        <div style="background-color:#fff3cd; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #ffc107;">
+            <strong>Instrucciones:</strong> Indique cuánto le ha molestado cada síntoma durante la <strong>última semana, incluyendo hoy</strong>.
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Síntoma</th>
+                        <th>Nada (0)</th>
+                        <th>Leve (1)</th>
+                        <th>Mod (2)</th>
+                        <th>Sev (3)</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-preguntas"></tbody>
+            </table>
+        </div>
+
+        <div class="buttons">
+            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Enviar</button>
+        </div>
+    </div>
+
+    <!-- ÁREA FINAL (Sin diagnósticos) -->
+    <div id="result-area">
+        <h3 style="color:#2e7d32;">¡Evaluación Completada!</h3>
+        <p>Gracias por responder con honestidad.</p>
+        <p>Tus datos están listos para ser enviados al departamento de orientación.</p>
+        <div class="buttons">
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Datos por WhatsApp</button>
+            <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
+        </div>
     </div>
 </div>
+
 <script>
     const NUMERO_DESTINO = "523111477413"; 
-    const preguntas = ["Entumecimiento", "Sensación de calor", "Temblor piernas", "Incapacidad relajarse", "Miedo a lo peor", "Mareo", "Palpitaciones", "Inestabilidad", "Terror", "Nerviosismo", "Sensación de ahogo", "Temblor manos", "Estremecimiento", "Miedo perder control", "Dificultad respirar", "Miedo a morir", "Asustado", "Indigestión", "Desmayo", "Rubor facial", "Sudoración"];
     
+    const preguntas = [
+        "1. Entumecimiento u hormigueo", "2. Sensación de calor", "3. Temblor en las piernas",
+        "4. Incapacidad para relajarse", "5. Miedo a que suceda lo peor", "6. Mareo o aturdimiento",
+        "7. Palpitaciones o taquicardia", "8. Sensación de inestabilidad", "9. Sensación de terror",
+        "10. Nerviosismo", "11. Sensación de ahogo", "12. Temblor de manos",
+        "13. Temblor generalizado", "14. Miedo a perder el control", "15. Dificultad para respirar",
+        "16. Miedo a morir", "17. Asustado", "18. Indigestión o malestar abdominal",
+        "19. Sensación de desmayo", "20. Rubor facial", "21. Sudoración (no debida al calor)"
+    ];
+
     const tbody = document.getElementById('tabla-preguntas');
     preguntas.forEach((p, i) => {
-        let html = `<tr><td>${i+1}. ${p}</td>${[0,1,2,3].map(v=>`<td><input type="radio" name="item${i+1}" value="${v}"></td>`).join('')}</tr>`;
+        let html = `<tr><td>${p}</td>${[0,1,2,3].map(v=>`<td><input type="radio" name="item${i+1}" value="${v}"></td>`).join('')}</tr>`;
         tbody.innerHTML += html;
     });
     document.getElementById('fecha').valueAsDate = new Date();
 
-    function calcular() {
+    let datosFinales = null;
+
+    function finalizarTest() {
         const nombre = document.getElementById('nombre').value;
         const fecha = document.getElementById('fecha').value;
-        if(!nombre) return null;
-        let suma = 0, count = 0;
+        if(!nombre) { alert("Por favor ingresa tu nombre."); return; }
+
+        let total = 0, count = 0;
+        let scores = []; 
+
         for(let i=1; i<=21; i++){
             const el = document.querySelector(`input[name="item${i}"]:checked`);
-            if(el) { suma += parseInt(el.value); count++; }
+            if(el) { 
+                let val = parseInt(el.value);
+                total += val; 
+                scores[i] = val; 
+                count++; 
+            }
         }
-        if(count<21) { alert("Faltan preguntas"); return null; }
         
-        let nivel = suma<=21 ? "Ansiedad Muy Baja" : (suma<=35 ? "Ansiedad Moderada" : "Ansiedad Severa");
-        return {nombre, fecha, suma, nivel};
+        if(count < 21) { alert(`Faltan preguntas por contestar (${count}/21)`); return; }
+
+        // Cálculos internos (Solo números)
+        let f1 = scores[4]+scores[5]+scores[9]+scores[10]+scores[14]+scores[16]+scores[17]; // Subjetivo
+        let f2 = scores[1]+scores[2]+scores[3]+scores[6]+scores[7]+scores[8]+scores[12]+scores[13]+scores[19]+scores[20]+scores[21]; // Neuro
+        let f3 = scores[11]+scores[15]+scores[18]; // Autonómico
+        let f4 = scores[7]+scores[11]+scores[15]+scores[16]; // Pánico
+
+        datosFinales = { nombre, fecha, total, f1, f2, f3, f4 };
+
+        // Ocultar test, mostrar confirmación
+        document.getElementById('test-form').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        window.scrollTo(0,0);
     }
 
     function enviarWhatsApp(){
-        const d = calcular(); if(!d) return;
-        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=Resultados BAI - ${d.nombre}: ${d.suma} puntos (${d.nivel})`;
-    }
-
-    function generarPDF(){
-        const d = calcular(); if(!d) return;
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const img = new Image(); img.src = "logo.jpg";
-        img.onload = () => drawPDF(doc, d, img);
-        img.onerror = () => drawPDF(doc, d, null);
-    }
-
-    function drawPDF(doc, d, img){
-        doc.setFillColor(27, 94, 32); doc.rect(0,0,210,40,'F');
-        if(img) doc.addImage(img,'JPEG',10,7,25,25);
-        doc.setTextColor(255); doc.setFontSize(16); doc.text("CBTa No. 130",105,25,null,null,"center");
-        doc.setTextColor(0); doc.text(`Paciente: ${d.nombre}`,20,60);
-        doc.text(`Puntuación BAI: ${d.suma} - ${d.nivel}`,20,75);
-        doc.save(`BAI_${d.nombre}.pdf`);
+        if(!datosFinales) return;
+        // Solo envía DATOS NUMÉRICOS, sin palabras como "Severo" o "Grave"
+        const msg = `🧠 *DATOS BAI*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Puntos Totales: ${datosFinales.total}%0A%0A*Factores (Interno):*%0AF1: ${datosFinales.f1}%0AF2: ${datosFinales.f2}%0AF3: ${datosFinales.f3}%0AF4: ${datosFinales.f4}`;
+        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${msg}`;
     }
 </script>
 </body>
 </html>
+
+
