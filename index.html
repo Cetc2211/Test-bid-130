@@ -19,6 +19,7 @@
     .cat-ans { color: #e65100; border-color: #ffe0b2; }
     .cat-dep { color: #1565C0; border-color: #bbdefb; }
     .cat-risk { color: #c62828; border-color: #ffcdd2; }
+    .cat-admin { color: #455a64; border-color: #cfd8dc; } /* Nuevo color gris */
 
     .bg-phq { background: linear-gradient(135deg, #00695c 0%, #00897b 100%); }
     .bg-gad { background: linear-gradient(135deg, #e65100 0%, #ef6c00 100%); }
@@ -30,6 +31,7 @@
     .bg-ssi { background: linear-gradient(135deg, #4527a0 0%, #7b1fa2 100%); }
     .bg-css { background: linear-gradient(135deg, #c62828 0%, #d32f2f 100%); }
     .bg-plut { background: linear-gradient(135deg, #5d4037 0%, #795548 100%); }
+    .bg-doc { background: linear-gradient(135deg, #607d8b 0%, #78909c 100%); } /* Nuevo fondo documento */
 
     .sender-box { background-color: #f8f9fa; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; margin-top: 30px; }
     .btn-whatsapp { width: 100%; background-color: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 15px; }
@@ -42,7 +44,7 @@
 
 <div class="card">
     <h1>CBTa No.130</h1>
-    <p class="subtitle">Panel de Control Clínico (v7.0)</p>
+    <p class="subtitle">Panel de Control Clínico (v8.0)</p>
 
     <div class="category-title cat-tam">🔍 Tamizaje</div>
     <div class="grid-buttons">
@@ -70,10 +72,17 @@
         <a href="plutchik.html" class="btn-access bg-plut">Plutchik</a>
     </div>
 
+    <!-- NUEVA SECCIÓN DE DOCUMENTOS -->
+    <div class="category-title cat-admin">📂 Expediente y Heteroaplicación</div>
+    <div class="grid-buttons">
+        <a href="consentimiento.html" class="btn-access bg-doc">Consentimiento<small>Informado</small></a>
+        <!-- Aquí podrás agregar la Entrevista Clínica después -->
+        <a href="#" class="btn-access" style="background:#e0e0e0; color:#888;">Entrevista<small>(Próximamente)</small></a>
+    </div>
+
     <!-- ENVÍO -->
     <div class="sender-box">
         <h3 style="margin-top:0; font-size:1rem; text-align:center;">📤 Enviar Batería</h3>
-        
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
             <div>
                 <label class="check-item"><input type="checkbox" id="chkPHQ">PHQ-9</label>
@@ -90,11 +99,10 @@
                 <label class="check-item"><input type="checkbox" id="chkPlut">Plutchik</label>
             </div>
         </div>
-
         <button class="btn-whatsapp" onclick="generarMensaje()">📲 Generar WhatsApp</button>
     </div>
 
-    <a href="admin.html" class="admin-link">🔒 Acceso Administrativo</a>
+    <a href="admin.html" class="admin-link">🔒 Acceso Administrativo (Resultados)</a>
 </div>
 
 <script>
