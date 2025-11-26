@@ -14,32 +14,24 @@
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
     
-    /* --- CORRECCIÓN DE TABLA --- */
+    /* Tabla Ajustada */
     .table-container { overflow-x: auto; }
-    table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        margin-top: 15px; 
-        font-size: 0.85rem; 
-        min-width: 600px; 
-        table-layout: fixed;
-    }
-    
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; min-width: 600px; table-layout: fixed; }
     th, td { padding: 12px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
-    
-    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; }
+    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; }
     th:not(:first-child), td:not(:first-child) { width: 12.5%; text-align: center; }
-    
     th { background-color: #e8f5e9; color: #1b5e20; position: sticky; top: 0; font-weight: bold; }
     tr:nth-child(even) { background-color: #fafafa; }
     
     input[type="radio"] { width: 24px; height: 24px; margin: 0 auto; display: block; cursor: pointer; }
 
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s; }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .whatsapp { background-color: #25D366; }
+    .local-save { background-color: #1565C0; }
     .reset { background-color: #757575; }
-    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 10px; }
+    
+    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 10px; border: 2px solid #c8e6c9; }
 </style>
 </head>
 <body>
@@ -52,7 +44,7 @@
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
         
         <div style="background-color:#fff3cd; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #ffc107;">
-            <strong>Instrucciones:</strong> Indique cuánto le ha molestado cada síntoma durante la <strong>última semana, incluyendo hoy</strong>.
+            <strong>Instrucciones:</strong> Indique cuánto le ha molestado cada síntoma durante la <strong>última semana</strong>.
         </div>
 
         <div class="table-container">
@@ -71,15 +63,20 @@
         </div>
 
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Enviar</button>
+            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar</button>
         </div>
     </div>
 
     <div id="result-area">
-        <h3 style="color:#2e7d32;">¡Evaluación Completada!</h3>
-        <p>Gracias por responder.</p>
+        <h3 style="color:#2e7d32;">📊 Resultados Listos</h3>
+        <p>Seleccione una acción:</p>
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Datos por WhatsApp</button>
+            <!-- Botón Azul para Guardar -->
+            <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente (iPad)</button>
+            
+            <!-- Botón Verde para WhatsApp -->
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
+            
             <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
         </div>
     </div>
@@ -89,6 +86,7 @@
     const NUMERO_DESTINO = "523111477413"; 
     const STORAGE_KEY = "cbta_paciente_temp";
 
+    const preguntas = [
         "1. Entumecimiento u hormigueo", "2. Sensación de calor", "3. Temblor en las piernas",
         "4. Incapacidad para relajarse", "5. Miedo a que suceda lo peor", "6. Mareo o aturdimiento",
         "7. Palpitaciones o taquicardia", "8. Sensación de inestabilidad", "9. Sensación de terror",
@@ -113,13 +111,17 @@
         if(!nombre) { alert("Por favor ingresa tu nombre."); return; }
 
         let total = 0, count = 0, scores = []; 
+
         for(let i=1; i<=21; i++){
             const el = document.querySelector(`input[name="item${i}"]:checked`);
             if(el) { 
                 let val = parseInt(el.value);
-                total += val; scores[i] = val; count++; 
+                total += val; 
+                scores[i] = val; 
+                count++; 
             }
         }
+        
         if(count < 21) { alert(`Faltan preguntas (${count}/21)`); return; }
 
         let f1 = scores[4]+scores[5]+scores[9]+scores[10]+scores[14]+scores[16]+scores[17]; 
@@ -128,15 +130,51 @@
         let f4 = scores[7]+scores[11]+scores[15]+scores[16];
 
         datosFinales = { nombre, fecha, total, f1, f2, f3, f4 };
+
         document.getElementById('test-form').style.display = 'none';
         document.getElementById('result-area').style.display = 'block';
         window.scrollTo(0,0);
     }
 
+    function guardarLocalmente() {
+        if(!datosFinales) {
+            alert("⚠️ No hay datos para guardar.");
+            return;
+        }
+        
+        try {
+            // Intentamos leer la memoria
+            let current = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            
+            // Actualizamos con los nuevos datos
+            let update = { 
+                ...current, 
+                nombre: datosFinales.nombre,
+                fecha: datosFinales.fecha,
+                bai: datosFinales.total, // Guardamos el total del BAI
+                f1: datosFinales.f1,
+                f2: datosFinales.f2,
+                f3: datosFinales.f3,
+                f4: datosFinales.f4
+            };
+            
+            // Guardamos de vuelta
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
+            
+            // Mensaje de Éxito
+            alert("✅ ¡Datos de ANSIEDAD guardados correctamente!\nPuedes continuar con otros tests o ir al Admin.");
+            
+        } catch (e) {
+            alert("❌ Error al guardar: " + e.message + "\n(Verifica que no estés en modo Incógnito estricto)");
+        }
+    }
+
     function enviarWhatsApp(){
         if(!datosFinales) return;
-        const msg = `🧠 *DATOS BAI*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Puntos Totales: ${datosFinales.total}%0A%0A*Factores (Interno):*%0AF1: ${datosFinales.f1}%0AF2: ${datosFinales.f2}%0AF3: ${datosFinales.f3}%0AF4: ${datosFinales.f4}`;
-        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${msg}`;
+        const msg = `🧠 *BAI*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Total: ${datosFinales.total}%0AFactores: ${datosFinales.f1}-${datosFinales.f2}-${datosFinales.f3}-${datosFinales.f4}`;
+        
+        // IMPORTANTE: Usar window.open con '_blank' para NO recargar la página actual
+        window.open(`https://wa.me/${NUMERO_DESTINO}?text=${msg}`, '_blank');
     }
 </script>
 </body>
