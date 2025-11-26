@@ -6,7 +6,6 @@
 <title>Evaluación IDARE - CBTa 130</title>
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
-    /* Encabezado AZUL OSCURO/GRISÁCEO para IDARE */
     header { background: linear-gradient(135deg, #37474f 0%, #455a64 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #37474f; text-align: center; margin-top: 0; border-bottom: 2px solid #cfd8dc; padding-bottom: 10px; }
@@ -15,20 +14,39 @@
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
     
+    /* --- CORRECCIÓN DE TABLA --- */
     .table-container { overflow-x: auto; margin-bottom: 30px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; min-width: 600px; }
-    th { background-color: #eceff1; color: #37474f; padding: 10px; text-align: center; position: sticky; top: 0; }
-    td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
-    td:first-child { text-align: left; font-weight: 500; width: 45%; padding-left: 10px; }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 10px; 
+        font-size: 0.85rem; 
+        min-width: 600px; /* Asegura scroll en móviles muy pequeños */
+        table-layout: fixed; /* CRUCIAL: Fija los anchos */
+    }
+    
+    /* Anchos fijos para alineación perfecta */
+    th, td { padding: 12px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
+    
+    /* Columna de Pregunta (50% del ancho) */
+    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; }
+    
+    /* Columnas de opciones (Repartidas equitativamente) */
+    th:not(:first-child), td:not(:first-child) { width: 12.5%; text-align: center; }
+    
+    th { background-color: #eceff1; color: #37474f; position: sticky; top: 0; font-weight: bold; }
     tr:nth-child(even) { background-color: #fafafa; }
 
-    .part-title { background-color: #cfd8dc; padding: 10px; border-radius: 5px; color: #263238; font-weight: bold; margin-top: 20px; }
+    /* Radio buttons grandes y centrados */
+    input[type="radio"] { 
+        width: 24px; height: 24px; margin: 0 auto; display: block; cursor: pointer;
+    }
 
+    .part-title { background-color: #cfd8dc; padding: 10px; border-radius: 5px; color: #263238; font-weight: bold; margin-top: 20px; }
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
     button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .whatsapp { background-color: #25D366; }
     .reset { background-color: #757575; }
-    input[type="radio"] { transform: scale(1.5); cursor: pointer; }
     #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #eceff1; border-radius: 10px; }
 </style>
 </head>
@@ -41,23 +59,21 @@
         <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
         
-        <!-- PARTE 1: ESTADO -->
         <div class="part-title">PARTE 1: CÓMO SE SIENTE AHORA MISMO</div>
         <div class="table-container">
             <table>
                 <thead>
-                    <tr><th>Ítem</th><th>Nada (1)</th><th>Poco (2)</th><th>Regular (3)</th><th>Mucho (4)</th></tr>
+                    <tr><th>Ítem</th><th>Nada<br>(1)</th><th>Poco<br>(2)</th><th>Regular<br>(3)</th><th>Mucho<br>(4)</th></tr>
                 </thead>
                 <tbody id="tabla-estado"></tbody>
             </table>
         </div>
 
-        <!-- PARTE 2: RASGO -->
         <div class="part-title">PARTE 2: CÓMO SE SIENTE GENERALMENTE</div>
         <div class="table-container">
             <table>
                 <thead>
-                    <tr><th>Ítem</th><th>Casi Nunca (1)</th><th>A veces (2)</th><th>Frecuente (3)</th><th>Casi Siempre (4)</th></tr>
+                    <tr><th>Ítem</th><th>Casi Nunca<br>(1)</th><th>A veces<br>(2)</th><th>Frecuente<br>(3)</th><th>Casi Siempre<br>(4)</th></tr>
                 </thead>
                 <tbody id="tabla-rasgo"></tbody>
             </table>
@@ -80,8 +96,6 @@
 
 <script>
     const NUMERO_DESTINO = "523111477413"; 
-    
-    // Ítems Estado (1-20)
     const itemsEstado = [
         "1. Me siento calmado", "2. Me siento seguro", "3. Estoy tenso", "4. Estoy contrariado",
         "5. Me siento a gusto", "6. Me siento alterado", "7. Estoy preocupado por desgracias",
@@ -90,8 +104,6 @@
         "14. Me siento a punto de explotar", "15. Me siento relajado", "16. Me siento satisfecho",
         "17. Estoy preocupado", "18. Me siento aturdido/confuso", "19. Me siento alegre", "20. Me siento bien"
     ];
-
-    // Ítems Rasgo (21-40)
     const itemsRasgo = [
         "21. Me siento bien", "22. Me canso rápidamente", "23. Siento ganas de llorar", "24. Quisiera ser tan feliz como otros",
         "25. Pierdo oportunidades por no decidir", "26. Me siento descansado", "27. Soy una persona tranquila",
@@ -102,7 +114,6 @@
         "40. Me pongo tenso pensando en asuntos"
     ];
 
-    // Renderizar Tablas
     const tEstado = document.getElementById('tabla-estado');
     itemsEstado.forEach((t, i) => {
         let idx = i + 1;
@@ -124,9 +135,6 @@
         if(!nombre) { alert("Nombre requerido"); return; }
 
         let scoreEstado = 0, scoreRasgo = 0, count = 0;
-        
-        // --- CÁLCULO ESTADO (1-20) ---
-        // Inversos (Se puntúan 5 - x): 1, 2, 5, 8, 10, 11, 15, 16, 19, 20
         const invE = [1, 2, 5, 8, 10, 11, 15, 16, 19, 20];
         
         for(let i=1; i<=20; i++){
@@ -138,10 +146,7 @@
             }
         }
 
-        // --- CÁLCULO RASGO (21-40) ---
-        // Inversos (Se puntúan 5 - x): 21, 26, 27, 30, 33, 36, 39
         const invR = [21, 26, 27, 30, 33, 36, 39];
-        
         for(let i=21; i<=40; i++){
             const el = document.querySelector(`input[name="r${i}"]:checked`);
             if(el) {
@@ -152,9 +157,7 @@
         }
 
         if(count < 40) { alert(`Faltan preguntas (${count}/40)`); return; }
-
         datosFinales = { nombre, fecha, scoreEstado, scoreRasgo };
-
         document.getElementById('test-form').style.display = 'none';
         document.getElementById('result-area').style.display = 'block';
         window.scrollTo(0,0);
@@ -168,4 +171,5 @@
 </script>
 </body>
 </html>
+
 
