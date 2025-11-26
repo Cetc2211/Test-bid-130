@@ -3,155 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evaluación SSI - CBTa 130</title>
+<title>Evaluación BHS - CBTa 130</title>
 <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
-    /* Encabezado VIOLETA para SSI */
-    header { background: linear-gradient(135deg, #4527a0 0%, #7b1fa2 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
+    header { background: linear-gradient(135deg, #212121 0%, #424242 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    h2 { color: #4527a0; text-align: center; margin-top: 0; border-bottom: 2px solid #e1bee7; padding-bottom: 10px; }
-    
+    h2 { color: #212121; text-align: center; border-bottom: 2px solid #bdbdbd; padding-bottom: 10px; }
     .input-group { margin-bottom: 15px; }
-    label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
-    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-
-    .instructions { background-color: #f3e5f5; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 0.95em; line-height: 1.5; border-left: 5px solid #7b1fa2; }
-
-    .question-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; margin-bottom: 20px; transition: all 0.3s ease; }
-    .question-title { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; color: #2c0e58; }
+    label { font-weight: 600; display: block; margin-bottom: 8px; }
+    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
     
-    .option-label { display: flex; align-items: flex-start; padding: 10px; cursor: pointer; border-radius: 6px; transition: background 0.2s; }
-    .option-label:hover { background-color: #f5f5f5; }
-    .option-label input { margin-right: 12px; margin-top: 4px; transform: scale(1.3); flex-shrink: 0; }
-    .option-text { font-size: 0.95em; }
+    /* REJILLA PARA V/F */
+    .question-item { border-bottom: 1px solid #eee; padding: 15px 0; display: grid; grid-template-columns: 1fr 100px; gap: 15px; align-items: center; }
+    .q-text { font-weight: 500; color: #333; font-size: 0.95rem; }
+    .q-opts { display: flex; justify-content: space-between; }
+    .opt-label { cursor: pointer; display: flex; flex-direction: column; align-items: center; font-weight: bold; }
+    .opt-v { color: #2E7d32; } .opt-f { color: #c62828; }
+    input[type="radio"] { width: 24px; height: 24px; border: 2px solid #ccc; border-radius: 50%; margin-top: 5px; cursor: pointer; }
+    input[type="radio"]:checked { border-color: currentColor; background-color: currentColor; box-shadow: inset 0 0 0 4px white; }
 
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
     .whatsapp { background-color: #25D366; }
+    .local-save { background-color: #1565C0; }
     .reset { background-color: #757575; }
-
-    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #f3e5f5; border-radius: 10px; }
-    
-    /* Clase para ocultar preguntas saltadas */
-    .hidden { display: none; }
+    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 10px; }
 </style>
 </head>
 <body>
-
-<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Escala de Ideación (SSI)</span></header>
-
+<header>CBTa No.130<br><span style="font-size:0.8em;">Escala de Desesperanza (BHS)</span></header>
 <div class="container">
     <div id="test-form">
         <h2>Datos del Alumno</h2>
-        <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
+        <div class="input-group"><label>Nombre:</label><input type="text" id="nombre" required></div>
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
-
-        <div class="instructions">
-            <strong>Instrucciones:</strong> Lea cuidadosamente cada grupo de afirmaciones y elija la que mejor describa su actitud <strong>actual o más reciente</strong>.
+        <div style="background-color:#eee; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #212121;">
+            <strong>Instrucciones:</strong> Marque si es <strong>VERDADERA (V)</strong> o <strong>FALSA (F)</strong>.
         </div>
-
-        <form id="ssiForm">
-            <!-- PARTE I -->
-            <div id="part1"></div>
-            
-            <!-- PARTE II, III, IV (Se ocultan si 4 y 5 son 0) -->
-            <div id="conditional-block">
-                <div style="text-align:center; color:#7b1fa2; margin:20px 0; font-weight:bold;">--- DETALLES DE LA IDEACIÓN ---</div>
-                <div id="part234"></div>
-            </div>
-
-            <!-- PARTE V -->
-            <div style="text-align:center; color:#7b1fa2; margin:20px 0; font-weight:bold;">--- ANTECEDENTES ---</div>
-            <div id="part5"></div>
-        </form>
-
-        <div class="buttons">
-            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Enviar</button>
-        </div>
+        <div id="questions-list"></div>
+        <div class="buttons"><button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar</button></div>
     </div>
-
     <div id="result-area">
-        <h3 style="color:#4527a0;">¡Registro Completado!</h3>
-        <p>Sus respuestas han sido guardadas de forma confidencial.</p>
+        <h3 style="color:#212121;">Resultados Listos</h3>
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Confirmación</button>
-            <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
+            <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar WhatsApp</button>
+            <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo</button>
         </div>
     </div>
 </div>
-
 <script>
     const NUMERO_DESTINO = "523111477413"; 
+    const STORAGE_KEY = "cbta_paciente_temp";
 
-    // Definición de Items
-    const itemsP1 = [
-        { t: "1. Deseo de vivir", o: ["0 = Moderado a fuerte", "1 = Débil", "2 = Ninguno"] },
-        { t: "2. Deseo de morir", o: ["0 = Ninguno", "1 = Débil", "2 = Moderado a fuerte"] },
-        { t: "3. Razones para vivir/morir", o: ["0 = Vivir supera a morir", "1 = Iguales", "2 = Morir supera a vivir"] },
-        { t: "4. Deseo de intento activo", o: ["0 = Ninguno", "1 = Débil", "2 = Moderado a fuerte"] },
-        { t: "5. Deseo suicida pasivo", o: ["0 = Tomaría precauciones para vivir", "1 = Dejaría vida/muerte al azar", "2 = Evitaría salvarse"] }
+    const items = [
+        "1. Veo el futuro con esperanza y entusiasmo", "2. Quizá debería abandonar todo", "3. Cuando las cosas están mal, me ayuda pensar que no será así",
+        "4. No imagino mi vida en 10 años", "5. Tengo tiempo suficiente", "6. Espero tener éxito", "7. Mi futuro parece oscuro",
+        "8. Espero que me sucedan cosas buenas", "9. No tengo suerte", "10. Mis experiencias me prepararon bien",
+        "11. Veo todo desagradable adelante", "12. No espero conseguir lo que quiero", "13. Espero ser más feliz", "14. Las cosas nunca marcharán bien",
+        "15. Tengo fe en el futuro", "16. Es absurdo querer algo", "17. Improbable lograr satisfacción", "18. Futuro vago e incierto",
+        "19. Espero épocas buenas", "20. Es inútil tratar de conseguir algo"
     ];
-
-    const itemsP234 = [
-        { t: "6. Dimensión temporal", o: ["0 = Breve, pasajero", "1 = Períodos largos", "2 = Continuo"] },
-        { t: "7. Frecuencia", o: ["0 = Rara, ocasional", "1 = Intermitente", "2 = Persistente"] },
-        { t: "8. Actitud hacia la ideación", o: ["0 = Rechazo", "1 = Ambivalente", "2 = Aceptación"] },
-        { t: "9. Control sobre la acción", o: ["0 = Tiene control", "1 = Inseguro", "2 = No tiene control"] },
-        { t: "10. Factores disuasivos", o: ["0 = No lo haría (familia, etc)", "1 = Cierta preocupación", "2 = Mínima preocupación"] },
-        { t: "11. Razones del intento", o: ["0 = Manipular/Atención", "1 = Combinación", "2 = Escape/Finalizar problemas"] },
-        { t: "12. Método: Planificación", o: ["0 = No considerado", "1 = No elaborado", "2 = Elaborado y detallado"] },
-        { t: "13. Método: Disponibilidad", o: ["0 = No disponible", "1 = Toma tiempo/esfuerzo", "2 = Disponible/Oportunidad presente"] },
-        { t: "14. Sentido de capacidad", o: ["0 = No tiene valor/miedo", "1 = Inseguro", "2 = Seguro de tener valor"] },
-        { t: "15. Expectativa de intento", o: ["0 = No", "1 = Incierto", "2 = Sí"] },
-        { t: "16. Preparación real", o: ["0 = Ninguna", "1 = Parcial", "2 = Completa"] },
-        { t: "17. Nota suicida", o: ["0 = No", "1 = Empezada", "2 = Completa"] },
-        { t: "18. Actos finales", o: ["0 = Ninguno", "1 = Pensamientos", "2 = Arreglos definitivos"] },
-        { t: "19. Engaño/Ocultamiento", o: ["0 = Abierto", "1 = Evitó tema", "2 = Engañó/Ocultó"] }
-    ];
-
-    const itemsP5 = [
-        { t: "20. Intentos previos", o: ["0 = Ninguno", "1 = Uno", "2 = Más de uno"] },
-        { t: "21. Intención en último intento", o: ["0 = Baja", "1 = Moderada", "2 = Alta"] }
-    ];
-
-    // Renderizar Preguntas
-    function render(list, containerId, startIdx) {
-        const div = document.getElementById(containerId);
-        list.forEach((item, i) => {
-            const num = startIdx + i;
-            let html = `<div class="question-card"><div class="question-title">${item.t}</div>`;
-            item.o.forEach((txt, val) => {
-                // Agregar evento onchange solo a 4 y 5 para la lógica de salto
-                const onChangeAttr = (num === 4 || num === 5) ? 'onchange="verificarSalto()"' : '';
-                html += `<label class="option-label"><input type="radio" name="item${num}" value="${val}" ${onChangeAttr} required><span class="option-text">${txt}</span></label>`;
-            });
-            html += `</div>`;
-            div.innerHTML += html;
-        });
-    }
-
-    render(itemsP1, 'part1', 1);
-    render(itemsP234, 'part234', 6);
-    render(itemsP5, 'part5', 20);
-
-    // Lógica de Salto (Beck Skip Logic)
-    function verificarSalto() {
-        const q4 = document.querySelector('input[name="item4"]:checked');
-        const q5 = document.querySelector('input[name="item5"]:checked');
-        const block = document.getElementById('conditional-block');
-        
-        // Si ambos están contestados y ambos son 0, ocultar bloque
-        if (q4 && q5 && q4.value === "0" && q5.value === "0") {
-            block.style.display = 'none';
-            // Limpiar valores del bloque oculto para no afectar suma si cambiaron de opinión
-            const inputs = block.querySelectorAll('input[type="radio"]');
-            inputs.forEach(i => i.checked = false);
-        } else {
-            block.style.display = 'block';
-        }
-    }
-
+    const container = document.getElementById('questions-list');
+    items.forEach((txt, i) => {
+        let idx = i + 1;
+        container.innerHTML += `<div class="question-item"><div class="q-text">${txt}</div><div class="q-opts"><label class="opt-label opt-v"><span>V</span><input type="radio" name="bhs${idx}" value="V"></label><label class="opt-label opt-f"><span>F</span><input type="radio" name="bhs${idx}" value="F"></label></div></div>`;
+    });
     document.getElementById('fecha').valueAsDate = new Date();
     let datosFinales = null;
 
@@ -159,64 +76,38 @@
         const nombre = document.getElementById('nombre').value;
         const fecha = document.getElementById('fecha').value;
         if(!nombre) { alert("Nombre requerido"); return; }
-
-        let total = 0;
-        let flags = [];
-        let items4and5Zero = false;
-
-        // Verificar 4 y 5
-        const q4 = document.querySelector('input[name="item4"]:checked');
-        const q5 = document.querySelector('input[name="item5"]:checked');
-        
-        if (!q4 || !q5) { alert("Por favor contesta al menos las primeras 5 preguntas."); return; }
-        
-        if (q4.value === "0" && q5.value === "0") items4and5Zero = true;
-
-        // Sumar items 1-19
-        for(let i=1; i<=19; i++) {
-            // Si saltamos, ignoramos 6-19
-            if (items4and5Zero && i >= 6) continue;
-
-            const el = document.querySelector(`input[name="item${i}"]:checked`);
-            if (el) {
-                const val = parseInt(el.value);
-                total += val;
-                
-                // Indicadores Críticos
-                if ((i === 4 || i === 5) && val >= 1) flags.push(`C${i}`);
-                if (i === 12 && val === 2) flags.push("C12");
-                if (i === 13 && val === 2) flags.push("C13");
-                if (i === 15 && val === 2) flags.push("C15");
-            } else if (!items4and5Zero) {
-                // Si no se deben saltar, es obligatorio contestar
-                alert(`Falta la pregunta ${i}`); return;
+        let total = 0, count = 0;
+        const keyTrue = [2, 4, 7, 9, 11, 12, 14, 16, 17, 18, 20];
+        for(let i=1; i<=20; i++){
+            const el = document.querySelector(`input[name="bhs${i}"]:checked`);
+            if(el) {
+                let v = el.value;
+                if (keyTrue.includes(i)) { if(v === "V") total++; } else { if(v === "F") total++; }
+                count++;
             }
         }
-
-        // Revisar item 20 (Antecedentes)
-        const q20 = document.querySelector('input[name="item20"]:checked');
-        if(q20) {
-            if (parseInt(q20.value) >= 1) flags.push("C20");
-        } else { alert("Falta pregunta 20"); return; }
-        
-        const q21 = document.querySelector('input[name="item21"]:checked');
-        if(!q21) { alert("Falta pregunta 21"); return; }
-
-        datosFinales = { nombre, fecha, total, flags };
-        
+        if(count < 20) { alert("Faltan preguntas"); return; }
+        datosFinales = { nombre, fecha, total };
         document.getElementById('test-form').style.display = 'none';
         document.getElementById('result-area').style.display = 'block';
         window.scrollTo(0,0);
     }
 
-    function enviarWhatsApp() {
+    function guardarLocalmente() {
         if(!datosFinales) return;
-        let m = `🟣 *DATOS SSI*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Score: ${datosFinales.total}`;
-        if(datosFinales.flags.length > 0) m += `%0A🚩 Flags: ${datosFinales.flags.join(', ')}`;
-        
+        let current = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let update = { ...current, nombre: datosFinales.nombre, bhs: datosFinales.total }; // Guarda en 'bhs'
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
+        alert("✅ Datos BHS guardados.");
+    }
+
+    function enviarWhatsApp(){
+        if(!datosFinales) return;
+        let m = `⚫ *BHS*%0A👤 ${datosFinales.nombre}%0A📊 Score: ${datosFinales.total}`;
         window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${m}`;
     }
 </script>
 </body>
 </html>
+
 
