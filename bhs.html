@@ -6,7 +6,6 @@
 <title>Evaluación BHS - CBTa 130</title>
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
-    /* Encabezado NEGRO/GRIS para BHS */
     header { background: linear-gradient(135deg, #212121 0%, #424242 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #212121; text-align: center; margin-top: 0; border-bottom: 2px solid #bdbdbd; padding-bottom: 10px; }
@@ -15,19 +14,66 @@
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
     
-    .question-item { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-    .q-text { flex: 1; font-weight: 500; color: #333; }
-    .q-opts { display: flex; gap: 15px; min-width: 120px; }
-    .opt-label { cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: bold; }
+    /* --- CORRECCIÓN DE ALINEACIÓN --- */
+    .question-item { 
+        border-bottom: 1px solid #eee; 
+        padding: 15px 0; 
+        display: grid; 
+        grid-template-columns: 1fr 120px; /* Texto flexible | Espacio fijo para botones */
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .q-text { font-weight: 500; color: #333; font-size: 0.95rem; line-height: 1.4; }
+    
+    .q-opts { 
+        display: flex; 
+        justify-content: flex-end; 
+        gap: 15px; 
+    }
+    
+    .opt-label { 
+        cursor: pointer; 
+        display: flex; 
+        flex-direction: column; /* Letra arriba, botón abajo */
+        align-items: center; 
+        font-weight: bold; 
+        font-size: 0.9rem;
+    }
+    
     .opt-v { color: #2E7d32; }
     .opt-f { color: #c62828; }
+    
+    /* Hacer el radio button más grande y fácil de tocar */
+    input[type="radio"] { 
+        appearance: none;
+        -webkit-appearance: none;
+        width: 24px;
+        height: 24px;
+        border: 2px solid #ccc;
+        border-radius: 50%;
+        outline: none;
+        margin-top: 5px;
+        transition: all 0.2s;
+    }
+    
+    input[type="radio"]:checked {
+        border-color: currentColor; /* Toma el color del texto (verde o rojo) */
+        background-color: currentColor;
+        box-shadow: inset 0 0 0 4px white; /* Crea el efecto de punto */
+    }
 
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
     button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .whatsapp { background-color: #25D366; }
     .reset { background-color: #757575; }
-    input[type="radio"] { transform: scale(1.5); cursor: pointer; }
     #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 10px; }
+    
+    /* Ajuste móvil */
+    @media (max-width: 450px) {
+        .question-item { grid-template-columns: 1fr 90px; }
+        .q-opts { gap: 10px; }
+    }
 </style>
 </head>
 <body>
@@ -40,7 +86,7 @@
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
         
         <div style="background-color:#eee; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #212121;">
-            <strong>Instrucciones:</strong> Lea cada afirmación y marque si es <strong>VERDADERA (V)</strong> o <strong>FALSA (F)</strong> para usted durante la última semana.
+            <strong>Instrucciones:</strong> Lea cada afirmación y marque si es <strong>VERDADERA (V)</strong> o <strong>FALSA (F)</strong> para usted.
         </div>
 
         <div id="questions-list"></div>
@@ -93,8 +139,14 @@
             <div class="question-item">
                 <div class="q-text">${txt}</div>
                 <div class="q-opts">
-                    <label class="opt-label opt-v"><input type="radio" name="bhs${idx}" value="V"> V</label>
-                    <label class="opt-label opt-f"><input type="radio" name="bhs${idx}" value="F"> F</label>
+                    <label class="opt-label opt-v">
+                        <span>V</span>
+                        <input type="radio" name="bhs${idx}" value="V">
+                    </label>
+                    <label class="opt-label opt-f">
+                        <span>F</span>
+                        <input type="radio" name="bhs${idx}" value="F">
+                    </label>
                 </div>
             </div>`;
     });
@@ -108,21 +160,14 @@
         if(!nombre) { alert("Nombre requerido"); return; }
 
         let total = 0, count = 0;
-        
-        // CLAVE DE RESPUESTA (Suma 1 punto si coincide)
-        // True: 2, 4, 7, 9, 11, 12, 14, 16, 17, 18, 20
-        // False: 1, 3, 5, 6, 8, 10, 13, 15, 19
         const keyTrue = [2, 4, 7, 9, 11, 12, 14, 16, 17, 18, 20];
 
         for(let i=1; i<=20; i++){
             const el = document.querySelector(`input[name="bhs${i}"]:checked`);
             if(el) {
-                let v = el.value; // "V" o "F"
-                if (keyTrue.includes(i)) {
-                    if(v === "V") total++;
-                } else {
-                    if(v === "F") total++;
-                }
+                let v = el.value;
+                if (keyTrue.includes(i)) { if(v === "V") total++; } 
+                else { if(v === "F") total++; }
                 count++;
             }
         }
@@ -130,7 +175,6 @@
         if(count < 20) { alert(`Faltan preguntas (${count}/20)`); return; }
 
         datosFinales = { nombre, fecha, total };
-
         document.getElementById('test-form').style.display = 'none';
         document.getElementById('result-area').style.display = 'block';
         window.scrollTo(0,0);
@@ -144,4 +188,5 @@
 </script>
 </body>
 </html>
+
 
