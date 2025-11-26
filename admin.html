@@ -14,13 +14,19 @@
     input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
     .row { display: flex; gap: 15px; }
     .col { flex: 1; }
+    
     .btn-generate { background-color: #1b5e20; color: white; border: none; width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; }
     .back-link { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; font-size: 0.9em; }
     
     .section-box { background:#fafafa; padding:15px; border-radius:10px; margin-bottom:15px; border-left: 5px solid #ccc; }
     .header-sec { margin-top:0; font-size:1rem; display:flex; justify-content:space-between; }
     
-    /* Colores */
+    /* Panel de Memoria */
+    .memory-panel { background: #fff3e0; border: 1px solid #ffe0b2; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .mem-text { color: #e65100; font-size: 0.9rem; }
+    .btn-clear { background: #c62828; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+    
+    /* Colores Secciones */
     .s-phq { border-left-color: #00695c; } .s-phq h3 { color: #00695c; }
     .s-gad { border-left-color: #e65100; } .s-gad h3 { color: #e65100; }
     .s-bai { border-left-color: #2e7d32; } .s-bai h3 { color: #2e7d32; }
@@ -36,8 +42,17 @@
 <body>
 
 <div class="card">
-    <h2>🏥 Generador Integral (V3)</h2>
+    <h2>🏥 Generador Integral (V4 - Memoria)</h2>
     
+    <!-- PANEL DE MEMORIA -->
+    <div id="memoryPanel" class="memory-panel" style="display:none;">
+        <div class="mem-text">
+            <strong>📂 Datos recuperados del dispositivo</strong><br>
+            Se cargaron automáticamente los resultados pendientes.
+        </div>
+        <button class="btn-clear" onclick="borrarMemoria()">🗑️ Borrar / Nuevo Paciente</button>
+    </div>
+
     <div class="row">
         <div class="col"><label>Nombre:</label><input type="text" id="nombre"></div>
         <div class="col"><label>Edad:</label><input type="number" id="edad"></div>
@@ -46,7 +61,7 @@
     </div>
     <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
 
-    <!-- TAMIZAJE & RÁPIDO -->
+    <!-- TAMIZAJE -->
     <div class="row">
         <div class="col section-box s-phq">
             <h3 class="header-sec">PHQ-9</h3>
@@ -109,7 +124,7 @@
     <div class="section-box s-cssrs">
         <h3 class="header-sec">Columbia (C-SSRS)</h3>
         <div class="row">
-            <div class="col"><label>Ideación (1-5)</label><select id="cssrsId"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><label>Idea (1-5)</label><select id="cssrsId"><option value="0">No</option><option value="1">Sí</option></select></div>
             <div class="col"><label>Plan (4-5)</label><select id="cssrsPlan"><option value="0">No</option><option value="1">Sí</option></select></div>
             <div class="col"><label>Conducta</label><select id="cssrsCond"><option value="0">No</option><option value="1">Sí</option></select></div>
             <div class="col"><label>Reciente</label><select id="cssrsRec"><option value="0">No</option><option value="1">Sí</option></select></div>
@@ -121,10 +136,47 @@
 </div>
 
 <script>
+    const STORAGE_KEY = "cbta_paciente_temp";
     document.getElementById('fecha').valueAsDate = new Date();
 
+    // --- CARGA AUTOMÁTICA AL ABRIR ---
+    window.addEventListener('DOMContentLoaded', () => {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+            const data = JSON.parse(raw);
+            document.getElementById('memoryPanel').style.display = 'flex';
+            
+            // Cargar Datos Generales
+            if(data.nombre) document.getElementById('nombre').value = data.nombre;
+            if(data.edad) document.getElementById('edad').value = data.edad;
+            if(data.sexo) document.getElementById('sexo').value = data.sexo;
+
+            // Cargar Scores (Solo si existen)
+            const setVal = (id, val) => { if(val !== undefined) document.getElementById(id).value = val; };
+            
+            setVal('scorePHQ', data.phq); setVal('flagPHQ', data.phqFlag);
+            setVal('scoreGAD', data.gad);
+            setVal('hadsA', data.hadsA); setVal('hadsD', data.hadsD);
+            setVal('scoreBAI', data.bai); setVal('f1', data.f1); setVal('f2', data.f2); setVal('f3', data.f3); setVal('f4', data.f4);
+            setVal('idareE', data.idareE); setVal('idareR', data.idareR);
+            setVal('scoreBDI', data.bdi);
+            setVal('scoreBHS', data.bhs);
+            setVal('scoreSSI', data.ssi); setVal('flagsSSI', data.ssiFlags);
+            setVal('scorePlut', data.plut);
+            
+            setVal('cssrsId', data.cId); setVal('cssrsPlan', data.cPlan); 
+            setVal('cssrsCond', data.cCond); setVal('cssrsRec', data.cRec);
+        }
+    });
+
+    function borrarMemoria() {
+        if(confirm("¿Seguro que deseas borrar los datos guardados? Esto iniciará un expediente nuevo.")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    }
+
     function generarReporte() {
-        // Recopilar todos los datos
         const d = {
             nombre: document.getElementById('nombre').value,
             edad: parseInt(document.getElementById('edad').value),
@@ -140,11 +192,8 @@
             bhs: document.getElementById('scoreBHS').value,
             ssi: document.getElementById('scoreSSI').value, flagsSSI: document.getElementById('flagsSSI').value,
             plut: document.getElementById('scorePlut').value,
-            // Columbia
-            cId: document.getElementById('cssrsId').value,
-            cPlan: document.getElementById('cssrsPlan').value,
-            cCond: document.getElementById('cssrsCond').value,
-            cRec: document.getElementById('cssrsRec').value
+            cId: document.getElementById('cssrsId').value, cPlan: document.getElementById('cssrsPlan').value,
+            cCond: document.getElementById('cssrsCond').value, cRec: document.getElementById('cssrsRec').value
         };
 
         if(!d.nombre) { alert("Falta nombre"); return; }
@@ -245,7 +294,6 @@
             drawRow("Plutchik", d.plut, n, v>=6);
         }
         
-        // Columbia Logic
         if(d.cId === "1" || d.cCond === "1") {
             let risk = "Bajo";
             if(d.cId==="1") risk="Ideación Presente";
