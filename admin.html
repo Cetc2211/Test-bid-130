@@ -7,11 +7,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
     body { font-family: -apple-system, sans-serif; background-color: #f5f5f5; padding: 20px; }
-    .card { background: white; max-width: 700px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .card { background: white; max-width: 800px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     h2 { color: #1b5e20; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
     .form-group { margin-bottom: 15px; }
     label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-    input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
     .row { display: flex; gap: 15px; }
     .col { flex: 1; }
     .btn-generate { background-color: #1b5e20; color: white; border: none; width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; }
@@ -20,78 +20,99 @@
     .section-box { background:#fafafa; padding:15px; border-radius:10px; margin-bottom:15px; border-left: 5px solid #ccc; }
     .header-sec { margin-top:0; font-size:1rem; display:flex; justify-content:space-between; }
     
+    /* Colores */
     .s-phq { border-left-color: #00695c; } .s-phq h3 { color: #00695c; }
     .s-gad { border-left-color: #e65100; } .s-gad h3 { color: #e65100; }
     .s-bai { border-left-color: #2e7d32; } .s-bai h3 { color: #2e7d32; }
     .s-idare { border-left-color: #37474f; } .s-idare h3 { color: #37474f; }
     .s-bdi { border-left-color: #1565C0; } .s-bdi h3 { color: #1565C0; }
+    .s-hads { border-left-color: #880e4f; } .s-hads h3 { color: #880e4f; }
     .s-ssi { border-left-color: #7b1fa2; } .s-ssi h3 { color: #7b1fa2; }
     .s-bhs { border-left-color: #212121; } .s-bhs h3 { color: #212121; }
+    .s-cssrs { border-left-color: #c62828; } .s-cssrs h3 { color: #c62828; }
+    .s-plut { border-left-color: #5d4037; } .s-plut h3 { color: #5d4037; }
 </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🏥 Generador de Informes Clínicos</h2>
+    <h2>🏥 Generador Integral (V3)</h2>
     
-    <div class="form-group"><label>Nombre del Paciente:</label><input type="text" id="nombre"></div>
     <div class="row">
-        <div class="col form-group"><label>Edad:</label><input type="number" id="edad"></div>
-        <div class="col form-group"><label>Fecha:</label><input type="date" id="fecha"></div>
-        <div class="col form-group"><label>Sexo (H/M):</label><input type="text" id="sexo" placeholder="H / M"></div>
+        <div class="col"><label>Nombre:</label><input type="text" id="nombre"></div>
+        <div class="col"><label>Edad:</label><input type="number" id="edad"></div>
+        <div class="col"><label>Sexo (H/M):</label><input type="text" id="sexo"></div>
+        <div class="col"><label>Fecha:</label><input type="date" id="fecha"></div>
     </div>
-    
     <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
 
-    <!-- TAMIZAJE -->
+    <!-- TAMIZAJE & RÁPIDO -->
     <div class="row">
         <div class="col section-box s-phq">
             <h3 class="header-sec">PHQ-9</h3>
             <input type="number" id="scorePHQ" placeholder="Total">
-            <input type="number" id="flagPHQ" placeholder="Ítem 9" style="margin-top:5px;">
+            <input type="number" id="flagPHQ" placeholder="Ítem 9" style="margin-top:5px">
         </div>
         <div class="col section-box s-gad">
             <h3 class="header-sec">GAD-7</h3>
             <input type="number" id="scoreGAD" placeholder="Total">
         </div>
-    </div>
-
-    <!-- ANSIEDAD PROFUNDA -->
-    <div class="section-box s-bai">
-        <h3 class="header-sec">BAI (Beck)</h3>
-        <input type="number" id="scoreBAI" placeholder="Total">
-        <div class="row" style="margin-top:5px;">
-            <div class="col"><input type="number" id="f1" placeholder="F1"></div>
-            <div class="col"><input type="number" id="f2" placeholder="F2"></div>
-            <div class="col"><input type="number" id="f3" placeholder="F3"></div>
-            <div class="col"><input type="number" id="f4" placeholder="F4"></div>
+        <div class="col section-box s-hads">
+            <h3 class="header-sec">HADS</h3>
+            <input type="number" id="hadsA" placeholder="Ansiedad">
+            <input type="number" id="hadsD" placeholder="Depresión" style="margin-top:5px">
         </div>
     </div>
 
-    <div class="section-box s-idare">
-        <h3 class="header-sec">IDARE (Rasgo-Estado)</h3>
-        <div class="row">
-            <div class="col"><label>Estado (Actual)</label><input type="number" id="scoreIdareE"></div>
-            <div class="col"><label>Rasgo (General)</label><input type="number" id="scoreIdareR"></div>
+    <!-- ANSIEDAD -->
+    <div class="row">
+        <div class="col section-box s-bai">
+            <h3 class="header-sec">BAI (Beck)</h3>
+            <input type="number" id="scoreBAI" placeholder="Total">
+            <div style="display:flex; gap:5px; margin-top:5px;">
+                <input type="number" id="f1" placeholder="F1"><input type="number" id="f2" placeholder="F2">
+                <input type="number" id="f3" placeholder="F3"><input type="number" id="f4" placeholder="F4">
+            </div>
+        </div>
+        <div class="col section-box s-idare">
+            <h3 class="header-sec">IDARE</h3>
+            <input type="number" id="idareE" placeholder="Estado">
+            <input type="number" id="idareR" placeholder="Rasgo" style="margin-top:5px">
         </div>
     </div>
 
-    <!-- DEPRESIÓN -->
-    <div class="section-box s-bdi">
-        <h3 class="header-sec">BDI-II (Depresión)</h3>
-        <input type="number" id="scoreBDI" placeholder="Total">
+    <!-- DEPRESIÓN & DESESPERANZA -->
+    <div class="row">
+        <div class="col section-box s-bdi">
+            <h3 class="header-sec">BDI-II</h3>
+            <input type="number" id="scoreBDI" placeholder="Total">
+        </div>
+        <div class="col section-box s-bhs">
+            <h3 class="header-sec">BHS</h3>
+            <input type="number" id="scoreBHS" placeholder="Total">
+        </div>
     </div>
 
-    <!-- RIESGO -->
+    <!-- RIESGO ALTO -->
     <div class="row">
         <div class="col section-box s-ssi">
             <h3 class="header-sec">SSI</h3>
             <input type="number" id="scoreSSI" placeholder="Total">
-            <input type="text" id="flagsSSI" placeholder="Flags" style="margin-top:5px;">
+            <input type="text" id="flagsSSI" placeholder="Flags" style="margin-top:5px">
         </div>
-        <div class="col section-box s-bhs">
-            <h3 class="header-sec">BHS (Desesperanza)</h3>
-            <input type="number" id="scoreBHS" placeholder="Total">
+        <div class="col section-box s-plut">
+            <h3 class="header-sec">Plutchik</h3>
+            <input type="number" id="scorePlut" placeholder="Total">
+        </div>
+    </div>
+
+    <div class="section-box s-cssrs">
+        <h3 class="header-sec">Columbia (C-SSRS)</h3>
+        <div class="row">
+            <div class="col"><label>Ideación (1-5)</label><select id="cssrsId"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><label>Plan (4-5)</label><select id="cssrsPlan"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><label>Conducta</label><select id="cssrsCond"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><label>Reciente</label><select id="cssrsRec"><option value="0">No</option><option value="1">Sí</option></select></div>
         </div>
     </div>
     
@@ -103,30 +124,30 @@
     document.getElementById('fecha').valueAsDate = new Date();
 
     function generarReporte() {
+        // Recopilar todos los datos
         const d = {
             nombre: document.getElementById('nombre').value,
             edad: parseInt(document.getElementById('edad').value),
             sexo: document.getElementById('sexo').value.toUpperCase(),
             fecha: document.getElementById('fecha').value,
             // Scores
-            phq: document.getElementById('scorePHQ').value,
-            phqFlag: document.getElementById('flagPHQ').value,
+            phq: document.getElementById('scorePHQ').value, flagPHQ: document.getElementById('flagPHQ').value,
             gad: document.getElementById('scoreGAD').value,
-            bai: document.getElementById('scoreBAI').value,
-            idareE: document.getElementById('scoreIdareE').value,
-            idareR: document.getElementById('scoreIdareR').value,
+            hadsA: document.getElementById('hadsA').value, hadsD: document.getElementById('hadsD').value,
+            bai: document.getElementById('scoreBAI').value, f1: document.getElementById('f1').value, f2: document.getElementById('f2').value, f3: document.getElementById('f3').value, f4: document.getElementById('f4').value,
+            idareE: document.getElementById('idareE').value, idareR: document.getElementById('idareR').value,
             bdi: document.getElementById('scoreBDI').value,
-            ssi: document.getElementById('scoreSSI').value,
-            ssiFlags: document.getElementById('flagsSSI').value,
             bhs: document.getElementById('scoreBHS').value,
-            // Factores BAI
-            f1: document.getElementById('f1').value,
-            f2: document.getElementById('f2').value,
-            f3: document.getElementById('f3').value,
-            f4: document.getElementById('f4').value
+            ssi: document.getElementById('scoreSSI').value, flagsSSI: document.getElementById('flagsSSI').value,
+            plut: document.getElementById('scorePlut').value,
+            // Columbia
+            cId: document.getElementById('cssrsId').value,
+            cPlan: document.getElementById('cssrsPlan').value,
+            cCond: document.getElementById('cssrsCond').value,
+            cRec: document.getElementById('cssrsRec').value
         };
 
-        if(!d.nombre || !d.edad) { alert("Faltan datos del paciente"); return; }
+        if(!d.nombre) { alert("Falta nombre"); return; }
         
         const img = new Image(); img.src = "logo.jpg";
         img.onload = () => createPDF(d, img);
@@ -137,118 +158,106 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // 1. Encabezado
+        // Encabezado
         doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
         if (img) doc.addImage(img, 'JPEG', 10, 7, 25, 25);
-        doc.setTextColor(255); doc.setFontSize(18); doc.setFont("helvetica", "bold");
-        doc.text("Centro de Bachillerato Tecnológico", 105, 18, null, null, "center");
-        doc.text("Agropecuario No. 130", 105, 28, null, null, "center");
-
-        doc.setTextColor(0); doc.setFontSize(16); doc.text("Informe Psicopedagógico Multidimensional", 105, 55, null, null, "center");
+        doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
+        doc.text("Centro de Bachillerato Tecnológico Agropecuario No. 130", 105, 25, null, null, "center");
         
-        doc.setFontSize(11); doc.setFont("helvetica", "normal");
-        doc.text(`Paciente: ${d.nombre}`, 20, 70);
-        doc.text(`Edad: ${d.edad} años (${d.sexo})`, 120, 70);
-        doc.text(`Fecha: ${d.fecha}`, 20, 80);
-        doc.line(20, 85, 190, 85);
+        doc.setTextColor(0); doc.setFontSize(14); doc.text("Informe Psicopedagógico Integral", 105, 55, null, null, "center");
+        doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.text(`Paciente: ${d.nombre} | Edad: ${d.edad} | Fecha: ${d.fecha}`, 20, 65);
+        doc.line(20, 70, 190, 70);
 
-        let yPos = 95;
+        let yPos = 80;
         
         const drawRow = (title, score, interp, colorRisk = false) => {
             if (yPos > 270) { doc.addPage(); yPos = 20; }
-            doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+            doc.setFont("helvetica", "bold");
             doc.text(title, 20, yPos);
             doc.setFont("helvetica", "normal");
             doc.text(score ? score.toString() : "-", 80, yPos);
-            
             if(colorRisk) doc.setTextColor(200,0,0);
             doc.text(interp, 100, yPos);
             doc.setTextColor(0);
-            
-            doc.setDrawColor(220);
             doc.line(20, yPos+2, 190, yPos+2);
-            yPos += 10;
+            yPos += 8;
         };
 
-        // --- SECCIÓN 1: TAMIZAJE ---
-        doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(27, 94, 32);
-        doc.text("1. ESCALAS DE TAMIZAJE (Screening)", 20, yPos);
-        yPos += 10;
+        // 1. TAMIZAJE
+        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(0, 105, 92);
+        doc.text("1. ESCALAS DE TAMIZAJE", 20, yPos); yPos += 10;
+        doc.setFontSize(9); doc.setTextColor(0);
 
         if(d.phq) {
-            let v = parseInt(d.phq), n = "";
-            if (v<=4) n="Mínima"; else if (v<=9) n="Leve"; else if (v<=14) n="Moderada"; else if (v<=19) n="Mod-Sev"; else n="Severa";
-            if(d.phqFlag > 0) n += " (ALERTA I9)";
-            drawRow("Depresión (PHQ-9)", d.phq, n, (v>=10 || d.phqFlag>0));
+            let v=parseInt(d.phq), n=""; if(v<=4)n="Mínima";else if(v<=9)n="Leve";else if(v<=14)n="Moderada";else if(v<=19)n="Mod-Sev";else n="Severa";
+            if(d.flagPHQ>0) n+=" (ALERTA I9)";
+            drawRow("PHQ-9 (Dep)", d.phq, n, v>=10);
         }
         if(d.gad) {
-            let v = parseInt(d.gad), n = "";
-            if (v<=4) n="Mínima"; else if (v<=9) n="Leve"; else if (v<=14) n="Moderada"; else n="Severa";
-            drawRow("Ansiedad (GAD-7)", d.gad, n, v>=10);
+            let v=parseInt(d.gad), n=""; if(v<=4)n="Mínima";else if(v<=9)n="Leve";else if(v<=14)n="Moderada";else n="Severa";
+            drawRow("GAD-7 (Ans)", d.gad, n, v>=10);
+        }
+        if(d.hadsA) {
+            let v=parseInt(d.hadsA), n=""; if(v<=7)n="Normal";else if(v<=10)n="Dudoso";else n="Caso Clínico";
+            drawRow("HADS-A (Ans)", d.hadsA, n, v>=11);
+        }
+        if(d.hadsD) {
+            let v=parseInt(d.hadsD), n=""; if(v<=7)n="Normal";else if(v<=10)n="Dudoso";else n="Caso Clínico";
+            drawRow("HADS-D (Dep)", d.hadsD, n, v>=11);
         }
         yPos += 5;
 
-        // --- SECCIÓN 2: ANSIEDAD PROFUNDA ---
-        doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(230, 81, 0); // Naranja
-        doc.text("2. EVALUACIÓN DE ANSIEDAD", 20, yPos);
-        yPos += 10;
+        // 2. PROFUNDIZACIÓN
+        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(21, 101, 192);
+        doc.text("2. EVALUACIÓN PROFUNDA", 20, yPos); yPos += 10;
+        doc.setFontSize(9); doc.setTextColor(0);
 
         if(d.bai) {
-            let v = parseInt(d.bai), n = "";
-            if (v<=7) n="Mínima"; else if (v<=15) n="Leve"; else if (v<=25) n="Moderada"; else n="Severa";
+            let v=parseInt(d.bai), n=""; if(v<=7)n="Normal";else if(v<=15)n="Leve";else if(v<=25)n="Moderada";else n="Severa";
             drawRow("BAI (Beck)", d.bai, n, v>15);
         }
-
-        if(d.idareE) {
-            // Percentiles IDARE (Mex 15-19)
-            // Hombres: 25(32), 75(44) | Mujeres: 25(34), 75(47)
-            let v = parseInt(d.idareE), n = "";
-            let p75 = (d.sexo.startsWith("M")) ? 47 : 44; // Mujer vs Hombre
-            if (v < 32) n="Baja"; else if (v > p75) n="Alta (Clínica)"; else n="Media";
-            drawRow("IDARE (Estado)", d.idareE, n, v>p75);
+        if(d.bdi) {
+            let v=parseInt(d.bdi), n=""; if(v<=12)n="Sin dep";else if(v<=18)n="Leve";else if(v<=27)n="Moderada";else n="Severa";
+            drawRow("BDI-II", d.bdi, n, v>=19);
         }
-        if(d.idareR) {
-            let v = parseInt(d.idareR), n = "";
-            let p75 = (d.sexo.startsWith("M")) ? 49 : 46; 
-            if (v < 34) n="Baja"; else if (v > p75) n="Alta (Clínica)"; else n="Media";
-            drawRow("IDARE (Rasgo)", d.idareR, n, v>p75);
+        if(d.idareE) {
+            let v=parseInt(d.idareE), n="Media"; if(v<32)n="Baja"; if(v>45)n="Alta";
+            drawRow("IDARE-E", d.idareE, n, v>45);
+        }
+        if(d.bhs) {
+            let v=parseInt(d.bhs), n=""; if(v<=3)n="Normal";else if(v<=8)n="Leve";else if(v<=14)n="Moderada";else n="Severa";
+            drawRow("BHS (Desesp)", d.bhs, n, v>=9);
         }
         yPos += 5;
 
-        // --- SECCIÓN 3: DEPRESIÓN Y RIESGO ---
-        doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(21, 101, 192);
-        doc.text("3. DEPRESIÓN Y RIESGO SUICIDA", 20, yPos);
-        yPos += 10;
-
-        if(d.bdi) {
-            let v = parseInt(d.bdi), n = "";
-            // Adolescentes
-            if (v<=12) n="Sin depresión"; else if (v<=18) n="Leve"; else if (v<=27) n="Moderada"; else n="Severa";
-            drawRow("BDI-II", d.bdi, n, v>=19);
-        }
-
-        if(d.bhs) {
-            let v = parseInt(d.bhs), n = "";
-            if(v<=3) n="Mínima"; else if(v<=8) n="Leve"; else if(v<=14) n="Moderada"; else n="Severa";
-            drawRow("BHS (Desesperanza)", d.bhs, n, v>=9);
-        }
+        // 3. RIESGO SUICIDA
+        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(198, 40, 40);
+        doc.text("3. EVALUACIÓN DE RIESGO", 20, yPos); yPos += 10;
+        doc.setFontSize(9); doc.setTextColor(0);
 
         if(d.ssi) {
-            let v = parseInt(d.ssi), n = "";
-            if (v<=5) n="Riesgo Bajo"; else if (v<=9) n="Riesgo Moderado"; else if (v<=14) n="Riesgo Alto"; else n="Riesgo Muy Alto";
-            if(d.ssiFlags) n += " (FLAGS: " + d.ssiFlags + ")";
-            drawRow("SSI (Ideación)", d.ssi, n, v>=6);
+            let v=parseInt(d.ssi), n=""; if(v<=5)n="Bajo";else if(v<=9)n="Moderado";else if(v<=14)n="Alto";else n="Muy Alto";
+            drawRow("SSI", d.ssi, n, v>=6);
+        }
+        if(d.plut) {
+            let v=parseInt(d.plut), n=""; if(v<=4)n="Sin riesgo";else if(v<=6)n="Leve";else if(v<=8)n="Moderado";else n="Alto";
+            drawRow("Plutchik", d.plut, n, v>=6);
+        }
+        
+        // Columbia Logic
+        if(d.cId === "1" || d.cCond === "1") {
+            let risk = "Bajo";
+            if(d.cId==="1") risk="Ideación Presente";
+            if(d.cPlan==="1") risk="ALTO (Con Plan)";
+            if(d.cCond==="1") risk="ALTO (Historial)";
+            if(d.cRec==="1") risk="MUY ALTO (Reciente)";
+            drawRow("C-SSRS", "Positivo", risk, true);
         }
 
         yPos += 20;
-        doc.setFontSize(11); doc.setTextColor(0); 
-        doc.setFont("helvetica", "bold"); doc.text("Conclusiones Clínicas:", 20, yPos);
-        doc.setDrawColor(150); doc.rect(20, yPos+5, 170, 40);
-
-        yPos += 70;
-        doc.line(70, yPos, 140, yPos);
-        doc.setFontSize(10);
-        doc.text("Firma del Evaluador", 105, yPos+5, null, null, "center");
+        doc.rect(20, yPos, 170, 40);
+        doc.text("Observaciones Clínicas:", 22, yPos+5);
 
         doc.save(`Expediente_${d.nombre}.pdf`);
     }
