@@ -4,33 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Centro de Evaluación - CBTa 130</title>
-
-<!-- --- CONFIGURACIÓN PARA IPAD / IPHONE --- -->
-<!-- Icono de escritorio (Asegúrate de subir 'icon.png' a GitHub) -->
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" type="image/png" href="icon.png">
-
-<!-- Modo Pantalla Completa (App Nativa) -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CBTa 130">
-<!-- ---------------------------------------- -->
-
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
     .card { background: white; max-width: 700px; width: 100%; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    
     h1 { color: #1a237e; margin: 0 0 5px 0; font-size: 1.6rem; text-align: center; }
     p.subtitle { color: #666; margin-bottom: 25px; text-align: center; font-size: 0.9rem; }
-    
     .category-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 2px solid #eee; font-weight: bold; display: flex; align-items: center; gap: 10px; }
     .grid-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 15px; }
-    
     .btn-access { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; color: white; transition: transform 0.2s; text-align: center; height: 70px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     .btn-access:active { transform: scale(0.95); }
     
-    /* Colores */
     .cat-tam { color: #00695c; border-color: #b2dfdb; }
     .cat-ans { color: #e65100; border-color: #ffe0b2; }
     .cat-dep { color: #1565C0; border-color: #bbdefb; }
@@ -48,6 +35,7 @@
     .bg-css { background: linear-gradient(135deg, #c62828 0%, #d32f2f 100%); }
     .bg-plut { background: linear-gradient(135deg, #5d4037 0%, #795548 100%); }
     .bg-doc { background: linear-gradient(135deg, #607d8b 0%, #78909c 100%); }
+    .bg-entr { background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); } /* Nuevo Azul Gris */
 
     .sender-box { background-color: #f8f9fa; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; margin-top: 30px; }
     .btn-whatsapp { width: 100%; background-color: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 15px; }
@@ -60,7 +48,7 @@
 
 <div class="card">
     <h1>CBTa No.130</h1>
-    <p class="subtitle">Panel de Control Clínico (v8.1)</p>
+    <p class="subtitle">Panel de Control Clínico (v9.0)</p>
 
     <div class="category-title cat-tam">🔍 Tamizaje</div>
     <div class="grid-buttons">
@@ -92,7 +80,8 @@
     <div class="category-title cat-admin">📂 Expediente y Heteroaplicación</div>
     <div class="grid-buttons">
         <a href="consentimiento.html" class="btn-access bg-doc">Consentimiento<small>Informado</small></a>
-        <a href="#" class="btn-access" style="background:#e0e0e0; color:#888;">Entrevista<small>(Próximamente)</small></a>
+        <!-- BOTÓN ACTIVO PARA ENTREVISTA -->
+        <a href="entrevista.html" class="btn-access bg-entr">Entrevista<small>Clínica</small></a>
     </div>
 
     <!-- ENVÍO -->
