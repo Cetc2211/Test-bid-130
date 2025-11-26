@@ -6,159 +6,122 @@
 <title>Centro de Evaluación - CBTa 130</title>
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
-    
     .card { background: white; max-width: 700px; width: 100%; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    
     h1 { color: #1a237e; margin: 0 0 5px 0; font-size: 1.6rem; text-align: center; }
     p.subtitle { color: #666; margin-bottom: 25px; text-align: center; font-size: 0.9rem; }
-    
-    /* Títulos de Sección */
-    .category-title { 
-        font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; 
-        margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 2px solid #eee; 
-        font-weight: bold; display: flex; align-items: center; gap: 10px;
-    }
-    
-    .cat-tamizaje { color: #00695c; border-color: #b2dfdb; }
-    .cat-ansiedad { color: #e65100; border-color: #ffe0b2; }
-    .cat-depresion { color: #1565C0; border-color: #bbdefb; }
-    .cat-riesgo { color: #7b1fa2; border-color: #e1bee7; }
-
-    /* Grilla de Botones */
-    .grid-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 15px; }
-    
-    .btn-access { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 0.85rem; color: white; transition: transform 0.2s; text-align: center; height: 70px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .category-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 2px solid #eee; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+    .grid-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 15px; }
+    .btn-access { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; color: white; transition: transform 0.2s; text-align: center; height: 70px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     .btn-access:active { transform: scale(0.95); }
-    .btn-access small { font-weight: normal; font-size: 0.7rem; opacity: 0.9; margin-top: 2px; }
+    
+    /* Colores */
+    .cat-tam { color: #00695c; border-color: #b2dfdb; }
+    .cat-ans { color: #e65100; border-color: #ffe0b2; }
+    .cat-dep { color: #1565C0; border-color: #bbdefb; }
+    .cat-risk { color: #c62828; border-color: #ffcdd2; }
 
-    /* Colores Específicos */
     .bg-phq { background: linear-gradient(135deg, #00695c 0%, #00897b 100%); }
     .bg-gad { background: linear-gradient(135deg, #e65100 0%, #ef6c00 100%); }
+    .bg-hads { background: linear-gradient(135deg, #880e4f 0%, #ad1457 100%); }
     .bg-bai { background: linear-gradient(135deg, #2E7d32 0%, #43a047 100%); }
-    .bg-idare { background: linear-gradient(135deg, #37474f 0%, #455a64 100%); } /* Nuevo */
+    .bg-idare { background: linear-gradient(135deg, #37474f 0%, #455a64 100%); }
     .bg-bdi { background: linear-gradient(135deg, #1565C0 0%, #1976D2 100%); }
+    .bg-bhs { background: linear-gradient(135deg, #212121 0%, #424242 100%); }
     .bg-ssi { background: linear-gradient(135deg, #4527a0 0%, #7b1fa2 100%); }
-    .bg-bhs { background: linear-gradient(135deg, #212121 0%, #424242 100%); } /* Nuevo */
+    .bg-css { background: linear-gradient(135deg, #c62828 0%, #d32f2f 100%); }
+    .bg-plut { background: linear-gradient(135deg, #5d4037 0%, #795548 100%); }
 
-    /* Sender Box */
     .sender-box { background-color: #f8f9fa; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; margin-top: 30px; }
-    .checklist-group { margin-bottom: 15px; }
-    .group-label { font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; }
-    
-    .check-item { display: flex; align-items: center; background: white; padding: 10px; border-radius: 6px; border: 1px solid #ddd; cursor: pointer; margin-bottom: 5px; transition: background 0.2s; }
-    .check-item:hover { background: #f0f0f0; }
-    .check-item input { transform: scale(1.3); margin-right: 10px; }
-    .check-item span { font-weight: 500; color: #333; font-size: 0.9rem; }
-    
-    .btn-whatsapp { width: 100%; background-color: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.2); margin-top: 15px; }
-    
-    .admin-footer { margin-top: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
-    .admin-link { color: #ccc; text-decoration: none; font-size: 0.8rem; transition: color 0.3s; }
-    .admin-link:hover { color: #1a237e; }
+    .btn-whatsapp { width: 100%; background-color: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 15px; }
+    .admin-link { display:block; margin-top:40px; text-align:center; color:#ccc; text-decoration:none; font-size:0.8rem; }
+    .check-item { display: flex; align-items: center; margin-bottom: 5px; font-size: 0.9rem; }
+    .check-item input { margin-right: 8px; transform: scale(1.2); }
 </style>
 </head>
 <body>
 
 <div class="card">
     <h1>CBTa No.130</h1>
-    <p class="subtitle">Panel de Control Clínico</p>
+    <p class="subtitle">Panel de Control Clínico (v7.0)</p>
 
-    <!-- 1. TAMIZAJE -->
-    <div class="category-title cat-tamizaje">🔍 Tamizaje Rápido</div>
+    <div class="category-title cat-tam">🔍 Tamizaje</div>
     <div class="grid-buttons">
-        <a href="phq9.html" class="btn-access bg-phq">PHQ-9<small>Salud General</small></a>
-        <a href="gad7.html" class="btn-access bg-gad">GAD-7<small>Ansiedad General</small></a>
+        <a href="phq9.html" class="btn-access bg-phq">PHQ-9</a>
+        <a href="gad7.html" class="btn-access bg-gad">GAD-7</a>
+        <a href="hads.html" class="btn-access bg-hads">HADS</a>
     </div>
 
-    <!-- 2. ANSIEDAD -->
-    <div class="category-title cat-ansiedad">🧠 Ansiedad Específica</div>
+    <div class="category-title cat-ans">🧠 Ansiedad</div>
     <div class="grid-buttons">
-        <a href="ansiedadbeck.html" class="btn-access bg-bai">BAI<small>Ansiedad Beck</small></a>
-        <a href="idare.html" class="btn-access bg-idare">IDARE<small>Rasgo-Estado</small></a>
+        <a href="ansiedadbeck.html" class="btn-access bg-bai">BAI</a>
+        <a href="idare.html" class="btn-access bg-idare">IDARE</a>
     </div>
 
-    <!-- 3. DEPRESIÓN -->
-    <div class="category-title cat-depresion">💙 Depresión</div>
+    <div class="category-title cat-dep">💙 Depresión / BHS</div>
     <div class="grid-buttons">
-        <a href="depbeck.html" class="btn-access bg-bdi">BDI-II<small>Depresión Beck</small></a>
+        <a href="depbeck.html" class="btn-access bg-bdi">BDI-II</a>
+        <a href="bhs.html" class="btn-access bg-bhs">BHS</a>
     </div>
 
-    <!-- 4. RIESGO -->
-    <div class="category-title cat-riesgo">🟣 Riesgo Suicida</div>
+    <div class="category-title cat-risk">🚨 Riesgo Suicida</div>
     <div class="grid-buttons">
-        <a href="ssibeck.html" class="btn-access bg-ssi">SSI<small>Ideación Suicida</small></a>
-        <a href="bhs.html" class="btn-access bg-bhs">BHS<small>Desesperanza</small></a>
+        <a href="columbia.html" class="btn-access bg-css">Columbia</a>
+        <a href="ssibeck.html" class="btn-access bg-ssi">SSI</a>
+        <a href="plutchik.html" class="btn-access bg-plut">Plutchik</a>
     </div>
 
-    <!-- SECCIÓN ENVÍO -->
+    <!-- ENVÍO -->
     <div class="sender-box">
-        <h3 style="margin-top:0; font-size:1rem; color:#333; text-align:center;">📤 Enviar Tests al Alumno</h3>
+        <h3 style="margin-top:0; font-size:1rem; text-align:center;">📤 Enviar Batería</h3>
         
-        <div class="checklist-group">
-            <div class="group-label">TAMIZAJE</div>
-            <label class="check-item"><input type="checkbox" id="checkPHQ"><span>🌿 PHQ-9 (Salud del Paciente)</span></label>
-            <label class="check-item"><input type="checkbox" id="checkGAD"><span>🔸 GAD-7 (Ansiedad Generalizada)</span></label>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div>
+                <label class="check-item"><input type="checkbox" id="chkPHQ">PHQ-9</label>
+                <label class="check-item"><input type="checkbox" id="chkGAD">GAD-7</label>
+                <label class="check-item"><input type="checkbox" id="chkHADS">HADS</label>
+                <label class="check-item"><input type="checkbox" id="chkBAI">BAI</label>
+                <label class="check-item"><input type="checkbox" id="chkIDARE">IDARE</label>
+            </div>
+            <div>
+                <label class="check-item"><input type="checkbox" id="chkBDI">BDI-II</label>
+                <label class="check-item"><input type="checkbox" id="chkBHS">BHS</label>
+                <label class="check-item"><input type="checkbox" id="chkCSS">Columbia</label>
+                <label class="check-item"><input type="checkbox" id="chkSSI">SSI</label>
+                <label class="check-item"><input type="checkbox" id="chkPlut">Plutchik</label>
+            </div>
         </div>
 
-        <div class="checklist-group">
-            <div class="group-label">PROFUNDIZACIÓN</div>
-            <label class="check-item"><input type="checkbox" id="checkBAI"><span>🧠 BAI (Ansiedad de Beck)</span></label>
-            <label class="check-item"><input type="checkbox" id="checkIdare"><span>🌫️ IDARE (Rasgo-Estado)</span></label>
-            <label class="check-item"><input type="checkbox" id="checkBDI"><span>💙 BDI-II (Depresión de Beck)</span></label>
-        </div>
-
-        <div class="checklist-group">
-            <div class="group-label">RIESGO</div>
-            <label class="check-item"><input type="checkbox" id="checkSSI"><span>🟣 SSI (Escala de Ideación)</span></label>
-            <label class="check-item"><input type="checkbox" id="checkBHS"><span>⚫ BHS (Escala de Desesperanza)</span></label>
-        </div>
-
-        <button class="btn-whatsapp" onclick="generarMensaje()">
-            📲 Generar Enlace WhatsApp
-        </button>
+        <button class="btn-whatsapp" onclick="generarMensaje()">📲 Generar WhatsApp</button>
     </div>
 
-    <div class="admin-footer">
-        <div style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">Versión 6.0 - CBTa 130</div>
-        <a href="admin.html" class="admin-link">🔒 Acceso Administrativo</a>
-    </div>
+    <a href="admin.html" class="admin-link">🔒 Acceso Administrativo</a>
 </div>
 
 <script>
     function generarMensaje() {
-        const baseURL = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-        
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
         const tests = [
-            { id: 'checkPHQ', name: '🌿 PHQ-9 (Tamizaje)', url: 'phq9.html' },
-            { id: 'checkGAD', name: '🔸 GAD-7 (Ansiedad)', url: 'gad7.html' },
-            { id: 'checkBAI', name: '🧠 BAI (Ansiedad)', url: 'ansiedadbeck.html' },
-            { id: 'checkIdare', name: '🌫️ IDARE (Rasgo-Estado)', url: 'idare.html' },
-            { id: 'checkBDI', name: '💙 BDI-II (Depresión)', url: 'depbeck.html' },
-            { id: 'checkSSI', name: '🟣 SSI (Ideación)', url: 'ssibeck.html' },
-            { id: 'checkBHS', name: '⚫ BHS (Desesperanza)', url: 'bhs.html' }
+            {id:'chkPHQ', n:'PHQ-9', u:'phq9.html'}, {id:'chkGAD', n:'GAD-7', u:'gad7.html'},
+            {id:'chkHADS', n:'HADS', u:'hads.html'}, {id:'chkBAI', n:'BAI', u:'ansiedadbeck.html'},
+            {id:'chkIDARE', n:'IDARE', u:'idare.html'}, {id:'chkBDI', n:'BDI-II', u:'depbeck.html'},
+            {id:'chkBHS', n:'BHS', u:'bhs.html'}, {id:'chkCSS', n:'Columbia', u:'columbia.html'},
+            {id:'chkSSI', n:'SSI', u:'ssibeck.html'}, {id:'chkPlut', n:'Plutchik', u:'plutchik.html'}
         ];
 
-        let mensaje = "Hola, por favor contesta las siguientes evaluaciones del departamento de orientación:%0A%0A";
-        let count = 0;
-
+        let msg = "Por favor contesta las siguientes evaluaciones:%0A%0A";
+        let c = 0;
         tests.forEach(t => {
-            if (document.getElementById(t.id).checked) {
-                count++;
-                mensaje += `*${count}. ${t.name}:*%0A${baseURL + t.url}%0A%0A`;
+            if(document.getElementById(t.id).checked) {
+                c++;
+                msg += `*${c}. ${t.n}:*%0A${base + t.u}%0A%0A`;
             }
         });
-
-        mensaje += "Al finalizar cada uno, presiona el botón para enviarme los datos. ¡Gracias!";
-
-        if (count === 0) {
-            alert("⚠️ Selecciona al menos un test.");
-            return;
-        }
-
-        window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+        msg += "Envía los resultados al finalizar. ¡Gracias!";
+        
+        if(c===0) alert("Selecciona al menos uno");
+        else window.open(`https://wa.me/?text=${msg}`, '_blank');
     }
 </script>
-
 </body>
 </html>
 
