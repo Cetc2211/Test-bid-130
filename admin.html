@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Generador de Informes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    body { font-family: -apple-system, sans-serif; background-color: #f5f5f5; padding: 20px; }
+    .card { background: white; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2 { color: #1b5e20; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    
+    .row { display: flex; gap: 15px; }
+    .col { flex: 1; }
+    
+    .btn-generate { background-color: #1b5e20; color: white; border: none; width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+    
+    .info-box { background-color: #e8f5e9; padding: 10px; border-radius: 5px; font-size: 0.9em; color: #2e7d32; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🏥 Generador de Informes Clínicos</h2>
+    <div class="info-box">
+        Ingresa los datos recibidos por WhatsApp para generar el expediente PDF oficial.
+    </div>
+
+    <div class="form-group">
+        <label>Nombre del Paciente:</label>
+        <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
+    </div>
+    
+    <div class="row">
+        <div class="col form-group">
+            <label>Edad:</label>
+            <input type="number" id="edad" placeholder="Años">
+        </div>
+        <div class="col form-group">
+            <label>Fecha:</label>
+            <input type="date" id="fecha">
+        </div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+
+    <div class="form-group">
+        <label>🧠 Puntaje Ansiedad (BAI):</label>
+        <input type="number" id="scoreBAI" placeholder="0 - 63">
+    </div>
+
+    <div class="form-group">
+        <label>💙 Puntaje Depresión (BDI-II):</label>
+        <input type="number" id="scoreBDI" placeholder="0 - 63">
+    </div>
+
+    <button class="btn-generate" onclick="generarReporte()">📄 Descargar Expediente Unificado</button>
+</div>
+
+<script>
+    document.getElementById('fecha').valueAsDate = new Date();
+
+    function generarReporte() {
+        const nombre = document.getElementById('nombre').value;
+        const edad = parseInt(document.getElementById('edad').value);
+        const fecha = document.getElementById('fecha').value;
+        const bai = document.getElementById('scoreBAI').value;
+        const bdi = document.getElementById('scoreBDI').value;
+
+        if(!nombre || !edad) { alert("Faltan datos del paciente"); return; }
+        
+        // Cargar logo
+        const img = new Image();
+        img.src = "logo.jpg";
+        img.onload = () => createPDF(nombre, edad, fecha, bai, bdi, img);
+        img.onerror = () => createPDF(nombre, edad, fecha, bai, bdi, null);
+    }
+
+    function createPDF(nombre, edad, fecha, bai, bdi, img) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // --- ENCABEZADO ---
+        doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
+        if (img) doc.addImage(img, 'JPEG', 10, 7, 25, 25);
+        
+        doc.setTextColor(255); doc.setFontSize(18); doc.setFont("helvetica", "bold");
+        doc.text("Centro de Bachillerato Tecnológico", 105, 18, null, null, "center");
+        doc.text("Agropecuario No. 130", 105, 28, null, null, "center");
+
+        // --- TÍTULO ---
+        doc.setTextColor(0); doc.setFontSize(16); doc.text("Informe Psicopedagógico Integral", 105, 55, null, null, "center");
+        
+        // --- DATOS PACIENTE ---
+        doc.setFontSize(11); doc.setFont("helvetica", "normal");
+        doc.text(`Paciente: ${nombre}`, 20, 70);
+        doc.text(`Edad: ${edad} años`, 120, 70);
+        doc.text(`Fecha: ${fecha}`, 20, 80);
+        doc.setLineWidth(0.5); doc.line(20, 85, 190, 85);
+
+        let yPos = 100;
+
+        // --- TABLA DE RESULTADOS ---
+        // Encabezado Tabla
+        doc.setFillColor(232, 245, 233); doc.rect(20, yPos, 170, 10, 'F');
+        doc.setFont("helvetica", "bold"); doc.setFontSize(12);
+        doc.text("Instrumento", 25, yPos+7);
+        doc.text("Puntaje", 80, yPos+7);
+        doc.text("Diagnóstico / Nivel", 110, yPos+7);
+        yPos += 10;
+
+        // 1. ANSIEDAD (BAI)
+        if(bai) {
+            const val = parseInt(bai);
+            let nivel = val<=21?"Ansiedad Muy Baja":(val<=35?"Ansiedad Moderada":"Ansiedad Severa");
+            
+            doc.setFont("helvetica", "normal");
+            doc.rect(20, yPos, 170, 10); // Borde
+            doc.text("Ansiedad (BAI)", 25, yPos+7);
+            doc.text(bai, 85, yPos+7);
+            
+            // Color de alerta
+            doc.setTextColor(val>35 ? 200 : 0, 0, 0); 
+            doc.text(nivel, 110, yPos+7);
+            doc.setTextColor(0); // Reset color
+            yPos += 10;
+        }
+
+        // 2. DEPRESIÓN (BDI)
+        if(bdi) {
+            const val = parseInt(bdi);
+            const esAdolescente = (edad >= 15 && edad <= 19);
+            let nivel = "";
+            
+            if (esAdolescente) {
+                if (val <= 12) nivel = "Sin depresión"; else if (val <= 18) nivel = "Depresión Leve"; else if (val <= 27) nivel = "Depresión Moderada"; else nivel = "Depresión Severa";
+            } else {
+                if (val <= 13) nivel = "Mínima"; else if (val <= 19) nivel = "Depresión Leve"; else if (val <= 28) nivel = "Depresión Moderada"; else nivel = "Depresión Severa";
+            }
+
+            doc.rect(20, yPos, 170, 10); // Borde
+            doc.text("Depresión (BDI-II)", 25, yPos+7);
+            doc.text(bdi, 85, yPos+7);
+            
+            doc.setTextColor(val >= 29 ? 200 : 0, 0, 0);
+            doc.text(nivel, 110, yPos+7);
+            doc.setTextColor(0);
+            yPos += 10;
+        }
+
+        // --- OBSERVACIONES Y FIRMA ---
+        yPos += 20;
+        doc.setFont("helvetica", "bold"); doc.text("Observaciones:", 20, yPos);
+        doc.setDrawColor(150);
+        doc.rect(20, yPos+5, 170, 30); // Cuadro para escribir a mano después si se imprime
+
+        yPos += 60;
+        doc.line(70, yPos, 140, yPos); // Línea firma
+        doc.setFontSize(10);
+        doc.text("Firma del Evaluador", 105, yPos+5, null, null, "center");
+
+        doc.save(`Expediente_${nombre}.pdf`);
+    }
+</script>
+</body>
+</html>
