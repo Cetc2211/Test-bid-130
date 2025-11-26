@@ -3,169 +3,314 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evaluación PHQ-9 - CBTa 130</title>
+<title>Admin - Generador de Informes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
-    header { background: linear-gradient(135deg, #00695c 0%, #00897b 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    h2 { color: #00695c; text-align: center; margin-top: 0; border-bottom: 2px solid #b2dfdb; padding-bottom: 10px; }
+    body { font-family: -apple-system, sans-serif; background-color: #f5f5f5; padding: 20px; }
+    .card { background: white; max-width: 800px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2 { color: #1b5e20; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
+    .row { display: flex; gap: 15px; }
+    .col { flex: 1; }
     
-    .input-group { margin-bottom: 15px; }
-    label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
-    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    .btn-generate { background-color: #1b5e20; color: white; border: none; width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+    .back-link { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; font-size: 0.9em; }
     
-    /* TABLA CORREGIDA */
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; min-width: 600px; table-layout: fixed; }
-    th, td { padding: 10px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
-    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; }
-    th:not(:first-child), td:not(:first-child) { width: 12.5%; text-align: center; }
-    th { background-color: #e0f2f1; color: #004d40; position: sticky; top: 0; font-weight: bold; }
-    tr:nth-child(even) { background-color: #fafafa; }
-    input[type="radio"] { width: 24px; height: 24px; margin: 0 auto; display: block; cursor: pointer; }
-
-    .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .whatsapp { background-color: #25D366; }
-    .local-save { background-color: #1565C0; margin-top: 10px; } /* Botón Azul */
-    .reset { background-color: #757575; }
-    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e0f2f1; border-radius: 10px; }
+    .section-box { background:#fafafa; padding:15px; border-radius:10px; margin-bottom:15px; border-left: 5px solid #ccc; }
+    .header-sec { margin-top:0; font-size:1rem; display:flex; justify-content:space-between; }
+    
+    /* Panel de Memoria */
+    .memory-panel { background: #fff3e0; border: 1px solid #ffe0b2; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .mem-text { color: #e65100; font-size: 0.9rem; }
+    .btn-clear { background: #c62828; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+    
+    /* Colores Secciones */
+    .s-phq { border-left-color: #00695c; } .s-phq h3 { color: #00695c; }
+    .s-gad { border-left-color: #e65100; } .s-gad h3 { color: #e65100; }
+    .s-bai { border-left-color: #2e7d32; } .s-bai h3 { color: #2e7d32; }
+    .s-idare { border-left-color: #37474f; } .s-idare h3 { color: #37474f; }
+    .s-bdi { border-left-color: #1565C0; } .s-bdi h3 { color: #1565C0; }
+    .s-hads { border-left-color: #880e4f; } .s-hads h3 { color: #880e4f; }
+    .s-ssi { border-left-color: #7b1fa2; } .s-ssi h3 { color: #7b1fa2; }
+    .s-bhs { border-left-color: #212121; } .s-bhs h3 { color: #212121; }
+    .s-cssrs { border-left-color: #c62828; } .s-cssrs h3 { color: #c62828; }
+    .s-plut { border-left-color: #5d4037; } .s-plut h3 { color: #5d4037; }
 </style>
 </head>
 <body>
-<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Cuestionario de Salud (PHQ-9)</span></header>
 
-<div class="container">
-    <div id="test-form">
-        <h2>Datos del Alumno</h2>
-        <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
-        <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
-        
-        <div style="background-color:#e0f2f1; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #00695c;">
-            <strong>Instrucciones:</strong> Durante las <strong>últimas 2 semanas</strong>, ¿qué tan seguido ha tenido molestias por los siguientes problemas?
+<div class="card">
+    <h2>🏥 Generador Integral (V4 - Memoria)</h2>
+    
+    <!-- PANEL DE MEMORIA -->
+    <div id="memoryPanel" class="memory-panel" style="display:none;">
+        <div class="mem-text">
+            <strong>📂 Datos recuperados del dispositivo</strong><br>
+            Se cargaron automáticamente los resultados pendientes.
         </div>
+        <button class="btn-clear" onclick="borrarMemoria()">🗑️ Borrar / Nuevo Paciente</button>
+    </div>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr><th>Problema</th><th>Nunca<br>(0)</th><th>Varios días<br>(1)</th><th>+Mitad días<br>(2)</th><th>Casi todos<br>(3)</th></tr>
-                </thead>
-                <tbody id="tabla-preguntas"></tbody>
-            </table>
+    <div class="row">
+        <div class="col"><label>Nombre:</label><input type="text" id="nombre"></div>
+        <div class="col"><label>Edad:</label><input type="number" id="edad"></div>
+        <div class="col"><label>Sexo (H/M):</label><input type="text" id="sexo"></div>
+        <div class="col"><label>Fecha:</label><input type="date" id="fecha"></div>
+    </div>
+    <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
+
+    <!-- TAMIZAJE -->
+    <div class="row">
+        <div class="col section-box s-phq">
+            <h3 class="header-sec">PHQ-9</h3>
+            <input type="number" id="scorePHQ" placeholder="Total">
+            <input type="number" id="flagPHQ" placeholder="Ítem 9" style="margin-top:5px">
         </div>
-
-        <div style="margin-top:20px; padding:15px; background:#fafafa; border-radius:10px;">
-            <p style="font-weight:bold; color:#333;">10. Dificultad funcional:</p>
-            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Ninguna" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Ninguna dificultad</label>
-            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Algo" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Algo de dificultad</label>
-            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Mucha" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Mucha dificultad</label>
-            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Extrema" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Extrema dificultad</label>
+        <div class="col section-box s-gad">
+            <h3 class="header-sec">GAD-7</h3>
+            <input type="number" id="scoreGAD" placeholder="Total">
         </div>
-
-        <div class="buttons">
-            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Ver Opciones</button>
+        <div class="col section-box s-hads">
+            <h3 class="header-sec">HADS</h3>
+            <input type="number" id="hadsA" placeholder="Ansiedad">
+            <input type="number" id="hadsD" placeholder="Depresión" style="margin-top:5px">
         </div>
     </div>
 
-    <div id="result-area">
-        <h3 style="color:#00695c;">Resultados Listos</h3>
-        <p>Seleccione qué desea hacer con los datos:</p>
-        <div class="buttons">
-            <!-- BOTÓN PARA DISPOSITIVO FIJO -->
-            <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente Local</button>
-            
-            <!-- BOTÓN PARA WHATSAPP -->
-            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
-            
-            <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
+    <!-- ANSIEDAD -->
+    <div class="row">
+        <div class="col section-box s-bai">
+            <h3 class="header-sec">BAI (Beck)</h3>
+            <input type="number" id="scoreBAI" placeholder="Total">
+            <div style="display:flex; gap:5px; margin-top:5px;">
+                <input type="number" id="f1" placeholder="F1"><input type="number" id="f2" placeholder="F2">
+                <input type="number" id="f3" placeholder="F3"><input type="number" id="f4" placeholder="F4">
+            </div>
+        </div>
+        <div class="col section-box s-idare">
+            <h3 class="header-sec">IDARE</h3>
+            <input type="number" id="idareE" placeholder="Estado">
+            <input type="number" id="idareR" placeholder="Rasgo" style="margin-top:5px">
         </div>
     </div>
+
+    <!-- DEPRESIÓN & DESESPERANZA -->
+    <div class="row">
+        <div class="col section-box s-bdi">
+            <h3 class="header-sec">BDI-II</h3>
+            <input type="number" id="scoreBDI" placeholder="Total">
+        </div>
+        <div class="col section-box s-bhs">
+            <h3 class="header-sec">BHS</h3>
+            <input type="number" id="scoreBHS" placeholder="Total">
+        </div>
+    </div>
+
+    <!-- RIESGO ALTO -->
+    <div class="row">
+        <div class="col section-box s-ssi">
+            <h3 class="header-sec">SSI</h3>
+            <input type="number" id="scoreSSI" placeholder="Total">
+            <input type="text" id="flagsSSI" placeholder="Flags" style="margin-top:5px">
+        </div>
+        <div class="col section-box s-plut">
+            <h3 class="header-sec">Plutchik</h3>
+            <input type="number" id="scorePlut" placeholder="Total">
+        </div>
+    </div>
+
+    <div class="section-box s-cssrs">
+        <h3 class="header-sec">Columbia (C-SSRS)</h3>
+        <div class="row">
+            <div class="col"><label>Idea (1-5)</label><select id="cssrsId"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><label>Plan (4-5)</label><select id="cssrsPlan"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><label>Conducta</label><select id="cssrsCond"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><label>Reciente</label><select id="cssrsRec"><option value="0">No</option><option value="1">Sí</option></select></div>
+        </div>
+    </div>
+    
+    <button class="btn-generate" onclick="generarReporte()">📄 Descargar Expediente Integrado</button>
+    <a href="index.html" class="back-link">← Volver al Menú Principal</a>
 </div>
 
 <script>
-    const NUMERO_DESTINO = "523111477413"; 
-    const STORAGE_KEY = "cbta_paciente_temp"; // Clave compartida con el Admin
-
-    const preguntas = [
-        "1. Poco interés o placer en hacer cosas",
-        "2. Se ha sentido decaído, deprimido o sin esperanzas",
-        "3. Dificultad para dormir o dormir demasiado",
-        "4. Cansado o con poca energía",
-        "5. Sin apetito o ha comido en exceso",
-        "6. Sentirse mal consigo mismo (fracaso)",
-        "7. Dificultad para concentrarse (leer, TV)",
-        "8. Moverse muy lento o muy inquieto/agitado",
-        "9. Pensamientos de estar mejor muerto o lastimarse"
-    ];
-
-    const tbody = document.getElementById('tabla-preguntas');
-    preguntas.forEach((p, i) => {
-        let html = `<tr><td>${p}</td>${[0,1,2,3].map(v=>`<td><input type="radio" name="item${i+1}" value="${v}"></td>`).join('')}</tr>`;
-        tbody.innerHTML += html;
-    });
+    const STORAGE_KEY = "cbta_paciente_temp";
     document.getElementById('fecha').valueAsDate = new Date();
 
-    let datosFinales = null;
+    // --- CARGA AUTOMÁTICA AL ABRIR ---
+    window.addEventListener('DOMContentLoaded', () => {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+            const data = JSON.parse(raw);
+            document.getElementById('memoryPanel').style.display = 'flex';
+            
+            // Cargar Datos Generales
+            if(data.nombre) document.getElementById('nombre').value = data.nombre;
+            if(data.edad) document.getElementById('edad').value = data.edad;
+            if(data.sexo) document.getElementById('sexo').value = data.sexo;
 
-    function finalizarTest() {
-        const nombre = document.getElementById('nombre').value;
-        const edad = prompt("Por favor confirma la EDAD del alumno (para el expediente):"); // Pedir edad aquí si no está en el form
-        const fecha = document.getElementById('fecha').value;
-        if(!nombre) { alert("Nombre requerido"); return; }
-
-        let total = 0, count = 0, item9 = 0;
-        for(let i=1; i<=9; i++){
-            const el = document.querySelector(`input[name="item${i}"]:checked`);
-            if(el) { 
-                let val = parseInt(el.value);
-                total += val; count++; 
-                if(i===9) item9 = val;
-            }
+            // Cargar Scores (Solo si existen)
+            const setVal = (id, val) => { if(val !== undefined) document.getElementById(id).value = val; };
+            
+            setVal('scorePHQ', data.phq); setVal('flagPHQ', data.phqFlag);
+            setVal('scoreGAD', data.gad);
+            setVal('hadsA', data.hadsA); setVal('hadsD', data.hadsD);
+            setVal('scoreBAI', data.bai); setVal('f1', data.f1); setVal('f2', data.f2); setVal('f3', data.f3); setVal('f4', data.f4);
+            setVal('idareE', data.idareE); setVal('idareR', data.idareR);
+            setVal('scoreBDI', data.bdi);
+            setVal('scoreBHS', data.bhs);
+            setVal('scoreSSI', data.ssi); setVal('flagsSSI', data.ssiFlags);
+            setVal('scorePlut', data.plut);
+            
+            setVal('cssrsId', data.cId); setVal('cssrsPlan', data.cPlan); 
+            setVal('cssrsCond', data.cCond); setVal('cssrsRec', data.cRec);
         }
-        if(count < 9) { alert(`Faltan preguntas (${count}/9)`); return; }
+    });
 
-        const func = document.querySelector(`input[name="item10"]:checked`);
-        const funcionalidad = func ? func.value : "No contestó";
-        
-        // DATOS LISTOS
-        datosFinales = { 
-            nombre: nombre, 
-            edad: edad, // Se guarda para el Admin
-            fecha: fecha, 
-            phq: total, 
-            phqFlag: item9 
+    function borrarMemoria() {
+        if(confirm("¿Seguro que deseas borrar los datos guardados? Esto iniciará un expediente nuevo.")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    }
+
+    function generarReporte() {
+        const d = {
+            nombre: document.getElementById('nombre').value,
+            edad: parseInt(document.getElementById('edad').value),
+            sexo: document.getElementById('sexo').value.toUpperCase(),
+            fecha: document.getElementById('fecha').value,
+            // Scores
+            phq: document.getElementById('scorePHQ').value, flagPHQ: document.getElementById('flagPHQ').value,
+            gad: document.getElementById('scoreGAD').value,
+            hadsA: document.getElementById('hadsA').value, hadsD: document.getElementById('hadsD').value,
+            bai: document.getElementById('scoreBAI').value, f1: document.getElementById('f1').value, f2: document.getElementById('f2').value, f3: document.getElementById('f3').value, f4: document.getElementById('f4').value,
+            idareE: document.getElementById('idareE').value, idareR: document.getElementById('idareR').value,
+            bdi: document.getElementById('scoreBDI').value,
+            bhs: document.getElementById('scoreBHS').value,
+            ssi: document.getElementById('scoreSSI').value, flagsSSI: document.getElementById('flagsSSI').value,
+            plut: document.getElementById('scorePlut').value,
+            cId: document.getElementById('cssrsId').value, cPlan: document.getElementById('cssrsPlan').value,
+            cCond: document.getElementById('cssrsCond').value, cRec: document.getElementById('cssrsRec').value
         };
 
-        document.getElementById('test-form').style.display = 'none';
-        document.getElementById('result-area').style.display = 'block';
-        window.scrollTo(0,0);
+        if(!d.nombre) { alert("Falta nombre"); return; }
+        
+        const img = new Image(); img.src = "logo.jpg";
+        img.onload = () => createPDF(d, img);
+        img.onerror = () => createPDF(d, null);
     }
 
-    // --- FUNCIÓN NUEVA: GUARDAR EN DISPOSITIVO ---
-    function guardarLocalmente() {
-        if(!datosFinales) return;
-        
-        // 1. Leer lo que ya hay guardado
-        let currentData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-        
-        // 2. Mezclar con los nuevos datos (sin borrar lo anterior)
-        let updatedData = { ...currentData, ...datosFinales };
-        
-        // 3. Guardar de nuevo
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
-        
-        alert("✅ Datos guardados en este iPad.\nPuedes abrir el Panel de Admin para verlos.");
-        // Opcional: Redirigir al menú
-        // window.location.href = 'index.html';
-    }
+    function createPDF(d, img) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
 
-    function enviarWhatsApp(){
-        if(!datosFinales) return;
-        let m = `🌿 *DATOS PHQ-9*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Score: ${datosFinales.phq}`;
-        if(datosFinales.phqFlag > 0) m += `%0A🚩 Flag I9: ${datosFinales.phqFlag}`;
-        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${m}`;
+        // Encabezado
+        doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
+        if (img) doc.addImage(img, 'JPEG', 10, 7, 25, 25);
+        doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
+        doc.text("Centro de Bachillerato Tecnológico Agropecuario No. 130", 105, 25, null, null, "center");
+        
+        doc.setTextColor(0); doc.setFontSize(14); doc.text("Informe Psicopedagógico Integral", 105, 55, null, null, "center");
+        doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.text(`Paciente: ${d.nombre} | Edad: ${d.edad} | Fecha: ${d.fecha}`, 20, 65);
+        doc.line(20, 70, 190, 70);
+
+        let yPos = 80;
+        
+        const drawRow = (title, score, interp, colorRisk = false) => {
+            if (yPos > 270) { doc.addPage(); yPos = 20; }
+            doc.setFont("helvetica", "bold");
+            doc.text(title, 20, yPos);
+            doc.setFont("helvetica", "normal");
+            doc.text(score ? score.toString() : "-", 80, yPos);
+            if(colorRisk) doc.setTextColor(200,0,0);
+            doc.text(interp, 100, yPos);
+            doc.setTextColor(0);
+            doc.line(20, yPos+2, 190, yPos+2);
+            yPos += 8;
+        };
+
+        // 1. TAMIZAJE
+        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(0, 105, 92);
+        doc.text("1. ESCALAS DE TAMIZAJE", 20, yPos); yPos += 10;
+        doc.setFontSize(9); doc.setTextColor(0);
+
+        if(d.phq) {
+            let v=parseInt(d.phq), n=""; if(v<=4)n="Mínima";else if(v<=9)n="Leve";else if(v<=14)n="Moderada";else if(v<=19)n="Mod-Sev";else n="Severa";
+            if(d.flagPHQ>0) n+=" (ALERTA I9)";
+            drawRow("PHQ-9 (Dep)", d.phq, n, v>=10);
+        }
+        if(d.gad) {
+            let v=parseInt(d.gad), n=""; if(v<=4)n="Mínima";else if(v<=9)n="Leve";else if(v<=14)n="Moderada";else n="Severa";
+            drawRow("GAD-7 (Ans)", d.gad, n, v>=10);
+        }
+        if(d.hadsA) {
+            let v=parseInt(d.hadsA), n=""; if(v<=7)n="Normal";else if(v<=10)n="Dudoso";else n="Caso Clínico";
+            drawRow("HADS-A (Ans)", d.hadsA, n, v>=11);
+        }
+        if(d.hadsD) {
+            let v=parseInt(d.hadsD), n=""; if(v<=7)n="Normal";else if(v<=10)n="Dudoso";else n="Caso Clínico";
+            drawRow("HADS-D (Dep)", d.hadsD, n, v>=11);
+        }
+        yPos += 5;
+
+        // 2. PROFUNDIZACIÓN
+        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(21, 101, 192);
+        doc.text("2. EVALUACIÓN PROFUNDA", 20, yPos); yPos += 10;
+        doc.setFontSize(9); doc.setTextColor(0);
+
+        if(d.bai) {
+            let v=parseInt(d.bai), n=""; if(v<=7)n="Normal";else if(v<=15)n="Leve";else if(v<=25)n="Moderada";else n="Severa";
+            drawRow("BAI (Beck)", d.bai, n, v>15);
+        }
+        if(d.bdi) {
+            let v=parseInt(d.bdi), n=""; if(v<=12)n="Sin dep";else if(v<=18)n="Leve";else if(v<=27)n="Moderada";else n="Severa";
+            drawRow("BDI-II", d.bdi, n, v>=19);
+        }
+        if(d.idareE) {
+            let v=parseInt(d.idareE), n="Media"; if(v<32)n="Baja"; if(v>45)n="Alta";
+            drawRow("IDARE-E", d.idareE, n, v>45);
+        }
+        if(d.bhs) {
+            let v=parseInt(d.bhs), n=""; if(v<=3)n="Normal";else if(v<=8)n="Leve";else if(v<=14)n="Moderada";else n="Severa";
+            drawRow("BHS (Desesp)", d.bhs, n, v>=9);
+        }
+        yPos += 5;
+
+        // 3. RIESGO SUICIDA
+        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(198, 40, 40);
+        doc.text("3. EVALUACIÓN DE RIESGO", 20, yPos); yPos += 10;
+        doc.setFontSize(9); doc.setTextColor(0);
+
+        if(d.ssi) {
+            let v=parseInt(d.ssi), n=""; if(v<=5)n="Bajo";else if(v<=9)n="Moderado";else if(v<=14)n="Alto";else n="Muy Alto";
+            drawRow("SSI", d.ssi, n, v>=6);
+        }
+        if(d.plut) {
+            let v=parseInt(d.plut), n=""; if(v<=4)n="Sin riesgo";else if(v<=6)n="Leve";else if(v<=8)n="Moderado";else n="Alto";
+            drawRow("Plutchik", d.plut, n, v>=6);
+        }
+        
+        if(d.cId === "1" || d.cCond === "1") {
+            let risk = "Bajo";
+            if(d.cId==="1") risk="Ideación Presente";
+            if(d.cPlan==="1") risk="ALTO (Con Plan)";
+            if(d.cCond==="1") risk="ALTO (Historial)";
+            if(d.cRec==="1") risk="MUY ALTO (Reciente)";
+            drawRow("C-SSRS", "Positivo", risk, true);
+        }
+
+        yPos += 20;
+        doc.rect(20, yPos, 170, 40);
+        doc.text("Observaciones Clínicas:", 22, yPos+5);
+
+        doc.save(`Expediente_${d.nombre}.pdf`);
     }
 </script>
 </body>
 </html>
+
 
