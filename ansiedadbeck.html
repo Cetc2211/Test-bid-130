@@ -14,21 +14,34 @@
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
     
-    /* Tabla Ajustada */
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; min-width: 600px; table-layout: fixed; }
+    /* TABLA CORREGIDA */
+    .table-container { overflow-x: auto; margin-bottom: 20px; }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 15px; 
+        font-size: 0.85rem; 
+        min-width: 600px; 
+        table-layout: fixed; 
+    }
+    
     th, td { padding: 12px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
-    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; }
+    
+    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; }
     th:not(:first-child), td:not(:first-child) { width: 12.5%; text-align: center; }
+    
     th { background-color: #e8f5e9; color: #1b5e20; position: sticky; top: 0; font-weight: bold; }
     tr:nth-child(even) { background-color: #fafafa; }
     
+    /* Radio buttons grandes */
     input[type="radio"] { width: 24px; height: 24px; margin: 0 auto; display: block; cursor: pointer; }
 
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s; }
+    button:active { transform: scale(0.98); }
+    
     .whatsapp { background-color: #25D366; }
-    .local-save { background-color: #1565C0; }
+    .local-save { background-color: #1565C0; } /* Azul */
     .reset { background-color: #757575; }
     
     #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 10px; border: 2px solid #c8e6c9; }
@@ -71,18 +84,15 @@
         <h3 style="color:#2e7d32;">📊 Resultados Listos</h3>
         <p>Seleccione una acción:</p>
         <div class="buttons">
-            <!-- Botón Azul para Guardar -->
             <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente (iPad)</button>
-            
-            <!-- Botón Verde para WhatsApp -->
             <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
-            
             <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
         </div>
     </div>
 </div>
 
 <script>
+    // --- CONFIGURACIÓN ---
     const NUMERO_DESTINO = "523111477413"; 
     const STORAGE_KEY = "cbta_paciente_temp";
 
@@ -96,6 +106,7 @@
         "19. Sensación de desmayo", "20. Rubor facial", "21. Sudoración (no debida al calor)"
     ];
 
+    // --- GENERAR TABLA ---
     const tbody = document.getElementById('tabla-preguntas');
     preguntas.forEach((p, i) => {
         let html = `<tr><td>${p}</td>${[0,1,2,3].map(v=>`<td><input type="radio" name="item${i+1}" value="${v}"></td>`).join('')}</tr>`;
@@ -106,74 +117,68 @@
     let datosFinales = null;
 
     function finalizarTest() {
-        const nombre = document.getElementById('nombre').value;
-        const fecha = document.getElementById('fecha').value;
-        if(!nombre) { alert("Por favor ingresa tu nombre."); return; }
+        try {
+            const nombre = document.getElementById('nombre').value;
+            const fecha = document.getElementById('fecha').value;
+            if(!nombre) { alert("Por favor ingresa el nombre."); return; }
 
-        let total = 0, count = 0, scores = []; 
+            let total = 0, count = 0;
+            let scores = new Array(22).fill(0); // Inicializar array con ceros para evitar errores
 
-        for(let i=1; i<=21; i++){
-            const el = document.querySelector(`input[name="item${i}"]:checked`);
-            if(el) { 
-                let val = parseInt(el.value);
-                total += val; 
-                scores[i] = val; 
-                count++; 
+            for(let i=1; i<=21; i++){
+                const el = document.querySelector(`input[name="item${i}"]:checked`);
+                if(el) { 
+                    let val = parseInt(el.value);
+                    total += val; 
+                    scores[i] = val; 
+                    count++; 
+                }
             }
+            
+            if(count < 21) { 
+                alert(`Faltan preguntas por contestar (${count}/21). Revisa la lista.`); 
+                return; 
+            }
+
+            // Cálculo de Factores
+            let f1 = scores[4]+scores[5]+scores[9]+scores[10]+scores[14]+scores[16]+scores[17]; 
+            let f2 = scores[1]+scores[2]+scores[3]+scores[6]+scores[7]+scores[8]+scores[12]+scores[13]+scores[19]+scores[20]+scores[21];
+            let f3 = scores[11]+scores[15]+scores[18];
+            let f4 = scores[7]+scores[11]+scores[15]+scores[16];
+
+            datosFinales = { nombre, fecha, total, f1, f2, f3, f4 };
+
+            document.getElementById('test-form').style.display = 'none';
+            document.getElementById('result-area').style.display = 'block';
+            window.scrollTo(0,0);
+
+        } catch (e) {
+            alert("Ocurrió un error al procesar: " + e.message);
         }
-        
-        if(count < 21) { alert(`Faltan preguntas (${count}/21)`); return; }
-
-        let f1 = scores[4]+scores[5]+scores[9]+scores[10]+scores[14]+scores[16]+scores[17]; 
-        let f2 = scores[1]+scores[2]+scores[3]+scores[6]+scores[7]+scores[8]+scores[12]+scores[13]+scores[19]+scores[20]+scores[21];
-        let f3 = scores[11]+scores[15]+scores[18];
-        let f4 = scores[7]+scores[11]+scores[15]+scores[16];
-
-        datosFinales = { nombre, fecha, total, f1, f2, f3, f4 };
-
-        document.getElementById('test-form').style.display = 'none';
-        document.getElementById('result-area').style.display = 'block';
-        window.scrollTo(0,0);
     }
 
     function guardarLocalmente() {
-        if(!datosFinales) {
-            alert("⚠️ No hay datos para guardar.");
-            return;
-        }
+        if(!datosFinales) { alert("No hay datos para guardar."); return; }
         
         try {
-            // Intentamos leer la memoria
             let current = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-            
-            // Actualizamos con los nuevos datos
             let update = { 
                 ...current, 
                 nombre: datosFinales.nombre,
                 fecha: datosFinales.fecha,
-                bai: datosFinales.total, // Guardamos el total del BAI
-                f1: datosFinales.f1,
-                f2: datosFinales.f2,
-                f3: datosFinales.f3,
-                f4: datosFinales.f4
+                bai: datosFinales.total, 
+                f1: datosFinales.f1, f2: datosFinales.f2, f3: datosFinales.f3, f4: datosFinales.f4
             };
-            
-            // Guardamos de vuelta
             localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
-            
-            // Mensaje de Éxito
-            alert("✅ ¡Datos de ANSIEDAD guardados correctamente!\nPuedes continuar con otros tests o ir al Admin.");
-            
+            alert("✅ Datos guardados en el iPad.\nPuedes continuar con otro test.");
         } catch (e) {
-            alert("❌ Error al guardar: " + e.message + "\n(Verifica que no estés en modo Incógnito estricto)");
+            alert("Error al guardar: " + e.message);
         }
     }
 
     function enviarWhatsApp(){
         if(!datosFinales) return;
         const msg = `🧠 *BAI*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Total: ${datosFinales.total}%0AFactores: ${datosFinales.f1}-${datosFinales.f2}-${datosFinales.f3}-${datosFinales.f4}`;
-        
-        // IMPORTANTE: Usar window.open con '_blank' para NO recargar la página actual
         window.open(`https://wa.me/${NUMERO_DESTINO}?text=${msg}`, '_blank');
     }
 </script>
