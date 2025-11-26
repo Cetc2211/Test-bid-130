@@ -7,20 +7,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
     body { font-family: -apple-system, sans-serif; background-color: #f5f5f5; padding: 20px; }
-    .card { background: white; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .card { background: white; max-width: 700px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     h2 { color: #1b5e20; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
     .form-group { margin-bottom: 15px; }
     label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-    input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
     .row { display: flex; gap: 15px; }
     .col { flex: 1; }
     .btn-generate { background-color: #1b5e20; color: white; border: none; width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; }
     .back-link { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; font-size: 0.9em; }
     
+    /* Estilos de Secciones */
     .section-box { background:#fafafa; padding:15px; border-radius:10px; margin-bottom:15px; border-left: 5px solid #ccc; }
-    .section-bai { border-left-color: #2e7d32; }
-    .section-bdi { border-left-color: #1565C0; }
-    .section-ssi { border-left-color: #7b1fa2; }
+    .header-sec { margin-top:0; font-size:1rem; display:flex; justify-content:space-between; }
+    
+    .s-bai { border-left-color: #2e7d32; } .s-bai h3 { color: #2e7d32; }
+    .s-bdi { border-left-color: #1565C0; } .s-bdi h3 { color: #1565C0; }
+    .s-ssi { border-left-color: #7b1fa2; } .s-ssi h3 { color: #7b1fa2; }
+    .s-phq { border-left-color: #00695c; } .s-phq h3 { color: #00695c; }
+    .s-gad { border-left-color: #e65100; } .s-gad h3 { color: #e65100; }
 </style>
 </head>
 <body>
@@ -33,36 +38,53 @@
         <div class="col form-group"><label>Edad:</label><input type="number" id="edad"></div>
         <div class="col form-group"><label>Fecha:</label><input type="date" id="fecha"></div>
     </div>
-    <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
     
-    <!-- BAI -->
-    <div class="section-box section-bai">
-        <h3 style="margin-top:0; color:#2e7d32; font-size:1rem;">Ansiedad (BAI)</h3>
-        <div class="form-group"><input type="number" id="scoreBAI" placeholder="Puntaje Total (0-63)"></div>
+    <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
+    <div style="font-size:0.8rem; color:#666; margin-bottom:15px;">*Llena solo los campos de los tests aplicados.</div>
+
+    <!-- PHQ-9 -->
+    <div class="section-box s-phq">
+        <h3 class="header-sec">PHQ-9 (Depresión) <span>Tamizaje</span></h3>
         <div class="row">
-            <div class="col"><input type="number" id="f1" placeholder="F1"></div>
-            <div class="col"><input type="number" id="f2" placeholder="F2"></div>
-            <div class="col"><input type="number" id="f3" placeholder="F3"></div>
-            <div class="col"><input type="number" id="f4" placeholder="F4"></div>
+            <div class="col"><input type="number" id="scorePHQ" placeholder="Total (0-27)"></div>
+            <div class="col"><input type="number" id="flagPHQ" placeholder="Valor Ítem 9 (0-3)"></div>
+        </div>
+    </div>
+
+    <!-- GAD-7 -->
+    <div class="section-box s-gad">
+        <h3 class="header-sec">GAD-7 (Ansiedad) <span>Tamizaje</span></h3>
+        <div class="form-group"><input type="number" id="scoreGAD" placeholder="Total (0-21)"></div>
+    </div>
+
+    <!-- BAI -->
+    <div class="section-box s-bai">
+        <h3 class="header-sec">Ansiedad (BAI) <span>Profundización</span></h3>
+        <div class="form-group"><input type="number" id="scoreBAI" placeholder="Total (0-63)"></div>
+        <div class="row">
+            <div class="col"><input type="number" id="f1" placeholder="F1 Subj"></div>
+            <div class="col"><input type="number" id="f2" placeholder="F2 Neuro"></div>
+            <div class="col"><input type="number" id="f3" placeholder="F3 Auto"></div>
+            <div class="col"><input type="number" id="f4" placeholder="F4 Pánic"></div>
         </div>
     </div>
 
     <!-- BDI -->
-    <div class="section-box section-bdi">
-        <h3 style="margin-top:0; color:#1565C0; font-size:1rem;">Depresión (BDI-II)</h3>
-        <div class="form-group"><input type="number" id="scoreBDI" placeholder="Puntaje Total (0-63)"></div>
+    <div class="section-box s-bdi">
+        <h3 class="header-sec">Depresión (BDI-II) <span>Profundización</span></h3>
+        <div class="form-group"><input type="number" id="scoreBDI" placeholder="Total (0-63)"></div>
     </div>
 
     <!-- SSI -->
-    <div class="section-box section-ssi">
-        <h3 style="margin-top:0; color:#7b1fa2; font-size:1rem;">Ideación Suicida (SSI)</h3>
+    <div class="section-box s-ssi">
+        <h3 class="header-sec">Ideación (SSI) <span>Riesgo</span></h3>
         <div class="row">
             <div class="col"><input type="number" id="scoreSSI" placeholder="Total (0-38)"></div>
             <div class="col"><input type="text" id="flagsSSI" placeholder="Flags (Ej: C4, C20)"></div>
         </div>
     </div>
     
-    <button class="btn-generate" onclick="generarReporte()">📄 Descargar Expediente Clínico</button>
+    <button class="btn-generate" onclick="generarReporte()">📄 Descargar Expediente Integrado</button>
     <a href="index.html" class="back-link">← Volver al Menú Principal</a>
 </div>
 
@@ -78,6 +100,9 @@
             bdi: document.getElementById('scoreBDI').value,
             ssi: document.getElementById('scoreSSI').value,
             ssiFlags: document.getElementById('flagsSSI').value,
+            phq: document.getElementById('scorePHQ').value,
+            phqFlag: document.getElementById('flagPHQ').value,
+            gad: document.getElementById('scoreGAD').value,
             f1: document.getElementById('f1').value,
             f2: document.getElementById('f2').value,
             f3: document.getElementById('f3').value,
@@ -95,14 +120,14 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Encabezado
+        // 1. Encabezado
         doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
         if (img) doc.addImage(img, 'JPEG', 10, 7, 25, 25);
         doc.setTextColor(255); doc.setFontSize(18); doc.setFont("helvetica", "bold");
         doc.text("Centro de Bachillerato Tecnológico", 105, 18, null, null, "center");
         doc.text("Agropecuario No. 130", 105, 28, null, null, "center");
 
-        doc.setTextColor(0); doc.setFontSize(16); doc.text("Informe Psicopedagógico Integral", 105, 55, null, null, "center");
+        doc.setTextColor(0); doc.setFontSize(16); doc.text("Informe Psicopedagógico Multidimensional", 105, 55, null, null, "center");
         
         doc.setFontSize(11); doc.setFont("helvetica", "normal");
         doc.text(`Paciente: ${d.nombre}`, 20, 70);
@@ -110,15 +135,65 @@
         doc.text(`Fecha: ${d.fecha}`, 20, 80);
         doc.line(20, 85, 190, 85);
 
-        let yPos = 100;
-        doc.setFillColor(232, 245, 233); doc.rect(20, yPos, 170, 10, 'F');
-        doc.setFont("helvetica", "bold"); doc.setFontSize(12);
-        doc.text("Instrumento", 25, yPos+7);
-        doc.text("Puntaje", 80, yPos+7);
-        doc.text("Diagnóstico / Nivel de Riesgo", 105, yPos+7);
+        let yPos = 95;
+        
+        // Función auxiliar para dibujar filas
+        const drawRow = (title, score, interp, colorRisk = false) => {
+            if (yPos > 270) { doc.addPage(); yPos = 20; }
+            doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+            doc.text(title, 20, yPos);
+            doc.setFont("helvetica", "normal");
+            doc.text(score.toString(), 80, yPos);
+            
+            if(colorRisk) doc.setTextColor(200,0,0);
+            doc.text(interp, 100, yPos);
+            doc.setTextColor(0);
+            
+            doc.setDrawColor(220);
+            doc.line(20, yPos+2, 190, yPos+2);
+            yPos += 10;
+        };
+
+        // --- SECCIÓN 1: TAMIZAJE ---
+        doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(27, 94, 32);
+        doc.text("1. ESCALAS DE TAMIZAJE (Screening)", 20, yPos);
         yPos += 10;
 
-        // --- BAI (Robles 2001) ---
+        // PHQ-9
+        if(d.phq) {
+            const val = parseInt(d.phq);
+            let nivel = "";
+            if (val <= 4) nivel = "Mínima / Monitoreo";
+            else if (val <= 9) nivel = "Leve / Seguimiento";
+            else if (val <= 14) nivel = "Moderada / Considerar Tx";
+            else if (val <= 19) nivel = "Mod-Severa / Tx Activo";
+            else nivel = "Severa / Tx Inmediato";
+            
+            if(d.phqFlag > 0) nivel += " (ALERTA: Ideación +)";
+            
+            drawRow("Depresión (PHQ-9)", d.phq, nivel, (val >= 10 || d.phqFlag > 0));
+        }
+
+        // GAD-7
+        if(d.gad) {
+            const val = parseInt(d.gad);
+            let nivel = "";
+            if (val <= 4) nivel = "Mínima";
+            else if (val <= 9) nivel = "Leve";
+            else if (val <= 14) nivel = "Moderada";
+            else nivel = "Severa";
+            
+            drawRow("Ansiedad (GAD-7)", d.gad, nivel, val >= 10);
+        }
+
+        yPos += 5;
+
+        // --- SECCIÓN 2: PROFUNDIZACIÓN ---
+        doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(21, 101, 192);
+        doc.text("2. ESCALAS DE PROFUNDIZACIÓN", 20, yPos);
+        yPos += 10;
+
+        // BAI
         if(d.bai) {
             const val = parseInt(d.bai);
             let nivel = "";
@@ -127,99 +202,65 @@
             else if (val <= 25) nivel = "Moderada";
             else nivel = "Severa";
             
-            doc.setFont("helvetica", "normal"); doc.rect(20, yPos, 170, 10);
-            doc.text("Ansiedad (BAI)", 25, yPos+7);
-            doc.text(d.bai, 85, yPos+7);
-            doc.setTextColor(val > 15 ? 200 : 0, 0, 0); 
-            doc.text(nivel, 105, yPos+7);
-            doc.setTextColor(0);
-            yPos += 10;
+            drawRow("Ansiedad (BAI)", d.bai, nivel, val > 15);
+            
+            // Factores BAI
+            if(d.f1) {
+                doc.setFontSize(8); doc.setTextColor(100);
+                doc.text(`Subj: ${d.f1} | Neuro: ${d.f2} | Auto: ${d.f3} | Pánico: ${d.f4}`, 25, yPos-4);
+                doc.setFontSize(10); doc.setTextColor(0);
+            }
         }
 
-        // --- BDI-II ---
+        // BDI
         if(d.bdi) {
             const val = parseInt(d.bdi);
-            const esAdolescente = (d.edad >= 15 && d.edad <= 19);
+            const esAdol = (d.edad >= 15 && d.edad <= 19);
             let nivel = "";
-            if (esAdolescente) {
+            if (esAdol) {
                 if (val <= 12) nivel = "Sin depresión"; else if (val <= 18) nivel = "Leve"; else if (val <= 27) nivel = "Moderada"; else nivel = "Severa";
             } else {
                 if (val <= 13) nivel = "Mínima"; else if (val <= 19) nivel = "Leve"; else if (val <= 28) nivel = "Moderada"; else nivel = "Severa";
             }
-
-            doc.rect(20, yPos, 170, 10);
-            doc.text("Depresión (BDI-II)", 25, yPos+7);
-            doc.text(d.bdi, 85, yPos+7);
-            doc.setTextColor(val >= 19 ? 200 : 0, 0, 0);
-            doc.text(nivel, 105, yPos+7);
-            doc.setTextColor(0);
-            yPos += 10;
+            drawRow("Depresión (BDI-II)", d.bdi, nivel, val >= 19);
         }
 
-        // --- SSI (BECK SUICIDE) ---
+        yPos += 5;
+
+        // --- SECCIÓN 3: RIESGO ---
+        doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(123, 31, 162);
+        doc.text("3. EVALUACIÓN DE RIESGO", 20, yPos);
+        yPos += 10;
+
+        // SSI
         if(d.ssi) {
             const val = parseInt(d.ssi);
-            let nivel = "", accion = "";
+            let nivel = "";
+            if (val <= 5) nivel = "Riesgo Bajo";
+            else if (val <= 9) nivel = "Riesgo Moderado";
+            else if (val <= 14) nivel = "Riesgo Alto";
+            else nivel = "Riesgo Muy Alto";
+
+            if(d.ssiFlags) nivel += " (FLAGS: " + d.ssiFlags + ")";
             
-            if (val <= 5) { nivel = "Riesgo Bajo"; accion = "Seguimiento regular"; }
-            else if (val <= 9) { nivel = "Riesgo Moderado"; accion = "Evaluación semanal"; }
-            else if (val <= 14) { nivel = "Riesgo Alto"; accion = "Plan de seguridad"; }
-            else { nivel = "Riesgo Muy Alto"; accion = "Intervención en crisis"; }
-
-            // Si hay flags críticos, elevar riesgo visualmente
-            if(d.ssiFlags && d.ssiFlags.length > 0) {
-                nivel += " (Con Indicadores Críticos)";
-            }
-
-            doc.rect(20, yPos, 170, 10);
-            doc.text("Ideación (SSI)", 25, yPos+7);
-            doc.text(d.ssi, 85, yPos+7);
-            
-            doc.setTextColor(val >= 6 || d.ssiFlags ? 220 : 0, 0, 0);
-            doc.setFont("helvetica", "bold");
-            doc.text(nivel, 105, yPos+7);
-            doc.setFont("helvetica", "normal");
-            doc.setTextColor(0);
-            yPos += 10;
-
-            // Mostrar acción sugerida abajo si es alto
-            if(val >= 6 || d.ssiFlags) {
-                doc.setFontSize(10); doc.setTextColor(100);
-                doc.text(`Acción sugerida: ${accion}`, 25, yPos+5);
-                if(d.ssiFlags) doc.text(`Alertas: ${d.ssiFlags}`, 105, yPos+5);
-                yPos += 8;
-            }
+            drawRow("Ideación (SSI)", d.ssi, nivel, val >= 6);
         }
 
-        // --- BAI FACTORES ---
-        if(d.f1 && d.f2 && d.f3 && d.f4) {
-             yPos += 5;
-             doc.setFont("helvetica", "bold"); doc.text("Desglose Factorial BAI:", 20, yPos);
-             yPos += 7;
-             doc.setFont("helvetica", "normal"); doc.setFontSize(10);
-             
-             const rowF = (txt, v, lim) => {
-                 let res = parseInt(v) > lim ? "ALTO" : "Normal";
-                 doc.text(`${txt}: ${v} (${res})`, 25, yPos);
-                 yPos += 5;
-             };
-             rowF("Subjetivo (Cog)", d.f1, 14);
-             rowF("Neurofisiológico", d.f2, 20);
-             rowF("Autonómico", d.f3, 6);
-             rowF("Pánico", d.f4, 8);
-        }
-
+        // --- OBSERVACIONES ---
         yPos += 15;
+        if (yPos > 250) { doc.addPage(); yPos = 20; }
+        
         doc.setFontSize(11);
-        doc.setFont("helvetica", "bold"); doc.text("Observaciones y Recomendaciones:", 20, yPos);
-        doc.setDrawColor(150); doc.rect(20, yPos+5, 170, 40);
+        doc.setFont("helvetica", "bold"); doc.setTextColor(0); 
+        doc.text("Integración Diagnóstica y Plan de Acción:", 20, yPos);
+        doc.setDrawColor(150); doc.rect(20, yPos+5, 170, 50);
 
-        yPos += 70;
+        yPos += 80;
         doc.line(70, yPos, 140, yPos);
         doc.setFontSize(10);
         doc.text("Firma del Evaluador", 105, yPos+5, null, null, "center");
 
-        doc.save(`Expediente_${d.nombre}.pdf`);
+        doc.save(`Expediente_Integral_${d.nombre}.pdf`);
     }
 </script>
 </body>
