@@ -6,7 +6,6 @@
 <title>Evaluación PHQ-9 - CBTa 130</title>
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
-    /* Encabezado TEAL */
     header { background: linear-gradient(135deg, #00695c 0%, #00897b 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #00695c; text-align: center; margin-top: 0; border-bottom: 2px solid #b2dfdb; padding-bottom: 10px; }
@@ -15,20 +14,21 @@
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
     
-    /* Tabla Responsiva */
+    /* TABLA CORREGIDA */
     .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; min-width: 600px; }
-    th { background-color: #e0f2f1; color: #004d40; padding: 10px; text-align: center; position: sticky; top: 0; }
-    td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
-    td:first-child { text-align: left; font-weight: 500; width: 40%; padding-left: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; min-width: 600px; table-layout: fixed; }
+    th, td { padding: 10px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
+    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; }
+    th:not(:first-child), td:not(:first-child) { width: 12.5%; text-align: center; }
+    th { background-color: #e0f2f1; color: #004d40; position: sticky; top: 0; font-weight: bold; }
     tr:nth-child(even) { background-color: #fafafa; }
-    
+    input[type="radio"] { width: 24px; height: 24px; margin: 0 auto; display: block; cursor: pointer; }
+
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
     button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .whatsapp { background-color: #25D366; }
+    .local-save { background-color: #1565C0; margin-top: 10px; } /* Botón Azul */
     .reset { background-color: #757575; }
-    
-    input[type="radio"] { transform: scale(1.5); cursor: pointer; }
     #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e0f2f1; border-radius: 10px; }
 </style>
 </head>
@@ -48,37 +48,35 @@
         <div class="table-container">
             <table>
                 <thead>
-                    <tr>
-                        <th>Problema</th>
-                        <th>Nunca (0)</th>
-                        <th>Varios días (1)</th>
-                        <th>+Mitad días (2)</th>
-                        <th>Casi todos (3)</th>
-                    </tr>
+                    <tr><th>Problema</th><th>Nunca<br>(0)</th><th>Varios días<br>(1)</th><th>+Mitad días<br>(2)</th><th>Casi todos<br>(3)</th></tr>
                 </thead>
                 <tbody id="tabla-preguntas"></tbody>
             </table>
         </div>
 
-        <!-- Pregunta 10 (Funcionalidad) -->
         <div style="margin-top:20px; padding:15px; background:#fafafa; border-radius:10px;">
-            <p style="font-weight:bold; color:#333;">10. Si marcó algún problema, ¿qué tanta dificultad le ha dado para hacer su trabajo, tareas o llevarse bien con otros?</p>
-            <label><input type="radio" name="item10" value="Ninguna"> Ninguna dificultad</label><br>
-            <label><input type="radio" name="item10" value="Algo"> Algo de dificultad</label><br>
-            <label><input type="radio" name="item10" value="Mucha"> Mucha dificultad</label><br>
-            <label><input type="radio" name="item10" value="Extrema"> Extrema dificultad</label>
+            <p style="font-weight:bold; color:#333;">10. Dificultad funcional:</p>
+            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Ninguna" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Ninguna dificultad</label>
+            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Algo" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Algo de dificultad</label>
+            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Mucha" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Mucha dificultad</label>
+            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Extrema" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Extrema dificultad</label>
         </div>
 
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Enviar</button>
+            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Ver Opciones</button>
         </div>
     </div>
 
     <div id="result-area">
-        <h3 style="color:#00695c;">¡Registro Completado!</h3>
-        <p>Tus respuestas han sido guardadas.</p>
+        <h3 style="color:#00695c;">Resultados Listos</h3>
+        <p>Seleccione qué desea hacer con los datos:</p>
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Datos por WhatsApp</button>
+            <!-- BOTÓN PARA DISPOSITIVO FIJO -->
+            <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente Local</button>
+            
+            <!-- BOTÓN PARA WHATSAPP -->
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
+            
             <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
         </div>
     </div>
@@ -86,7 +84,8 @@
 
 <script>
     const NUMERO_DESTINO = "523111477413"; 
-    
+    const STORAGE_KEY = "cbta_paciente_temp"; // Clave compartida con el Admin
+
     const preguntas = [
         "1. Poco interés o placer en hacer cosas",
         "2. Se ha sentido decaído, deprimido o sin esperanzas",
@@ -110,44 +109,64 @@
 
     function finalizarTest() {
         const nombre = document.getElementById('nombre').value;
+        const edad = prompt("Por favor confirma la EDAD del alumno (para el expediente):"); // Pedir edad aquí si no está en el form
         const fecha = document.getElementById('fecha').value;
         if(!nombre) { alert("Nombre requerido"); return; }
 
-        let total = 0, count = 0;
-        let item9 = 0;
-
+        let total = 0, count = 0, item9 = 0;
         for(let i=1; i<=9; i++){
             const el = document.querySelector(`input[name="item${i}"]:checked`);
             if(el) { 
                 let val = parseInt(el.value);
-                total += val; 
-                count++; 
+                total += val; count++; 
                 if(i===9) item9 = val;
             }
         }
-        
         if(count < 9) { alert(`Faltan preguntas (${count}/9)`); return; }
 
-        // Funcionalidad
         const func = document.querySelector(`input[name="item10"]:checked`);
         const funcionalidad = func ? func.value : "No contestó";
-
-        datosFinales = { nombre, fecha, total, item9, funcionalidad };
+        
+        // DATOS LISTOS
+        datosFinales = { 
+            nombre: nombre, 
+            edad: edad, // Se guarda para el Admin
+            fecha: fecha, 
+            phq: total, 
+            phqFlag: item9 
+        };
 
         document.getElementById('test-form').style.display = 'none';
         document.getElementById('result-area').style.display = 'block';
         window.scrollTo(0,0);
     }
 
+    // --- FUNCIÓN NUEVA: GUARDAR EN DISPOSITIVO ---
+    function guardarLocalmente() {
+        if(!datosFinales) return;
+        
+        // 1. Leer lo que ya hay guardado
+        let currentData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        
+        // 2. Mezclar con los nuevos datos (sin borrar lo anterior)
+        let updatedData = { ...currentData, ...datosFinales };
+        
+        // 3. Guardar de nuevo
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
+        
+        alert("✅ Datos guardados en este iPad.\nPuedes abrir el Panel de Admin para verlos.");
+        // Opcional: Redirigir al menú
+        // window.location.href = 'index.html';
+    }
+
     function enviarWhatsApp(){
         if(!datosFinales) return;
-        let m = `🌿 *DATOS PHQ-9*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Score: ${datosFinales.total}%0A⚙️ Funcionalidad: ${datosFinales.funcionalidad}`;
-        // Alerta discreta si item 9 > 0
-        if(datosFinales.item9 > 0) m += `%0A🚩 Flag I9: ${datosFinales.item9}`;
-        
+        let m = `🌿 *DATOS PHQ-9*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Score: ${datosFinales.phq}`;
+        if(datosFinales.phqFlag > 0) m += `%0A🚩 Flag I9: ${datosFinales.phqFlag}`;
         window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${m}`;
     }
 </script>
 </body>
 </html>
+
 
