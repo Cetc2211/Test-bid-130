@@ -3,37 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evaluación PHQ-9 - CBTa 130</title>
+<title>Evaluación BAI - CBTa 130</title>
 <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
-    header { background: linear-gradient(135deg, #00695c 0%, #00897b 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f2f2f7; color: #1c1c1e; }
+    header { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    h2 { color: #00695c; text-align: center; margin-top: 0; border-bottom: 2px solid #b2dfdb; padding-bottom: 10px; }
+    h2 { color: #2e7d32; text-align: center; margin-top: 0; border-bottom: 2px solid #e8f5e9; padding-bottom: 10px; }
     
     .input-group { margin-bottom: 15px; }
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
     
-    /* TABLA CORREGIDA */
+    /* --- CORRECCIÓN DE TABLA --- */
     .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; min-width: 600px; table-layout: fixed; }
-    th, td { padding: 10px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 15px; 
+        font-size: 0.85rem; 
+        min-width: 600px; 
+        table-layout: fixed;
+    }
+    
+    th, td { padding: 12px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
+    
     th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; }
     th:not(:first-child), td:not(:first-child) { width: 12.5%; text-align: center; }
-    th { background-color: #e0f2f1; color: #004d40; position: sticky; top: 0; font-weight: bold; }
+    
+    th { background-color: #e8f5e9; color: #1b5e20; position: sticky; top: 0; font-weight: bold; }
     tr:nth-child(even) { background-color: #fafafa; }
+    
     input[type="radio"] { width: 24px; height: 24px; margin: 0 auto; display: block; cursor: pointer; }
 
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s; }
     .whatsapp { background-color: #25D366; }
-    .local-save { background-color: #1565C0; margin-top: 10px; } /* Botón Azul */
     .reset { background-color: #757575; }
-    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e0f2f1; border-radius: 10px; }
+    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 10px; }
 </style>
 </head>
 <body>
-<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Cuestionario de Salud (PHQ-9)</span></header>
+<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Inventario de Ansiedad (BAI)</span></header>
 
 <div class="container">
     <div id="test-form">
@@ -41,42 +51,35 @@
         <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
         
-        <div style="background-color:#e0f2f1; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #00695c;">
-            <strong>Instrucciones:</strong> Durante las <strong>últimas 2 semanas</strong>, ¿qué tan seguido ha tenido molestias por los siguientes problemas?
+        <div style="background-color:#fff3cd; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #ffc107;">
+            <strong>Instrucciones:</strong> Indique cuánto le ha molestado cada síntoma durante la <strong>última semana, incluyendo hoy</strong>.
         </div>
 
         <div class="table-container">
             <table>
                 <thead>
-                    <tr><th>Problema</th><th>Nunca<br>(0)</th><th>Varios días<br>(1)</th><th>+Mitad días<br>(2)</th><th>Casi todos<br>(3)</th></tr>
+                    <tr>
+                        <th>Síntoma</th>
+                        <th>Nada<br>(0)</th>
+                        <th>Leve<br>(1)</th>
+                        <th>Mod<br>(2)</th>
+                        <th>Sev<br>(3)</th>
+                    </tr>
                 </thead>
                 <tbody id="tabla-preguntas"></tbody>
             </table>
         </div>
 
-        <div style="margin-top:20px; padding:15px; background:#fafafa; border-radius:10px;">
-            <p style="font-weight:bold; color:#333;">10. Dificultad funcional:</p>
-            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Ninguna" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Ninguna dificultad</label>
-            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Algo" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Algo de dificultad</label>
-            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Mucha" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Mucha dificultad</label>
-            <label style="display:block; margin-bottom:5px;"><input type="radio" name="item10" value="Extrema" style="display:inline-block; vertical-align:middle; margin:0 5px 0 0;"> Extrema dificultad</label>
-        </div>
-
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Ver Opciones</button>
+            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Enviar</button>
         </div>
     </div>
 
     <div id="result-area">
-        <h3 style="color:#00695c;">Resultados Listos</h3>
-        <p>Seleccione qué desea hacer con los datos:</p>
+        <h3 style="color:#2e7d32;">¡Evaluación Completada!</h3>
+        <p>Gracias por responder.</p>
         <div class="buttons">
-            <!-- BOTÓN PARA DISPOSITIVO FIJO -->
-            <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente Local</button>
-            
-            <!-- BOTÓN PARA WHATSAPP -->
-            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
-            
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Datos por WhatsApp</button>
             <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
         </div>
     </div>
@@ -84,18 +87,14 @@
 
 <script>
     const NUMERO_DESTINO = "523111477413"; 
-    const STORAGE_KEY = "cbta_paciente_temp"; // Clave compartida con el Admin
-
     const preguntas = [
-        "1. Poco interés o placer en hacer cosas",
-        "2. Se ha sentido decaído, deprimido o sin esperanzas",
-        "3. Dificultad para dormir o dormir demasiado",
-        "4. Cansado o con poca energía",
-        "5. Sin apetito o ha comido en exceso",
-        "6. Sentirse mal consigo mismo (fracaso)",
-        "7. Dificultad para concentrarse (leer, TV)",
-        "8. Moverse muy lento o muy inquieto/agitado",
-        "9. Pensamientos de estar mejor muerto o lastimarse"
+        "1. Entumecimiento u hormigueo", "2. Sensación de calor", "3. Temblor en las piernas",
+        "4. Incapacidad para relajarse", "5. Miedo a que suceda lo peor", "6. Mareo o aturdimiento",
+        "7. Palpitaciones o taquicardia", "8. Sensación de inestabilidad", "9. Sensación de terror",
+        "10. Nerviosismo", "11. Sensación de ahogo", "12. Temblor de manos",
+        "13. Temblor generalizado", "14. Miedo a perder el control", "15. Dificultad para respirar",
+        "16. Miedo a morir", "17. Asustado", "18. Indigestión o malestar abdominal",
+        "19. Sensación de desmayo", "20. Rubor facial", "21. Sudoración (no debida al calor)"
     ];
 
     const tbody = document.getElementById('tabla-preguntas');
@@ -109,61 +108,34 @@
 
     function finalizarTest() {
         const nombre = document.getElementById('nombre').value;
-        const edad = prompt("Por favor confirma la EDAD del alumno (para el expediente):"); // Pedir edad aquí si no está en el form
         const fecha = document.getElementById('fecha').value;
-        if(!nombre) { alert("Nombre requerido"); return; }
+        if(!nombre) { alert("Por favor ingresa tu nombre."); return; }
 
-        let total = 0, count = 0, item9 = 0;
-        for(let i=1; i<=9; i++){
+        let total = 0, count = 0, scores = []; 
+        for(let i=1; i<=21; i++){
             const el = document.querySelector(`input[name="item${i}"]:checked`);
             if(el) { 
                 let val = parseInt(el.value);
-                total += val; count++; 
-                if(i===9) item9 = val;
+                total += val; scores[i] = val; count++; 
             }
         }
-        if(count < 9) { alert(`Faltan preguntas (${count}/9)`); return; }
+        if(count < 21) { alert(`Faltan preguntas (${count}/21)`); return; }
 
-        const func = document.querySelector(`input[name="item10"]:checked`);
-        const funcionalidad = func ? func.value : "No contestó";
-        
-        // DATOS LISTOS
-        datosFinales = { 
-            nombre: nombre, 
-            edad: edad, // Se guarda para el Admin
-            fecha: fecha, 
-            phq: total, 
-            phqFlag: item9 
-        };
+        let f1 = scores[4]+scores[5]+scores[9]+scores[10]+scores[14]+scores[16]+scores[17]; 
+        let f2 = scores[1]+scores[2]+scores[3]+scores[6]+scores[7]+scores[8]+scores[12]+scores[13]+scores[19]+scores[20]+scores[21];
+        let f3 = scores[11]+scores[15]+scores[18];
+        let f4 = scores[7]+scores[11]+scores[15]+scores[16];
 
+        datosFinales = { nombre, fecha, total, f1, f2, f3, f4 };
         document.getElementById('test-form').style.display = 'none';
         document.getElementById('result-area').style.display = 'block';
         window.scrollTo(0,0);
     }
 
-    // --- FUNCIÓN NUEVA: GUARDAR EN DISPOSITIVO ---
-    function guardarLocalmente() {
-        if(!datosFinales) return;
-        
-        // 1. Leer lo que ya hay guardado
-        let currentData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-        
-        // 2. Mezclar con los nuevos datos (sin borrar lo anterior)
-        let updatedData = { ...currentData, ...datosFinales };
-        
-        // 3. Guardar de nuevo
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
-        
-        alert("✅ Datos guardados en este iPad.\nPuedes abrir el Panel de Admin para verlos.");
-        // Opcional: Redirigir al menú
-        // window.location.href = 'index.html';
-    }
-
     function enviarWhatsApp(){
         if(!datosFinales) return;
-        let m = `🌿 *DATOS PHQ-9*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Score: ${datosFinales.phq}`;
-        if(datosFinales.phqFlag > 0) m += `%0A🚩 Flag I9: ${datosFinales.phqFlag}`;
-        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${m}`;
+        const msg = `🧠 *DATOS BAI*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Puntos Totales: ${datosFinales.total}%0A%0A*Factores (Interno):*%0AF1: ${datosFinales.f1}%0AF2: ${datosFinales.f2}%0AF3: ${datosFinales.f3}%0AF4: ${datosFinales.f4}`;
+        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${msg}`;
     }
 </script>
 </body>
