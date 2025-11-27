@@ -25,6 +25,7 @@
     .whatsapp { background-color: #25D366; }
     .local-save { background-color: #1565C0; }
     .reset { background-color: #757575; }
+    .btn-back { background-color: #78909c; }
     #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #fff3e0; border-radius: 10px; }
 </style>
 </head>
@@ -36,15 +37,15 @@
         <div class="input-group"><label>Nombre:</label><input type="text" id="nombre" required></div>
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
         <div style="background-color:#fff3e0; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #e65100;">
-            <strong>Instrucciones:</strong> Durante las <strong>últimas 2 semanas</strong>, ¿qué tan seguido le han molestado los siguientes problemas?
+            <strong>Instrucciones:</strong> Durante las <strong>últimas 2 semanas</strong>...
         </div>
         <div class="table-container">
-            <table>
-                <thead><tr><th>Problema</th><th>Nunca<br>(0)</th><th>Varios<br>(1)</th><th>+Mitad<br>(2)</th><th>Casi<br>(3)</th></tr></thead>
-                <tbody id="tabla-preguntas"></tbody>
-            </table>
+            <table><thead><tr><th>Problema</th><th>Nunca<br>(0)</th><th>Varios<br>(1)</th><th>+Mitad<br>(2)</th><th>Casi<br>(3)</th></tr></thead><tbody id="tabla-preguntas"></tbody></table>
         </div>
-        <div class="buttons"><button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar</button></div>
+        <div class="buttons">
+            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
+        </div>
     </div>
     <div id="result-area">
         <h3 style="color:#e65100;">Resultados Listos</h3>
@@ -52,59 +53,28 @@
             <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
             <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar WhatsApp</button>
             <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Ir al Menú</button>
         </div>
     </div>
 </div>
 <script>
-    const NUMERO_DESTINO = "523111477413"; 
-    const STORAGE_KEY = "cbta_paciente_temp";
-
-    const preguntas = [
-        "1. Sentirse nervioso, ansioso o con los nervios de punta",
-        "2. No poder dejar de preocuparse o controlar la preocupación",
-        "3. Preocuparse demasiado por diferentes cosas",
-        "4. Dificultad para relajarse",
-        "5. Estar tan inquieto que es difícil permanecer sentado",
-        "6. Molestarse o ponerse irritable fácilmente",
-        "7. Sentir miedo como si algo terrible fuera a suceder"
-    ];
+    const NUMERO_DESTINO = "523111477413"; const STORAGE_KEY = "cbta_paciente_temp";
+    const preguntas = ["1. Nervioso/ansioso", "2. No poder parar de preocuparse", "3. Preocupación excesiva", "4. Dificultad relajarse", "5. Inquieto", "6. Irritable", "7. Miedo terrible"];
     const tbody = document.getElementById('tabla-preguntas');
-    preguntas.forEach((p, i) => {
-        let html = `<tr><td>${p}</td>${[0,1,2,3].map(v=>`<td><input type="radio" name="item${i+1}" value="${v}"></td>`).join('')}</tr>`;
-        tbody.innerHTML += html;
-    });
+    preguntas.forEach((p, i) => { tbody.innerHTML += `<tr><td>${p}</td>${[0,1,2,3].map(v=>`<td><input type="radio" name="item${i+1}" value="${v}"></td>`).join('')}</tr>`; });
     document.getElementById('fecha').valueAsDate = new Date();
     let datosFinales = null;
-
     function finalizarTest() {
-        const nombre = document.getElementById('nombre').value;
-        const fecha = document.getElementById('fecha').value;
+        const nombre = document.getElementById('nombre').value; const fecha = document.getElementById('fecha').value;
         if(!nombre) { alert("Nombre requerido"); return; }
         let total = 0, count = 0;
-        for(let i=1; i<=7; i++){
-            const el = document.querySelector(`input[name="item${i}"]:checked`);
-            if(el) { total += parseInt(el.value); count++; }
-        }
+        for(let i=1; i<=7; i++){ const el = document.querySelector(`input[name="item${i}"]:checked`); if(el) { total += parseInt(el.value); count++; } }
         if(count < 7) { alert("Faltan preguntas"); return; }
         datosFinales = { nombre, fecha, total };
-        document.getElementById('test-form').style.display = 'none';
-        document.getElementById('result-area').style.display = 'block';
-        window.scrollTo(0,0);
+        document.getElementById('test-form').style.display = 'none'; document.getElementById('result-area').style.display = 'block'; window.scrollTo(0,0);
     }
-
-    function guardarLocalmente() {
-        if(!datosFinales) return;
-        let current = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-        let update = { ...current, nombre: datosFinales.nombre, gad: datosFinales.total }; // Guarda en 'gad'
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
-        alert("✅ Datos GAD-7 guardados.");
-    }
-
-    function enviarWhatsApp(){
-        if(!datosFinales) return;
-        let m = `🔸 *GAD-7*%0A👤 ${datosFinales.nombre}%0A📊 Score: ${datosFinales.total}`;
-        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${m}`;
-    }
+    function guardarLocalmente() { if(!datosFinales) return; let current = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; let update = { ...current, nombre: datosFinales.nombre, gad: datosFinales.total }; localStorage.setItem(STORAGE_KEY, JSON.stringify(update)); alert("✅ Datos GAD guardados."); }
+    function enviarWhatsApp(){ if(!datosFinales) return; let m = `🔸 *GAD-7*%0A👤 ${datosFinales.nombre}%0A📊 Score: ${datosFinales.total}`; window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank'); }
 </script>
 </body>
 </html>
