@@ -6,129 +6,91 @@
 <title>Evaluación HADS - CBTa 130</title>
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
-    /* Encabezado VINO/MAGENTA */
-    header { background: linear-gradient(135deg, #880e4f 0%, #ad1457 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    header { background: linear-gradient(135deg, #880e4f 0%, #ad1457 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #880e4f; text-align: center; margin-top: 0; border-bottom: 2px solid #f8bbd0; padding-bottom: 10px; }
-    
     .input-group { margin-bottom: 15px; }
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
-    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-    
+    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; }
     .question-card { background: #fff; border-bottom: 1px solid #eee; padding: 20px 0; }
     .question-title { font-weight: bold; font-size: 1.1em; margin-bottom: 15px; color: #880e4f; }
-    
-    .options-group { display: flex; flex-direction: column; gap: 8px; }
-    .option-label { display: flex; align-items: center; padding: 10px; cursor: pointer; border-radius: 6px; border: 1px solid #eee; transition: background 0.2s; }
+    .option-label { display: flex; align-items: center; padding: 10px; cursor: pointer; border-radius: 6px; border: 1px solid #eee; margin-bottom: 5px; }
     .option-label:hover { background-color: #fce4ec; }
     .option-label input { margin-right: 15px; transform: scale(1.3); }
-    
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
     .whatsapp { background-color: #25D366; }
+    .local-save { background-color: #1565C0; }
+    .btn-back { background-color: #78909c; }
     .reset { background-color: #757575; }
     #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #fce4ec; border-radius: 10px; }
 </style>
 </head>
 <body>
 <header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Escala Hospitalaria (HADS)</span></header>
-
 <div class="container">
     <div id="test-form">
         <h2>Datos del Alumno</h2>
         <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
-        
         <div style="background-color:#fce4ec; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #880e4f;">
             <strong>Instrucciones:</strong> Marque la respuesta que mejor describa cómo se ha sentido durante la <strong>última semana</strong>.
         </div>
-
         <div id="cuestionario"></div>
-
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Enviar</button>
+            <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
         </div>
     </div>
-
     <div id="result-area">
-        <h3 style="color:#880e4f;">¡Registro Completado!</h3>
-        <p>Datos listos para su envío.</p>
+        <h3 style="color:#880e4f;">Resultados Listos</h3>
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Datos por WhatsApp</button>
-            <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
+            <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar WhatsApp</button>
+            <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Ir al Menú</button>
         </div>
     </div>
 </div>
-
 <script>
-    const NUMERO_DESTINO = "523111477413"; 
-    
-    // Estructura: t=Título, vals=Valores [0,1,2,3] o [3,2,1,0] según el orden de las opciones
+    const NUMERO_DESTINO = "523111477413"; const STORAGE_KEY = "cbta_paciente_temp";
     const items = [
-        { t: "1. Me siento tenso o nervioso", opts: ["Casi todo el día", "Gran parte del día", "De vez en cuando", "Nunca"], vals: [3, 2, 1, 0] },
-        { t: "2. Sigo disfrutando de las cosas como siempre", opts: ["Ciertamente, igual", "No tanto como antes", "Solamente un poco", "Ya no disfruto nada"], vals: [0, 1, 2, 3] },
-        { t: "3. Siento temor como si algo malo fuera a suceder", opts: ["Sí, muy intenso", "Sí, pero no intenso", "Sí, pero no me preocupa", "No siento nada de eso"], vals: [3, 2, 1, 0] },
-        { t: "4. Soy capaz de reírme y ver el lado gracioso", opts: ["Igual que siempre", "Algo menos", "Mucho menos", "En absoluto"], vals: [0, 1, 2, 3] },
-        { t: "5. Tengo la cabeza llena de preocupaciones", opts: ["Casi todo el día", "Gran parte del día", "De vez en cuando", "Nunca"], vals: [3, 2, 1, 0] },
-        { t: "6. Me siento alegre", opts: ["Nunca", "Muy pocas veces", "En algunas ocasiones", "Gran parte del día"], vals: [3, 2, 1, 0] },
-        { t: "7. Puedo estar sentado tranquilo y relajado", opts: ["Siempre", "A menudo", "Raras veces", "Nunca"], vals: [0, 1, 2, 3] },
-        { t: "8. Me siento lento y torpe", opts: ["Gran parte del día", "A menudo", "A veces", "Nunca"], vals: [3, 2, 1, 0] },
-        { t: "9. Sensación de nervios/hormigueo en estómago", opts: ["Nunca", "Solo en ocasiones", "A menudo", "Muy a menudo"], vals: [0, 1, 2, 3] },
-        { t: "10. He perdido interés por mi aspecto personal", opts: ["Completamente", "No me cuido bien", "Quizás no me cuide", "Me cuido como siempre"], vals: [3, 2, 1, 0] },
-        { t: "11. Me siento inquieto, no puedo parar de moverme", opts: ["Realmente mucho", "Bastante", "No mucho", "En absoluto"], vals: [3, 2, 1, 0] },
-        { t: "12. Espero las cosas con ilusión", opts: ["Como siempre", "Algo menos", "Mucho menos", "En absoluto"], vals: [0, 1, 2, 3] },
-        { t: "13. Sensaciones repentinas de angustia/temor", opts: ["Muy a menudo", "Con frecuencia", "Raramente", "Nunca"], vals: [3, 2, 1, 0] },
-        { t: "14. Disfruto con un buen libro o programa TV", opts: ["A menudo", "Algunas veces", "Pocas veces", "Casi nunca"], vals: [0, 1, 2, 3] }
+        { t: "1. Tenso/Nervioso", o: ["Casi todo", "Gran parte", "De vez en cuando", "Nunca"], v: [3, 2, 1, 0] },
+        { t: "2. Disfruto cosas", o: ["Igual", "No tanto", "Poco", "Nada"], v: [0, 1, 2, 3] },
+        { t: "3. Temor algo malo", o: ["Sí intenso", "Sí pero no", "Poco", "Nada"], v: [3, 2, 1, 0] },
+        { t: "4. Reír", o: ["Igual", "Algo menos", "Mucho menos", "Nada"], v: [0, 1, 2, 3] },
+        { t: "5. Preocupaciones", o: ["Casi todo", "Gran parte", "De vez en cuando", "Nunca"], v: [3, 2, 1, 0] },
+        { t: "6. Alegre", o: ["Nunca", "Poco", "A veces", "Casi siempre"], v: [3, 2, 1, 0] },
+        { t: "7. Sentado tranquilo", o: ["Siempre", "A menudo", "Raras veces", "Nunca"], v: [0, 1, 2, 3] },
+        { t: "8. Lento/Torpe", o: ["Gran parte", "A menudo", "A veces", "Nunca"], v: [3, 2, 1, 0] },
+        { t: "9. Hormigueo estómago", o: ["Nunca", "Ocasiones", "A menudo", "Muy a menudo"], v: [0, 1, 2, 3] },
+        { t: "10. Interés personal", o: ["Totalmente perdido", "No me cuido bien", "Quizás no", "Me cuido"], v: [3, 2, 1, 0] },
+        { t: "11. Inquieto", o: ["Mucho", "Bastante", "No mucho", "Nada"], v: [3, 2, 1, 0] },
+        { t: "12. Ilusión", o: ["Siempre", "Menos", "Mucho menos", "Nada"], v: [0, 1, 2, 3] },
+        { t: "13. Angustia repentina", o: ["Muy a menudo", "Frecuencia", "Raro", "Nunca"], v: [3, 2, 1, 0] },
+        { t: "14. Libros/TV", o: ["A menudo", "A veces", "Poco", "Nunca"], v: [0, 1, 2, 3] }
     ];
-
     const container = document.getElementById('cuestionario');
-    items.forEach((item, idx) => {
-        const num = idx + 1;
-        let html = `<div class="question-card"><div class="question-title">${item.t}</div><div class="options-group">`;
-        item.opts.forEach((optText, i) => {
-            // El valor real (score) se saca del array vals
-            let score = item.vals[i]; 
-            html += `<label class="option-label"><input type="radio" name="q${num}" value="${score}" required> ${optText}</label>`;
-        });
-        html += `</div></div>`;
-        container.innerHTML += html;
+    items.forEach((it, idx) => {
+        let h = `<div class="question-card"><div class="question-title">${idx+1}. ${it.t}</div>`;
+        it.o.forEach((op, i) => h += `<label class="option-label"><input type="radio" name="q${idx+1}" value="${it.v[i]}"> ${op}</label>`);
+        container.innerHTML += h + `</div>`;
     });
-
     document.getElementById('fecha').valueAsDate = new Date();
     let datosFinales = null;
-
     function finalizarTest() {
-        const nombre = document.getElementById('nombre').value;
-        const fecha = document.getElementById('fecha').value;
+        const nombre = document.getElementById('nombre').value; const fecha = document.getElementById('fecha').value;
         if(!nombre) { alert("Nombre requerido"); return; }
-
-        let scoreA = 0, scoreD = 0, count = 0;
-        
-        for(let i=1; i<=14; i++){
-            const el = document.querySelector(`input[name="q${i}"]:checked`);
-            if(el) {
-                let v = parseInt(el.value);
-                // Impares = Ansiedad, Pares = Depresión
-                if(i % 2 !== 0) scoreA += v; else scoreD += v;
-                count++;
-            }
-        }
-        
-        if(count < 14) { alert(`Faltan preguntas (${count}/14)`); return; }
-
-        datosFinales = { nombre, fecha, scoreA, scoreD };
-
-        document.getElementById('test-form').style.display = 'none';
-        document.getElementById('result-area').style.display = 'block';
-        window.scrollTo(0,0);
+        let sA = 0, sD = 0, c = 0;
+        for(let i=1; i<=14; i++){ const el = document.querySelector(`input[name="q${i}"]:checked`); if(el) { let v = parseInt(el.value); if(i%2!==0) sA+=v; else sD+=v; c++; } }
+        if(c < 14) { alert(`Faltan preguntas (${c}/14)`); return; }
+        datosFinales = { nombre, fecha, hadsA: sA, hadsD: sD };
+        document.getElementById('test-form').style.display = 'none'; document.getElementById('result-area').style.display = 'block'; window.scrollTo(0,0);
     }
-
-    function enviarWhatsApp(){
-        if(!datosFinales) return;
-        let m = `🏥 *DATOS HADS*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A🅰️ Ansiedad: ${datosFinales.scoreA}%0A🇩 Depresión: ${datosFinales.scoreD}`;
-        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${m}`;
-    }
+    function guardarLocalmente() { if(!datosFinales) return; let cur = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; let up = { ...cur, ...datosFinales }; localStorage.setItem(STORAGE_KEY, JSON.stringify(up)); alert("✅ Datos HADS guardados."); }
+    function enviarWhatsApp(){ if(!datosFinales) return; let m = `🏥 *HADS*%0A👤 ${datosFinales.nombre}%0A🅰️ Ans: ${datosFinales.hadsA}%0A🇩 Dep: ${datosFinales.hadsD}`; window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank'); }
 </script>
 </body>
 </html>
+
 
