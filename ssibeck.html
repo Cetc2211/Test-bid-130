@@ -12,17 +12,22 @@
     .input-group { margin-bottom: 15px; }
     label { font-weight: 600; display: block; margin-bottom: 8px; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+    
     .question-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; margin-bottom: 20px; }
     .question-title { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; color: #2c0e58; }
-    .option-label { display: flex; align-items: flex-start; padding: 10px; cursor: pointer; border-radius: 6px; }
-    .option-label:hover { background-color: #f5f5f5; }
-    .option-label input { margin-right: 12px; transform: scale(1.3); flex-shrink: 0; }
+    
+    /* ALINEACIÓN CORREGIDA */
+    .option-label { display: flex; align-items: flex-start; padding: 10px; cursor: pointer; border-radius: 6px; margin-bottom: 5px; }
+    .option-label:hover { background-color: #f3e5f5; }
+    .option-label input { margin-right: 12px; margin-top: 4px; width: 20px; height: 20px; flex-shrink: 0; }
+    
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
     button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
     .whatsapp { background-color: #25D366; }
     .local-save { background-color: #1565C0; }
     .reset { background-color: #757575; }
     .btn-back { background-color: #78909c; }
+    
     #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #f3e5f5; border-radius: 10px; }
     #conditional-block { display: block; }
 </style>
@@ -62,17 +67,147 @@
     </div>
 </div>
 <script>
-    const NUMERO_DESTINO = "523111477413"; const STORAGE_KEY = "cbta_paciente_temp";
-    const itemsP1 = [ { t: "1. Deseo de vivir", o: ["0=Mod/Fuerte", "1=Débil", "2=Ninguno"] }, { t: "2. Deseo de morir", o: ["0=Ninguno", "1=Débil", "2=Mod/Fuerte"] }, { t: "3. Razones vivir/morir", o: ["0=Vivir>Morir", "1=Iguales", "2=Morir>Vivir"] }, { t: "4. Intento activo", o: ["0=Ninguno", "1=Débil", "2=Mod/Fuerte"] }, { t: "5. Deseo pasivo", o: ["0=Evitaría morir", "1=Azar", "2=No evitaría"] } ];
-    const itemsP234 = [ { t: "6. Duración", o: ["0=Breve", "1=Largo", "2=Continuo"] }, { t: "7. Frecuencia", o: ["0=Rara", "1=Intermitente", "2=Persistente"] }, { t: "8. Actitud", o: ["0=Rechazo", "1=Ambivalente", "2=Aceptación"] }, { t: "9. Control", o: ["0=Control", "1=Inseguro", "2=Sin control"] }, { t: "10. Disuasivos", o: ["0=Familia", "1=Preocupación", "2=Sin preocupación"] }, { t: "11. Razón", o: ["0=Atención", "1=Ambos", "2=Escape"] }, { t: "12. Planificación", o: ["0=No", "1=No elaborado", "2=Detallado"] }, { t: "13. Disponibilidad", o: ["0=No", "1=Tiempo", "2=Disponible"] }, { t: "14. Capacidad", o: ["0=Miedo", "1=Inseguro", "2=Seguro"] }, { t: "15. Expectativa", o: ["0=No", "1=Incierto", "2=Sí"] }, { t: "16. Preparación", o: ["0=Ninguna", "1=Parcial", "2=Completa"] }, { t: "17. Nota", o: ["0=No", "1=Empezada", "2=Completa"] }, { t: "18. Actos finales", o: ["0=No", "1=Pensamientos", "2=Definitivos"] }, { t: "19. Ocultamiento", o: ["0=Abierto", "1=Evitó", "2=Engañó"] } ];
-    const itemsP5 = [ { t: "20. Intentos previos", o: ["0=Ninguno", "1=Uno", "2=Más de uno"] }, { t: "21. Intención último", o: ["0=Baja", "1=Mod", "2=Alta"] } ];
-    function render(list, id, start) { const div = document.getElementById(id); list.forEach((item, i) => { const num = start + i; let html = `<div class="question-card"><div class="question-title">${num}. ${item.t}</div>`; item.o.forEach((txt, val) => { const ev = (num===4||num===5) ? 'onchange="verificarSalto()"' : ''; html += `<label class="option-label"><input type="radio" name="item${num}" value="${val}" ${ev}> <span style="font-size:0.9em">${txt}</span></label>`; }); html += `</div>`; div.innerHTML += html; }); }
-    render(itemsP1, 'part1', 1); render(itemsP234, 'part234', 6); render(itemsP5, 'part5', 20); document.getElementById('fecha').valueAsDate = new Date();
-    function verificarSalto() { const q4 = document.querySelector('input[name="item4"]:checked'); const q5 = document.querySelector('input[name="item5"]:checked'); const block = document.getElementById('conditional-block'); if (q4 && q5 && q4.value === "0" && q5.value === "0") { block.style.display = 'none'; block.querySelectorAll('input').forEach(i => i.checked = false); } else { block.style.display = 'block'; } }
+    const NUMERO_DESTINO = "523111477413"; 
+    const STORAGE_KEY = "cbta_paciente_temp";
+
+    const itemsP1 = [ 
+        { t: "1. Deseo de vivir", o: ["0=Moderado a Fuerte", "1=Débil", "2=Ninguno"] }, 
+        { t: "2. Deseo de morir", o: ["0=Ninguno", "1=Débil", "2=Mod/Fuerte"] }, 
+        { t: "3. Razones vivir/morir", o: ["0=Vivir supera a Morir", "1=Iguales", "2=Morir supera a Vivir"] }, 
+        { t: "4. Deseo de intento suicida activo", o: ["0=Ninguno", "1=Débil", "2=Mod/Fuerte"] }, 
+        { t: "5. Deseo suicida pasivo", o: ["0=Tomaría precauciones para vivir", "1=Dejaría al azar", "2=Evitaría pasos para vivir"] } 
+    ];
+    const itemsP234 = [ 
+        { t: "6. Dimensión temporal", o: ["0=Breve, pasajero", "1=Períodos largos", "2=Continuo"] }, 
+        { t: "7. Frecuencia", o: ["0=Rara, ocasional", "1=Intermitente", "2=Persistente"] }, 
+        { t: "8. Actitud hacia la ideación", o: ["0=Rechazo", "1=Ambivalente", "2=Aceptación"] }, 
+        { t: "9. Control sobre la acción", o: ["0=Tiene control", "1=Inseguro", "2=No tiene control"] }, 
+        { t: "10. Factores disuasivos", o: ["0=Familia/religión", "1=Cierta preocupación", "2=Mínima preocupación"] }, 
+        { t: "11. Razones del intento", o: ["0=Manipular/Atención", "1=Combinación", "2=Escape/Finalizar"] }, 
+        { t: "12. Método: Planificación", o: ["0=No considerado", "1=No elaborado", "2=Elaborado y detallado"] }, 
+        { t: "13. Método: Disponibilidad", o: ["0=No disponible", "1=Tiempo/Esfuerzo", "2=Disponible"] }, 
+        { t: "14. Sentido de capacidad", o: ["0=Miedo/No valor", "1=Inseguro", "2=Seguro"] }, 
+        { t: "15. Expectativa de intento", o: ["0=No", "1=Incierto", "2=Sí"] }, 
+        { t: "16. Preparación real", o: ["0=Ninguna", "1=Parcial", "2=Completa"] }, 
+        { t: "17. Nota suicida", o: ["0=No escrita", "1=Empezada", "2=Completa"] }, 
+        { t: "18. Actos finales", o: ["0=Ninguno", "1=Pensamientos", "2=Arreglos definitivos"] }, 
+        { t: "19. Engaño/Ocultamiento", o: ["0=Abierto", "1=Evitó tema", "2=Engañó/Ocultó"] } 
+    ];
+    const itemsP5 = [ 
+        { t: "20. Intentos previos", o: ["0=Ninguno", "1=Uno", "2=Más de uno"] }, 
+        { t: "21. Intención en último intento", o: ["0=Baja", "1=Moderada", "2=Alta"] } 
+    ];
+    
+    function render(list, id, start) { 
+        const div = document.getElementById(id); 
+        list.forEach((item, i) => { 
+            const num = start + i; 
+            let html = `<div class="question-card"><div class="question-title">${num}. ${item.t}</div>`; 
+            
+            item.o.forEach((txt, idx) => { 
+                // CORRECCIÓN: Extraer valor (0,1,2) del texto "0=Texto"
+                let v = txt.split('=')[0]; 
+                
+                // Evento para preguntas 4 y 5
+                const ev = (num === 4 || num === 5) ? 'onchange="verificarSalto()"' : ''; 
+                
+                html += `<label class="option-label">
+                            <input type="radio" name="item${num}" value="${v}" ${ev}> 
+                            <span style="font-size:0.95em">${txt}</span>
+                         </label>`; 
+            }); 
+            html += `</div>`; 
+            div.innerHTML += html; 
+        }); 
+    }
+
+    // Renderizar al cargar
+    render(itemsP1, 'part1', 1); 
+    render(itemsP234, 'part234', 6); 
+    render(itemsP5, 'part5', 20); 
+    
+    document.getElementById('fecha').valueAsDate = new Date();
+
+    function verificarSalto() { 
+        const q4 = document.querySelector('input[name="item4"]:checked'); 
+        const q5 = document.querySelector('input[name="item5"]:checked'); 
+        const block = document.getElementById('conditional-block'); 
+        
+        if (q4 && q5 && q4.value === "0" && q5.value === "0") { 
+            block.style.display = 'none'; 
+            // Limpiar respuestas si se oculta
+            block.querySelectorAll('input').forEach(i => i.checked = false); 
+        } else { 
+            block.style.display = 'block'; 
+        } 
+    }
+
     let datosFinales = null;
-    function finalizarTest() { const nombre = document.getElementById('nombre').value; const fecha = document.getElementById('fecha').value; if(!nombre) { alert("Nombre requerido"); return; } let total = 0, flags = [], skip = false; const q4 = document.querySelector('input[name="item4"]:checked'); const q5 = document.querySelector('input[name="item5"]:checked'); if (!q4 || !q5) { alert("Contesta las primeras 5"); return; } if (q4.value==="0" && q5.value==="0") skip = true; for(let i=1; i<=19; i++) { if(skip && i>=6) continue; const el = document.querySelector(`input[name="item${i}"]:checked`); if(el) { let val = parseInt(el.value); total += val; if((i===4||i===5) && val>=1) flags.push(`C${i}`); if([12,13,15].includes(i) && val===2) flags.push(`C${i}`); } else if (!skip) { alert(`Falta la ${i}`); return; } } const q20 = document.querySelector('input[name="item20"]:checked'); if(!q20) { alert("Falta la 20"); return; } if(parseInt(q20.value)>=1) flags.push("C20"); datosFinales = { nombre, fecha, total, flags }; document.getElementById('test-form').style.display = 'none'; document.getElementById('result-area').style.display = 'block'; window.scrollTo(0,0); }
-    function guardarLocalmente() { if(!datosFinales) return; let cur = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; let up = { ...cur, nombre: datosFinales.nombre, ssi: datosFinales.total, ssiFlags: datosFinales.flags.join(',') }; localStorage.setItem(STORAGE_KEY, JSON.stringify(up)); alert("✅ SSI guardado."); }
-    function enviarWhatsApp(){ if(!datosFinales) return; let m = `🟣 *SSI*%0A👤 ${datosFinales.nombre}%0A📊 Score: ${datosFinales.total}`; if(datosFinales.flags.length>0) m+=`%0A🚩: ${datosFinales.flags.join(',')}`; window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank'); }
+
+    function finalizarTest() { 
+        const nombre = document.getElementById('nombre').value; 
+        const fecha = document.getElementById('fecha').value; 
+        if(!nombre) { alert("Por favor ingresa el nombre."); return; } 
+        
+        let total = 0, flags = [], skip = false; 
+        
+        // Revisar 4 y 5 primero
+        const q4 = document.querySelector('input[name="item4"]:checked'); 
+        const q5 = document.querySelector('input[name="item5"]:checked'); 
+        
+        if (!q4 || !q5) { alert("Por favor contesta al menos las primeras 5 preguntas."); return; } 
+        
+        if (q4.value === "0" && q5.value === "0") skip = true; 
+
+        for(let i=1; i<=19; i++) { 
+            if(skip && i>=6) continue; // Saltar 6-19 si aplica
+            
+            const el = document.querySelector(`input[name="item${i}"]:checked`); 
+            if(el) { 
+                let val = parseInt(el.value); 
+                total += val; 
+                
+                // Flags de riesgo
+                if((i===4||i===5) && val>=1) flags.push(`C${i}`); 
+                if([12,13,15].includes(i) && val===2) flags.push(`C${i}`); 
+            } else if (!skip) { 
+                alert(`Falta responder la pregunta ${i}`); return; 
+            } 
+        } 
+        
+        const q20 = document.querySelector('input[name="item20"]:checked'); 
+        if(!q20) { alert("Falta responder la pregunta 20"); return; } 
+        if(parseInt(q20.value)>=1) flags.push("C20"); 
+
+        const q21 = document.querySelector('input[name="item21"]:checked'); 
+        if(!q21) { alert("Falta responder la pregunta 21"); return; }
+
+        datosFinales = { nombre, fecha, total, flags }; 
+        
+        document.getElementById('test-form').style.display = 'none'; 
+        document.getElementById('result-area').style.display = 'block'; 
+        window.scrollTo(0,0); 
+    }
+
+    function guardarLocalmente() { 
+        if(!datosFinales) return; 
+        let cur = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; 
+        let up = { 
+            ...cur, 
+            nombre: datosFinales.nombre, 
+            ssi: datosFinales.total, 
+            ssiFlags: datosFinales.flags.join(',') 
+        }; 
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(up)); 
+        alert("✅ Datos SSI guardados en el expediente."); 
+    }
+
+    function enviarWhatsApp(){ 
+        if(!datosFinales) return; 
+        let m = `🟣 *SSI*%0A👤 ${datosFinales.nombre}%0A📊 Score: ${datosFinales.total}`; 
+        if(datosFinales.flags.length > 0) m += `%0A🚩 Alertas: ${datosFinales.flags.join(',')}`; 
+        window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank'); 
+    }
 </script>
 </body>
 </html>
