@@ -12,11 +12,32 @@
     .input-group { margin-bottom: 15px; }
     label { font-weight: 600; display: block; margin-bottom: 8px; }
     input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+    
     .question-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; margin-bottom: 20px; }
-    .question-title { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; }
-    .option-label { display: flex; align-items: flex-start; padding: 10px; cursor: pointer; border-radius: 6px; }
-    .option-label:hover { background-color: #f5f5f5; }
-    .option-label input { margin-right: 12px; transform: scale(1.3); flex-shrink: 0; }
+    .question-title { font-weight: bold; font-size: 1.1em; margin-bottom: 15px; color: #1565C0; }
+    
+    /* --- CORRECCIÓN DE ALINEACIÓN --- */
+    .option-label { 
+        display: flex; 
+        align-items: flex-start; /* Alinea arriba */
+        padding: 12px; 
+        cursor: pointer; 
+        border-radius: 6px; 
+        border: 1px solid transparent;
+        margin-bottom: 5px;
+    }
+    .option-label:hover { background-color: #e3f2fd; }
+    
+    .option-label input { 
+        margin-right: 15px; 
+        margin-top: 4px; /* Pequeño ajuste para alinear con primera línea */
+        width: 20px; 
+        height: 20px; 
+        flex-shrink: 0; /* Evita que se aplaste */
+    }
+    
+    .option-text { font-size: 0.95rem; line-height: 1.4; color: #333; }
+
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
     button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
     .whatsapp { background-color: #25D366; }
@@ -37,7 +58,7 @@
         <div id="cuestionario"></div>
         <div class="buttons">
             <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar</button>
-            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar</button>
         </div>
     </div>
     <div id="result-area">
@@ -46,43 +67,51 @@
             <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
             <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar WhatsApp</button>
             <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo</button>
-            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Ir al Menú</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Menú</button>
         </div>
     </div>
 </div>
 <script>
     const NUMERO_DESTINO = "523111477413"; const STORAGE_KEY = "cbta_paciente_temp";
     const items = [
-        { t: "1. Tristeza", o: ["No triste", "Triste gran parte", "Triste todo tiempo", "Inseportable"] },
-        { t: "2. Pesimismo", o: ["No desalentado", "Más desalentado", "Sin esperanza", "Futuro desesperanzador"] },
-        { t: "3. Fracaso", o: ["No fracasado", "He fracasado más", "Muchos fracasos", "Fracaso total"] },
-        { t: "4. Placer", o: ["Igual", "No tanto", "Muy poco", "Ninguno"] },
-        { t: "5. Culpa", o: ["No culpable", "A veces", "Bastante", "Siempre"] },
-        { t: "6. Castigo", o: ["No", "Podría", "Espero", "Siento castigo"] },
-        { t: "7. Disconformidad", o: ["Igual", "Menos confianza", "Decepcionado", "No me gusto"] },
-        { t: "8. Autocrítica", o: ["No", "Más crítico", "Critico errores", "Me culpo todo"] },
-        { t: "9. Suicidio", o: ["No", "Pensamientos", "Me gustaría", "Me suicidaría"] },
-        { t: "10. Llanto", o: ["No más", "Más", "Por todo", "Ganas sin poder"] },
-        { t: "11. Agitación", o: ["No", "Más inquieto", "Difícil quieto", "Moverme siempre"] },
-        { t: "12. Interés", o: ["No perdido", "Menos", "Casi todo", "Todo"] },
-        { t: "13. Indecisión", o: ["Igual", "Más difícil", "Mucha dificultad", "Imposible"] },
-        { t: "14. Valor", o: ["No inútil", "No tan valioso", "Menos valioso", "Inútil"] },
-        { t: "15. Energía", o: ["Igual", "Menos", "Insuficiente", "Sin energía"] },
-        { t: "16. Sueño", o: ["Igual", "Algo +/-", "Mucho +/-", "Todo/Nada"] },
-        { t: "17. Irritabilidad", o: ["No", "Más", "Mucho más", "Siempre"] },
-        { t: "18. Apetito", o: ["Igual", "Algo +/-", "Mucho +/-", "Nada/Todo"] },
-        { t: "19. Concentración", o: ["Igual", "No tan bien", "Difícil", "Nada"] },
-        { t: "20. Cansancio", o: ["No más", "Más fácil", "Demasiado", "Casi todo"] },
-        { t: "21. Sexo", o: ["Igual", "Menos", "Mucho menos", "Perdido"] }
+        { t: "1. Tristeza", o: ["No me siento triste.", "Me siento triste gran parte del tiempo.", "Me siento triste todo el tiempo.", "Me siento tan triste o desgraciado que no puedo soportarlo."] },
+        { t: "2. Pesimismo", o: ["No estoy desalentado respecto a mi futuro.", "Me siento más desalentado respecto de mi futuro que lo habitual.", "No espero que las cosas funcionen para mi.", "Siento que no hay esperanza para mi futuro y que sólo puede empeorar."] },
+        { t: "3. Fracaso", o: ["No me siento como un fracasado.", "He fracasado más de lo que hubiera debido.", "Cuando miro hacia atrás, veo muchos fracasos.", "Siento que como persona soy un fracaso total."] },
+        { t: "4. Pérdida de Placer", o: ["Obtengo tanto placer como siempre por las cosas.", "No disfruto tanto de las cosas como solía hacerlo.", "Obtengo muy poco placer de las cosas que solía disfrutar.", "No puedo obtener ningún placer de las cosas."] },
+        { t: "5. Sentimientos de Culpa", o: ["No me siento particularmente culpable.", "Me siento culpable respecto de varias cosas que he hecho.", "Me siento bastante culpable la mayor parte del tiempo.", "Me siento culpable todo el tiempo."] },
+        { t: "6. Sentimientos de Castigo", o: ["No siento que este siendo castigado.", "Siento que tal vez pueda ser castigado.", "Espero ser castigado.", "Siento que estoy siendo castigado."] },
+        { t: "7. Disconformidad con uno mismo", o: ["Siento lo mismo que siempre respecto a mi mismo.", "He perdido confianza en mí mismo.", "Estoy decepcionado conmigo mismo.", "No me gusto a mí mismo."] },
+        { t: "8. Autocrítica", o: ["No me critico ni me culpo más de lo habitual.", "Soy más crítico conmigo mismo de lo que solía ser.", "Me critico a mí mismo por todos mis errores.", "Me culpo a mí mismo por todo lo malo que sucede."] },
+        { t: "9. Pensamientos Suicidas", o: ["No tengo ningún pensamiento de matarme.", "He tenido pensamientos de matarme, pero no lo haría.", "Me gustaría matarme.", "Me mataría si tuviera la oportunidad."] },
+        { t: "10. Llanto", o: ["No lloro más de lo que solía hacerlo.", "Lloro más de lo que solía hacerlo.", "Lloro por cualquier pequeñez.", "Siento ganas de llorar pero no puedo."] },
+        { t: "11. Agitación", o: ["No estoy más inquieto o tenso que lo habitual.", "Me siento más inquieto o tenso que lo habitual.", "Estoy tan inquieto o agitado que me es difícil quedarme quieto.", "Estoy tan inquieto o agitado que tengo que estar moviéndome."] },
+        { t: "12. Pérdida de Interés", o: ["No he perdido el interés en otras actividades o personas.", "Estoy menos interesado que antes en otras personas o cosas.", "He perdido casi todo el interés en otras personas o cosas.", "Me es difícil interesarme por cualquier cosa."] },
+        { t: "13. Indecisión", o: ["Tomo mis decisiones tan bien como siempre.", "Me resulta más difícil que de costumbre tomar decisiones.", "Encuentro mucha más dificultad que antes para tomar decisiones.", "Tengo problemas para tomar cualquier decisión."] },
+        { t: "14. Desvalorización", o: ["No siento que yo no sea valioso.", "No me considero tan valioso y útil como solía ser.", "Me siento menos valioso cuando me comparo con otros.", "Siento que no valgo nada."] },
+        { t: "15. Pérdida de Energía", o: ["Tengo tanta energía como siempre.", "Tengo menos energía que la que solía tener.", "No tengo suficiente energía para hacer demasiado.", "No tengo energía suficiente para hacer nada."] },
+        { t: "16. Cambios en el Sueño", o: ["No he experimentado ningún cambio en mis hábitos de sueño.", "Duermo un poco más/menos de lo habitual.", "Duermo mucho más/menos de lo habitual.", "Duermo la mayor parte del día / Me despierto muy temprano y no puedo volver a dormir."] },
+        { t: "17. Irritabilidad", o: ["No estoy más irritable que lo habitual.", "Estoy más irritable que lo habitual.", "Estoy mucho más irritable que lo habitual.", "Estoy irritable todo el tiempo."] },
+        { t: "18. Cambios en el Apetito", o: ["No he experimentado ningún cambio en mi apetito.", "Mi apetito es un poco menor/mayor que lo habitual.", "Mi apetito es mucho menor/mayor que lo habitual.", "No tengo apetito en absoluto / Quiero comer todo el tiempo."] },
+        { t: "19. Dificultad de Concentración", o: ["Puedo concentrarme tan bien como siempre.", "No puedo concentrarme tan bien como habitualmente.", "Me es difícil mantener la mente en algo por mucho tiempo.", "Encuentro que no puedo concentrarme en nada."] },
+        { t: "20. Cansancio o Fatiga", o: ["No estoy más cansado o fatigado que lo habitual.", "Me fatigo o canso más fácilmente que lo habitual.", "Estoy demasiado fatigado o cansado para hacer muchas cosas.", "Estoy demasiado fatigado o cansado para hacer la mayoría de las cosas."] },
+        { t: "21. Pérdida de Interés en el Sexo", o: ["No he notado ningún cambio reciente en mi interés por el sexo.", "Estoy menos interesado en el sexo de lo que solía estar.", "Estoy mucho menos interesado en el sexo ahora.", "He perdido completamente el interés en el sexo."] }
     ];
+
     const divCuestionario = document.getElementById('cuestionario');
     items.forEach((item, index) => {
-        let html = `<div class="question-card"><div class="question-title">${index+1}. ${item.t}</div>`;
-        item.o.forEach((txt, val) => html += `<label class="option-label"><input type="radio" name="item${index+1}" value="${val}"> <span>${val} - ${txt}</span></label>`);
+        const num = index + 1;
+        let html = `<div class="question-card"><div class="question-title">${num}. ${item.t}</div>`;
+        item.o.forEach((txt, val) => {
+            html += `<label class="option-label">
+                        <input type="radio" name="item${num}" value="${val}">
+                        <span class="option-text">${txt}</span>
+                     </label>`;
+        });
         divCuestionario.innerHTML += html + `</div>`;
     });
     document.getElementById('fecha').valueAsDate = new Date();
     let datosFinales = null;
+
     function finalizarTest() {
         const nombre = document.getElementById('nombre').value; const edad = document.getElementById('edad').value; const fecha = document.getElementById('fecha').value;
         if (!nombre || !edad) { alert("Datos incompletos"); return; }
