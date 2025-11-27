@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrevista Clínica Integral - CBTa 130</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #eceff1; color: #263238; padding: 20px; line-height: 1.5; }
+    .paper { background: white; max-width: 950px; margin: 0 auto; padding: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+    
+    /* Encabezados */
+    .header { text-align: center; border-bottom: 3px solid #37474f; padding-bottom: 15px; margin-bottom: 25px; }
+    .header h1 { font-size: 1.4rem; margin: 0; color: #37474f; }
+    .header h2 { font-size: 1.1rem; margin: 5px 0; color: #546e7a; }
+    
+    .section-header { 
+        background: #455a64; color: white; padding: 10px 15px; 
+        font-weight: bold; margin-top: 40px; margin-bottom: 15px; 
+        border-radius: 4px; text-transform: uppercase; font-size: 1rem; border-left: 5px solid #263238;
+    }
+    
+    .sub-header { 
+        color: #006064; border-bottom: 1px solid #b2ebf2; 
+        padding-bottom: 5px; margin-top: 25px; margin-bottom: 10px; font-weight: bold; font-size: 0.95rem;
+    }
+
+    /* Alertas */
+    .alert-box { background-color: #ffebee; border: 1px solid #ef5350; color: #c62828; padding: 10px; border-radius: 5px; font-weight: bold; margin: 10px 0; display: none; }
+
+    /* Formulario */
+    .row { display: flex; gap: 15px; margin-bottom: 12px; flex-wrap: wrap; }
+    .col { flex: 1; min-width: 200px; }
+    
+    label { font-weight: 600; font-size: 0.85rem; display: block; color: #455a64; margin-bottom: 4px; }
+    
+    input[type="text"], input[type="number"], input[type="date"], input[type="time"], select { 
+        width: 100%; padding: 8px; border: 1px solid #cfd8dc; border-radius: 4px; 
+        font-size: 0.95rem; box-sizing: border-box; background: #fafafa;
+    }
+    input:focus, textarea:focus { border-color: #006064; outline: none; background: #fff; }
+
+    textarea { 
+        width: 100%; padding: 10px; border: 1px solid #cfd8dc; border-radius: 4px; 
+        font-size: 0.95rem; min-height: 60px; resize: vertical; font-family: inherit;
+    }
+
+    /* Tablas */
+    .styled-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+    .styled-table th { background: #cfd8dc; padding: 8px; text-align: left; border: 1px solid #b0bec5; }
+    .styled-table td { border: 1px solid #e0e0e0; padding: 6px; }
+    .styled-table input[type="radio"] { margin: 0 auto; display: block; }
+
+    /* Checkboxes & Radios */
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 5px; }
+    .check-label { display: flex; align-items: flex-start; gap: 6px; font-size: 0.9rem; cursor: pointer; }
+    .check-label input { margin-top: 3px; }
+
+    /* Botones Flotantes */
+    .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+    .btn-fab { 
+        background: #263238; color: white; border: none; padding: 15px 20px; 
+        border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+        display: flex; align-items: center; gap: 10px; transition: transform 0.2s;
+    }
+    .btn-fab:hover { transform: scale(1.05); }
+    .btn-pdf { background: #bf360c; }
+    .btn-save { background: #0277bd; }
+    .btn-menu { background: #546e7a; }
+
+    /* Impresión */
+    @media print { .fab-container { display: none; } body { background: white; padding: 0; } .paper { box-shadow: none; max-width: 100%; padding: 20px; } }
+</style>
+</head>
+<body>
+
+<div class="paper">
+    <div class="header">
+        <h1>CENTRO DE BACHILLERATO TECNOLÓGICO AGROPECUARIO No. 130</h1>
+        <h2>ENTREVISTA CLÍNICA PSICOPEDAGÓGICA INTEGRAL (v3.0)</h2>
+    </div>
+
+    <!-- CONTROL -->
+    <div class="row" style="background:#eceff1; padding:10px; border-radius:5px;">
+        <div class="col"><label>Expediente No.:</label><input type="text" id="expediente"></div>
+        <div class="col"><label>Fecha:</label><input type="date" id="fecha"></div>
+        <div class="col"><label>Entrevistador:</label><input type="text" id="entrevistador" value="Psic. Cecilio Topete Cruz"></div>
+    </div>
+
+    <!-- A. ENCUADRE -->
+    <div class="section-header">SECCIÓN A: DATOS DE IDENTIFICACIÓN</div>
+    <div class="row">
+        <div class="col" style="flex:2"><label>Nombre Completo:</label><input type="text" id="nombre"></div>
+        <div class="col"><label>Edad:</label><input type="number" id="edad"></div>
+        <div class="col"><label>Semestre/Grupo:</label><input type="text" id="semestre"></div>
+    </div>
+
+    <!-- B. MOTIVO -->
+    <div class="section-header">SECCIÓN B: MOTIVO DE CONSULTA</div>
+    <textarea id="motivoConsulta" placeholder="¿Qué te trae por aquí?"></textarea>
+    <label style="margin-top:10px;">Historia del Problema (Inicio, evolución):</label>
+    <textarea id="historiaProblema" style="height:100px;"></textarea>
+
+    <!-- C. FAMILIA -->
+    <div class="section-header">SECCIÓN C: HISTORIA FAMILIAR</div>
+    <label>Dinámica Familiar y Conflictos:</label>
+    <textarea id="dinamiaFamiliar"></textarea>
+
+    <!-- D. ACADÉMICA -->
+    <div class="section-header">SECCIÓN D: HISTORIA ACADÉMICA</div>
+    <div class="row">
+        <div class="col"><label>Promedio:</label><input type="text" id="promedio"></div>
+        <div class="col"><label>Materias Difíciles:</label><input type="text" id="matDif"></div>
+    </div>
+    <label>Hábitos de Estudio:</label>
+    <textarea id="habitos"></textarea>
+
+    <!-- F. EMOCIONAL (AMPLIADO) -->
+    <div class="section-header">SECCIÓN F: ÁREA EMOCIONAL Y PSICOLÓGICA</div>
+    
+    <div class="sub-header">12. Estado Emocional Actual</div>
+    <div class="row">
+        <div class="col"><label>Escala de Ánimo (1-10):</label><input type="number" id="animoScale" min="1" max="10"></div>
+        <div class="col">
+            <label>Predominio:</label>
+            <select id="predominioEmocional">
+                <option value="">-- Seleccione --</option>
+                <option value="Tristeza">Tristeza persistente</option>
+                <option value="Ansiedad">Ansiedad/Nerviosismo</option>
+                <option value="Irritabilidad">Irritabilidad/Enojo</option>
+                <option value="Apatía">Apatía/Desgano</option>
+                <option value="Estable">Estable y positivo</option>
+            </select>
+        </div>
+    </div>
+
+    <label style="margin-top:10px;">Síntomas Específicos (Últimas 2 semanas):</label>
+    <div class="check-grid">
+        <label class="check-label"><input type="checkbox" id="sin1"> Tristeza sin razón</label>
+        <label class="check-label"><input type="checkbox" id="sin2"> Ganas de llorar</label>
+        <label class="check-label"><input type="checkbox" id="sin3"> Pérdida interés</label>
+        <label class="check-label"><input type="checkbox" id="sin4"> Fatiga/Energía baja</label>
+        <label class="check-label"><input type="checkbox" id="sin5"> Problemas sueño</label>
+        <label class="check-label"><input type="checkbox" id="sin6"> Cambios apetito</label>
+        <label class="check-label"><input type="checkbox" id="sin7"> Dif. Concentración</label>
+        <label class="check-label"><input type="checkbox" id="sin8"> Culpa excesiva</label>
+        <label class="check-label"><input type="checkbox" id="sin9"> Ataques pánico</label>
+    </div>
+
+    <!-- ALERTA DE CRISIS -->
+    <div class="sub-header" style="color:#c62828; border-color:#ef5350;">⚠️ Exploración de Riesgo (Protocolo Crisis)</div>
+    <div class="row">
+        <div class="col"><label>¿Ideas de muerte?</label><select id="ideaMuerte" onchange="checkRisk()"><option value="No">No</option><option value="Si">Sí</option></select></div>
+        <div class="col"><label>¿Ideas de daño?</label><select id="ideaDano" onchange="checkRisk()"><option value="No">No</option><option value="Si">Sí</option></select></div>
+        <div class="col"><label>¿Plan específico?</label><select id="planSuicida" onchange="checkRisk()"><option value="No">No</option><option value="Si">Sí</option></select></div>
+    </div>
+    
+    <div id="riskAlert" class="alert-box">🚨 ALERTA: INDICADORES DE RIESGO DETECTADOS. ACTIVAR PROTOCOLO.</div>
+    <textarea id="detalleRiesgo" placeholder="Detalles del riesgo, plan, medios y factores protectores..." style="border-color:#ef5350;"></textarea>
+
+    <div class="sub-header">13. Historia Salud Mental</div>
+    <div class="row">
+        <div class="col"><label>Atención Previa:</label><input type="text" id="atencionPrevia" placeholder="Psicológica / Psiquiátrica"></div>
+        <div class="col"><label>Autolesiones:</label><select id="autolesiones"><option value="Nunca">Nunca</option><option value="Pasado">Pasado</option><option value="Actual">Actual</option></select></div>
+    </div>
+
+    <!-- G. FACTORES DE RIESGO -->
+    <div class="section-header">SECCIÓN G: FACTORES Y CONDUCTAS DE RIESGO</div>
+    
+    <div class="sub-header">15. Consumo de Sustancias</div>
+    <table class="styled-table">
+        <thead><tr><th>Sustancia</th><th>Consumo</th><th>Frecuencia</th><th>Edad Inicio</th></tr></thead>
+        <tbody>
+            <tr><td>Tabaco</td><td><input type="checkbox" id="usoTabaco"></td><td><input type="text" id="frecTabaco"></td><td><input type="text" id="edadTabaco"></td></tr>
+            <tr><td>Alcohol</td><td><input type="checkbox" id="usoAlcohol"></td><td><input type="text" id="frecAlcohol"></td><td><input type="text" id="edadAlcohol"></td></tr>
+            <tr><td>Marihuana</td><td><input type="checkbox" id="usoMarihuana"></td><td><input type="text" id="frecMarihuana"></td><td><input type="text" id="edadMarihuana"></td></tr>
+            <tr><td>Otras</td><td><input type="checkbox" id="usoOtras"></td><td><input type="text" id="frecOtras"></td><td><input type="text" id="edadOtras"></td></tr>
+        </tbody>
+    </table>
+
+    <div class="sub-header">16-18. Otros Riesgos</div>
+    <div class="check-grid">
+        <label class="check-label"><input type="checkbox" id="riesgoSexual"> Actividad sexual riesgo</label>
+        <label class="check-label"><input type="checkbox" id="riesgoPeleas"> Peleas frecuentes</label>
+        <label class="check-label"><input type="checkbox" id="riesgoRedes"> Uso excesivo redes</label>
+        <label class="check-label"><input type="checkbox" id="riesgoBullying"> Acoso/Bullying</label>
+        <label class="check-label"><input type="checkbox" id="riesgoAlim"> Conducta alimentaria</label>
+    </div>
+
+    <!-- H. COGNITIVO -->
+    <div class="section-header">SECCIÓN H: FUNCIONAMIENTO COGNITIVO</div>
+    <div class="row">
+        <div class="col"><label>Atención/Concentración:</label><input type="text" id="cogAtencion"></div>
+        <div class="col"><label>Memoria:</label><input type="text" id="cogMemoria"></div>
+    </div>
+    <label>Dificultades de Aprendizaje (Lectura, Escritura, Matemáticas):</label>
+    <textarea id="difAprendizaje"></textarea>
+
+    <!-- I. VOCACIONAL -->
+    <div class="section-header">SECCIÓN I: VOCACIONAL Y PROYECTO DE VIDA</div>
+    <label>Intereses Principales:</label>
+    <input type="text" id="interesesVoc">
+    <label>Metas a Corto/Mediano Plazo:</label>
+    <textarea id="metasVida"></textarea>
+
+    <!-- K. ESTADO MENTAL -->
+    <div class="section-header">SECCIÓN K: EXAMEN MENTAL (Observación)</div>
+    <div class="row">
+        <div class="col"><label>Apariencia:</label><input type="text" id="emApariencia"></div>
+        <div class="col"><label>Habla/Lenguaje:</label><input type="text" id="emHabla"></div>
+        <div class="col"><label>Ánimo/Afecto:</label><input type="text" id="emAfecto"></div>
+    </div>
+    <div class="row">
+        <div class="col"><label>Pensamiento:</label><input type="text" id="emPensamiento"></div>
+        <div class="col"><label>Juicio/Insight:</label><input type="text" id="emJuicio"></div>
+    </div>
+
+    <!-- M. IMPRESIÓN CLÍNICA -->
+    <div class="section-header">SECCIÓN M: IMPRESIÓN Y FORMULACIÓN</div>
+    
+    <label>35. Impresión Diagnóstica (Problema principal):</label>
+    <textarea id="impDiagnostica"></textarea>
+
+    <label>36. Hipótesis (DSM-5 / CIE-11):</label>
+    <input type="text" id="hipotesisDiag">
+
+    <label>37. Evaluación de Riesgo Global:</label>
+    <div class="check-inline">
+        <label class="check-label"><input type="radio" name="riesgoGlobal" value="Bajo"> Bajo</label>
+        <label class="check-label"><input type="radio" name="riesgoGlobal" value="Moderado"> Moderado</label>
+        <label class="check-label"><input type="radio" name="riesgoGlobal" value="Alto"> Alto</label>
+        <label class="check-label"><input type="radio" name="riesgoGlobal" value="Inminente"> Inminente</label>
+    </div>
+
+    <label style="margin-top:10px;">39. Plan de Intervención Recomendado:</label>
+    <textarea id="planIntervencion" placeholder="Psicoterapia, canalización, seguimiento..."></textarea>
+
+    <div class="sub-header">Firmas</div>
+    <div class="row" style="margin-top:30px;">
+        <div class="col" style="text-align:center; border-top:1px solid #ccc; padding-top:5px;">Firma Entrevistador</div>
+        <div class="col" style="text-align:center; border-top:1px solid #ccc; padding-top:5px;">Vo.Bo. Coordinación</div>
+    </div>
+
+</div>
+
+<!-- BOTONES -->
+<div class="fab-container">
+    <button class="btn-fab btn-save" onclick="guardarLocal()">💾 Guardar</button>
+    <button class="btn-fab btn-pdf" onclick="generarPDFCompleto()">📄 PDF Oficial</button>
+    <button class="btn-fab btn-menu" onclick="location.href='index.html'">🏠 Salir</button>
+</div>
+
+<script>
+    const STORAGE_KEY = "cbta_entrevista_full_v3";
+    document.getElementById('fecha').valueAsDate = new Date();
+
+    function checkRisk() {
+        const i1 = document.getElementById('ideaMuerte').value;
+        const i2 = document.getElementById('ideaDano').value;
+        const i3 = document.getElementById('planSuicida').value;
+        const alertBox = document.getElementById('riskAlert');
+        
+        if(i1 === "Si" || i2 === "Si" || i3 === "Si") {
+            alertBox.style.display = "block";
+        } else {
+            alertBox.style.display = "none";
+        }
+    }
+
+    // Cargar datos
+    window.onload = function() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if(saved) {
+            const data = JSON.parse(saved);
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                if(input.id && data[input.id]) {
+                    if(input.type === "checkbox") input.checked = data[input.id];
+                    else if(input.type === "radio") {
+                        if(input.value === data[input.name]) input.checked = true;
+                    } else input.value = data[input.id];
+                }
+            });
+            checkRisk(); // Verificar alerta al cargar
+        }
+    };
+
+    function guardarLocal() {
+        const data = {};
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            if(input.id) {
+                if(input.type === "checkbox") data[input.id] = input.checked;
+                else if(input.type === "radio") { if(input.checked) data[input.name] = input.value; }
+                else data[input.id] = input.value;
+            }
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        alert("✅ Entrevista guardada en dispositivo.");
+    }
+
+    function generarPDFCompleto() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        let y = 20;
+        
+        // Helpers
+        const val = (id) => document.getElementById(id).value || "---";
+        const chk = (id) => document.getElementById(id).checked ? "SÍ" : "NO";
+        
+        const addTitle = (t) => {
+            if(y>270) { doc.addPage(); y=20; }
+            doc.setFillColor(230); doc.rect(10, y, 190, 7, 'F');
+            doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+            doc.text(t, 12, y+5); y+=12;
+        };
+        
+        const addField = (lbl, txt) => {
+            if(y>270) { doc.addPage(); y=20; }
+            doc.setFont("helvetica", "bold"); doc.text(lbl, 12, y);
+            
+            const lines = doc.splitTextToSize(txt, 140);
+            doc.setFont("helvetica", "normal");
+            doc.text(lines, 60, y);
+            y += (lines.length * 5) + 3;
+        };
+
+        // Header
+        doc.setFontSize(14); doc.setFont("helvetica", "bold");
+        doc.text("ENTREVISTA CLÍNICA INTEGRAL (CBTa 130)", 105, y, null, null, "center"); y+=10;
+        
+        doc.setFontSize(9); doc.setFont("helvetica", "normal");
+        doc.text(`Expediente: ${val('expediente')} | Fecha: ${val('fecha')} | Entrevistador: ${val('entrevistador')}`, 12, y); y+=10;
+
+        addTitle("A. DATOS GENERALES");
+        addField("Estudiante:", `${val('nombre')} (${val('edad')} años)`);
+        addField("Escolar:", val('semestre'));
+
+        addTitle("B. MOTIVO Y C. FAMILIA");
+        addField("Motivo:", val('motivoConsulta'));
+        addField("Historia:", val('historiaProblema'));
+        addField("Dinámica Fam:", val('dinamiaFamiliar'));
+
+        addTitle("F. ÁREA EMOCIONAL Y RIESGO");
+        addField("Estado Ánimo:", `Nivel: ${val('animoScale')}/10 | Predominio: ${val('predominioEmocional')}`);
+        
+        let riskText = `Muerte: ${val('ideaMuerte')} | Daño: ${val('ideaDano')} | Plan: ${val('planSuicida')}`;
+        doc.setTextColor(198, 40, 40); // Rojo
+        addField("Riesgo Suicida:", riskText);
+        doc.setTextColor(0);
+        
+        if(val('detalleRiesgo') !== "---") addField("Detalle Riesgo:", val('detalleRiesgo'));
+        addField("Autolesiones:", val('autolesiones'));
+
+        addTitle("G. CONDUCTAS DE RIESGO");
+        let sust = [];
+        if(document.getElementById('usoTabaco').checked) sust.push("Tabaco");
+        if(document.getElementById('usoAlcohol').checked) sust.push("Alcohol");
+        if(document.getElementById('usoMarihuana').checked) sust.push("Marihuana");
+        if(document.getElementById('usoOtras').checked) sust.push("Otras");
+        addField("Sustancias:", sust.join(", ") || "Ninguna reportada");
+        
+        let otrosR = [];
+        if(document.getElementById('riesgoSexual').checked) otrosR.push("Sexual");
+        if(document.getElementById('riesgoPeleas').checked) otrosR.push("Violencia");
+        if(document.getElementById('riesgoBullying').checked) otrosR.push("Bullying");
+        addField("Otros Riesgos:", otrosR.join(", ") || "Negados");
+
+        addTitle("K. EXAMEN MENTAL");
+        addField("Observación:", `Apariencia: ${val('emApariencia')} | Juicio: ${val('emJuicio')}`);
+        addField("Procesos:", `Pensamiento: ${val('emPensamiento')} | Afecto: ${val('emAfecto')}`);
+
+        addTitle("M. IMPRESIÓN Y PLAN");
+        addField("Impresión Dx:", val('impDiagnostica'));
+        addField("Hipótesis:", val('hipotesisDiag'));
+        
+        const rG = document.querySelector('input[name="riesgoGlobal"]:checked');
+        doc.setFont("helvetica", "bold");
+        doc.text(`RIESGO GLOBAL ESTIMADO: ${rG ? rG.value : "No evaluado"}`, 12, y); y+=8;
+        
+        addField("Plan Intervención:", val('planIntervencion'));
+
+        y += 15;
+        doc.line(70, y, 140, y);
+        doc.text("Firma Profesional", 105, y+5, null, null, "center");
+
+        doc.save(`Entrevista_${val('nombre')}.pdf`);
+    }
+</script>
+</body>
+</html>
+
+
