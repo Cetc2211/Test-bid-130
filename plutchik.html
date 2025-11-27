@@ -6,116 +6,71 @@
 <title>Evaluación Plutchik - CBTa 130</title>
 <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1c1e; }
-    header { background: linear-gradient(135deg, #5d4037 0%, #795548 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    header { background: linear-gradient(135deg, #5d4037 0%, #795548 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #5d4037; text-align: center; margin-top: 0; border-bottom: 2px solid #d7ccc8; padding-bottom: 10px; }
-    
     .input-group { margin-bottom: 15px; }
-    label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
-    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-    
+    label { font-weight: 600; display: block; margin-bottom: 8px; }
+    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
     .table-container { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; min-width: 600px; }
     th { background-color: #efebe9; color: #5d4037; padding: 10px; text-align: center; position: sticky; top: 0; }
     td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
     td:first-child { text-align: left; font-weight: 500; width: 60%; padding-left: 10px; }
     tr:nth-child(even) { background-color: #fafafa; }
-    
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
     .whatsapp { background-color: #25D366; }
+    .btn-back { background-color: #78909c; }
     input[type="radio"] { transform: scale(1.5); cursor: pointer; }
 </style>
 </head>
 <body>
-<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Escala de Riesgo (Plutchik)</span></header>
-
+<header>CBTa No.130<br><span style="font-size:0.8em;">Escala de Riesgo (Plutchik)</span></header>
 <div class="container">
     <div id="test-form">
         <h2>Datos del Alumno</h2>
-        <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
+        <div class="input-group"><label>Nombre:</label><input type="text" id="nombre" required></div>
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
-        
         <div style="background-color:#efebe9; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #5d4037;">
-            <strong>Instrucciones:</strong> Responda SÍ o NO a las siguientes preguntas sobre lo que ha sentido o hecho.
+            <strong>Instrucciones:</strong> Responda SÍ o NO.
         </div>
-
         <div class="table-container">
-            <table>
-                <thead>
-                    <tr><th>Pregunta</th><th>SÍ (1)</th><th>NO (0)</th></tr>
-                </thead>
-                <tbody id="tabla-preguntas"></tbody>
-            </table>
+            <table><thead><tr><th>Pregunta</th><th>SÍ (1)</th><th>NO (0)</th></tr></thead><tbody id="tabla-preguntas"></tbody></table>
         </div>
-
         <div class="buttons">
             <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar y Enviar</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
         </div>
     </div>
 </div>
-
 <script>
-    const NUMERO_DESTINO = "523111477413"; 
-    
-    const preguntas = [
-        "1. ¿Toma medicamentos habituales (aspirinas, dormir)?",
-        "2. ¿Tiene dificultades para conciliar el sueño?",
-        "3. ¿A veces nota que podría perder el control?",
-        "4. ¿Tiene poco interés en relacionarse con la gente?",
-        "5. ¿Ve su futuro con más pesimismo que optimismo?",
-        "6. ¿Se ha sentido alguna vez inútil o sin valor?",
-        "7. ¿Ve su futuro sin ninguna esperanza?",
-        "8. ¿Se ha sentido tan fracasado que quería abandonarlo todo?",
-        "9. ¿Está deprimido ahora?",
-        "10. ¿Está usted separado, divorciado o viudo?",
-        "11. ¿Sabe si algún familiar ha intentado suicidarse?",
-        "12. ¿Se ha sentido tan enfadado capaz de matar a alguien?",
-        "13. ¿Ha pensado alguna vez en suicidarse?",
-        "14. ¿Le ha comentado a alguien que quería suicidarse?",
-        "15. ¿Ha intentado alguna vez quitarse la vida?"
-    ];
-
+    const NUMERO_DESTINO = "523111477413"; const STORAGE_KEY = "cbta_paciente_temp";
+    const preguntas = ["1. Medicamentos habituales", "2. Dificultad sueño", "3. Perder control", "4. Poco interés gente", "5. Futuro pesimismo", "6. Inútil/sin valor", "7. Futuro sin esperanza", "8. Fracasado/abandonar", "9. Deprimido ahora", "10. Separado/Viudo", "11. Familiar suicida", "12. Capaz matar", "13. Pensado suicidio", "14. Comentado suicidio", "15. Intentado suicidio"];
     const tbody = document.getElementById('tabla-preguntas');
-    preguntas.forEach((p, i) => {
-        let html = `<tr><td>${p}</td>
-            <td><input type="radio" name="p${i+1}" value="1"></td>
-            <td><input type="radio" name="p${i+1}" value="0"></td></tr>`;
-        tbody.innerHTML += html;
-    });
+    preguntas.forEach((p, i) => { tbody.innerHTML += `<tr><td>${p}</td><td><input type="radio" name="p${i+1}" value="1"></td><td><input type="radio" name="p${i+1}" value="0"></td></tr>`; });
     document.getElementById('fecha').valueAsDate = new Date();
-
     function finalizarTest() {
-        const nombre = document.getElementById('nombre').value;
-        const fecha = document.getElementById('fecha').value;
-        if(!nombre) { alert("Nombre requerido"); return; }
-
-        let total = 0, count = 0;
-        let flags = [];
-
-        for(let i=1; i<=15; i++){
-            const el = document.querySelector(`input[name="p${i}"]:checked`);
-            if(el) { 
-                let val = parseInt(el.value);
-                total += val;
-                count++; 
-                // Items críticos
-                if(val === 1) {
-                    if(i===13) flags.push("Idea");
-                    if(i===14) flags.push("Com");
-                    if(i===15) flags.push("Intento");
-                }
-            }
-        }
-        
+        const nombre = document.getElementById('nombre').value; if(!nombre) { alert("Nombre requerido"); return; }
+        let total = 0, count = 0, flags = [];
+        for(let i=1; i<=15; i++){ const el = document.querySelector(`input[name="p${i}"]:checked`); if(el) { let val = parseInt(el.value); total += val; count++; if(val===1 && [13,14,15].includes(i)) flags.push("Crítico"); } }
         if(count < 15) { alert(`Faltan preguntas (${count}/15)`); return; }
-
-        let m = `🟤 *DATOS PLUTCHIK*%0A👤 ${nombre}%0A📅 ${fecha}%0A📊 Score: ${total}/15`;
-        if(flags.length > 0) m += `%0A🚩 Alertas: ${flags.join(', ')}`;
         
-        window.location.href = `https://wa.me/${NUMERO_DESTINO}?text=${m}`;
+        // Guardar
+        let cur = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let up = { ...cur, nombre: nombre, plut: total };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(up));
+
+        let m = `🟤 *PLUTCHIK*%0A👤 ${nombre}%0A📊 Score: ${total}/15`;
+        if(flags.length>0) m+=`%0A🚩 ALERTA`;
+        
+        if(confirm("✅ Guardado. ¿Enviar WhatsApp?")) {
+            window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank');
+        }
+        window.location.href = 'index.html';
     }
 </script>
 </body>
 </html>
+
 
