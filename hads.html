@@ -9,86 +9,173 @@
     header { background: linear-gradient(135deg, #880e4f 0%, #ad1457 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; }
     .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #880e4f; text-align: center; margin-top: 0; border-bottom: 2px solid #f8bbd0; padding-bottom: 10px; }
+    
     .input-group { margin-bottom: 15px; }
     label { font-weight: 600; display: block; margin-bottom: 8px; color: #333; }
-    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; }
-    .question-card { background: #fff; border-bottom: 1px solid #eee; padding: 20px 0; }
-    .question-title { font-weight: bold; font-size: 1.1em; margin-bottom: 15px; color: #880e4f; }
-    .option-label { display: flex; align-items: center; padding: 10px; cursor: pointer; border-radius: 6px; border: 1px solid #eee; margin-bottom: 5px; }
-    .option-label:hover { background-color: #fce4ec; }
-    .option-label input { margin-right: 15px; transform: scale(1.3); }
+    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    
+    /* --- CORRECCIÓN DE TABLA --- */
+    .table-container { overflow-x: auto; margin-bottom: 20px; }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 15px; 
+        font-size: 0.85rem; 
+        min-width: 700px; /* Asegura scroll si es necesario */
+        table-layout: fixed; /* Fija anchos de columna */
+    }
+    
+    th, td { padding: 10px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
+    
+    /* Columna Pregunta: 40% | Opciones: 15% cada una */
+    th:first-child, td:first-child { width: 40%; text-align: left; padding-left: 10px; font-weight: 600; white-space: normal; }
+    th:not(:first-child), td:not(:first-child) { width: 15%; text-align: center; font-size: 0.8rem; }
+    
+    th { background-color: #fce4ec; color: #880e4f; position: sticky; top: 0; font-weight: bold; z-index: 10; }
+    tr:nth-child(even) { background-color: #fafafa; }
+    
+    /* Radio Button Centrado */
+    input[type="radio"] { 
+        width: 24px; height: 24px; margin: 5px auto; display: block; cursor: pointer;
+        accent-color: #880e4f; 
+    }
+    
+    /* Etiquetas dentro de celda */
+    .cell-label { display: block; font-size: 0.75rem; color: #666; margin-bottom: 4px; line-height: 1.1; }
+
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
     button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
     .whatsapp { background-color: #25D366; }
     .local-save { background-color: #1565C0; }
-    .btn-back { background-color: #78909c; }
     .reset { background-color: #757575; }
+    .btn-back { background-color: #78909c; }
     #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #fce4ec; border-radius: 10px; }
 </style>
 </head>
 <body>
 <header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Escala Hospitalaria (HADS)</span></header>
+
 <div class="container">
     <div id="test-form">
         <h2>Datos del Alumno</h2>
         <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
+        
         <div style="background-color:#fce4ec; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #880e4f;">
-            <strong>Instrucciones:</strong> Marque la respuesta que mejor describa cómo se ha sentido durante la <strong>última semana</strong>.
+            <strong>Instrucciones:</strong> Marque la opción que mejor describa cómo se ha sentido la última semana.
         </div>
-        <div id="cuestionario"></div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Síntoma</th>
+                        <th>Opción A<br>(3)</th>
+                        <th>Opción B<br>(2)</th>
+                        <th>Opción C<br>(1)</th>
+                        <th>Opción D<br>(0)</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-preguntas"></tbody>
+            </table>
+        </div>
+
         <div class="buttons">
             <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar</button>
             <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
         </div>
     </div>
+
     <div id="result-area">
         <h3 style="color:#880e4f;">Resultados Listos</h3>
         <div class="buttons">
             <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
             <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar WhatsApp</button>
             <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo</button>
-            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Ir al Menú</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Menú</button>
         </div>
     </div>
 </div>
+
 <script>
-    const NUMERO_DESTINO = "523111477413"; const STORAGE_KEY = "cbta_paciente_temp";
+    const NUMERO_DESTINO = "523111477413"; 
+    const STORAGE_KEY = "cbta_paciente_temp";
+
+    // Estructura: t=Título, o=Opciones [TextoA, TextoB, TextoC, TextoD], v=Valores [3,2,1,0] o [0,1,2,3]
     const items = [
-        { t: "1. Tenso/Nervioso", o: ["Casi todo", "Gran parte", "De vez en cuando", "Nunca"], v: [3, 2, 1, 0] },
-        { t: "2. Disfruto cosas", o: ["Igual", "No tanto", "Poco", "Nada"], v: [0, 1, 2, 3] },
-        { t: "3. Temor algo malo", o: ["Sí intenso", "Sí pero no", "Poco", "Nada"], v: [3, 2, 1, 0] },
-        { t: "4. Reír", o: ["Igual", "Algo menos", "Mucho menos", "Nada"], v: [0, 1, 2, 3] },
-        { t: "5. Preocupaciones", o: ["Casi todo", "Gran parte", "De vez en cuando", "Nunca"], v: [3, 2, 1, 0] },
-        { t: "6. Alegre", o: ["Nunca", "Poco", "A veces", "Casi siempre"], v: [3, 2, 1, 0] },
+        { t: "1. Me siento tenso o nervioso", o: ["Casi todo el día", "Gran parte", "A veces", "Nunca"], v: [3, 2, 1, 0] },
+        { t: "2. Disfruto las cosas", o: ["Igual que antes", "No tanto", "Solo un poco", "Nada"], v: [0, 1, 2, 3] },
+        { t: "3. Temor a algo malo", o: ["Sí, intenso", "Sí, pero no", "Poco", "Nada"], v: [3, 2, 1, 0] },
+        { t: "4. Capaz de reír", o: ["Igual", "Algo menos", "Mucho menos", "Nada"], v: [0, 1, 2, 3] },
+        { t: "5. Preocupaciones", o: ["Casi todo el día", "Gran parte", "A veces", "Nunca"], v: [3, 2, 1, 0] },
+        { t: "6. Me siento alegre", o: ["Nunca", "Pocas veces", "A veces", "Casi siempre"], v: [3, 2, 1, 0] },
         { t: "7. Sentado tranquilo", o: ["Siempre", "A menudo", "Raras veces", "Nunca"], v: [0, 1, 2, 3] },
-        { t: "8. Lento/Torpe", o: ["Gran parte", "A menudo", "A veces", "Nunca"], v: [3, 2, 1, 0] },
-        { t: "9. Hormigueo estómago", o: ["Nunca", "Ocasiones", "A menudo", "Muy a menudo"], v: [0, 1, 2, 3] },
+        { t: "8. Lento y torpe", o: ["Gran parte", "A menudo", "A veces", "Nunca"], v: [3, 2, 1, 0] },
+        { t: "9. Nervios estómago", o: ["Nunca", "Ocasiones", "A menudo", "Muy a menudo"], v: [0, 1, 2, 3] },
         { t: "10. Interés personal", o: ["Totalmente perdido", "No me cuido bien", "Quizás no", "Me cuido"], v: [3, 2, 1, 0] },
-        { t: "11. Inquieto", o: ["Mucho", "Bastante", "No mucho", "Nada"], v: [3, 2, 1, 0] },
-        { t: "12. Ilusión", o: ["Siempre", "Menos", "Mucho menos", "Nada"], v: [0, 1, 2, 3] },
-        { t: "13. Angustia repentina", o: ["Muy a menudo", "Frecuencia", "Raro", "Nunca"], v: [3, 2, 1, 0] },
-        { t: "14. Libros/TV", o: ["A menudo", "A veces", "Poco", "Nunca"], v: [0, 1, 2, 3] }
+        { t: "11. Inquieto (moverme)", o: ["Mucho", "Bastante", "No mucho", "Nada"], v: [3, 2, 1, 0] },
+        { t: "12. Ilusión por cosas", o: ["Como siempre", "Algo menos", "Mucho menos", "Nada"], v: [0, 1, 2, 3] },
+        { t: "13. Angustia repentina", o: ["Muy a menudo", "Frecuente", "Raramente", "Nunca"], v: [3, 2, 1, 0] },
+        { t: "14. Libros / TV", o: ["A menudo", "A veces", "Poco", "Nunca"], v: [0, 1, 2, 3] }
     ];
-    const container = document.getElementById('cuestionario');
-    items.forEach((it, idx) => {
-        let h = `<div class="question-card"><div class="question-title">${idx+1}. ${it.t}</div>`;
-        it.o.forEach((op, i) => h += `<label class="option-label"><input type="radio" name="q${idx+1}" value="${it.v[i]}"> ${op}</label>`);
-        container.innerHTML += h + `</div>`;
+
+    const tbody = document.getElementById('tabla-preguntas');
+    items.forEach((item, idx) => {
+        const num = idx + 1;
+        let html = `<tr><td>${num}. ${item.t}</td>`;
+        
+        // Generar las 4 columnas de opciones
+        item.o.forEach((txt, i) => {
+            html += `
+                <td>
+                    <span class="cell-label">${txt}</span>
+                    <input type="radio" name="q${num}" value="${item.v[i]}">
+                </td>`;
+        });
+        html += `</tr>`;
+        tbody.innerHTML += html;
     });
+
     document.getElementById('fecha').valueAsDate = new Date();
     let datosFinales = null;
+
     function finalizarTest() {
-        const nombre = document.getElementById('nombre').value; const fecha = document.getElementById('fecha').value;
+        const nombre = document.getElementById('nombre').value;
+        const fecha = document.getElementById('fecha').value;
         if(!nombre) { alert("Nombre requerido"); return; }
-        let sA = 0, sD = 0, c = 0;
-        for(let i=1; i<=14; i++){ const el = document.querySelector(`input[name="q${i}"]:checked`); if(el) { let v = parseInt(el.value); if(i%2!==0) sA+=v; else sD+=v; c++; } }
-        if(c < 14) { alert(`Faltan preguntas (${c}/14)`); return; }
-        datosFinales = { nombre, fecha, hadsA: sA, hadsD: sD };
-        document.getElementById('test-form').style.display = 'none'; document.getElementById('result-area').style.display = 'block'; window.scrollTo(0,0);
+
+        let scoreA = 0, scoreD = 0, count = 0;
+        
+        for(let i=1; i<=14; i++){
+            const el = document.querySelector(`input[name="q${i}"]:checked`);
+            if(el) {
+                let v = parseInt(el.value);
+                if(i % 2 !== 0) scoreA += v; else scoreD += v;
+                count++;
+            }
+        }
+        
+        if(count < 14) { alert(`Faltan preguntas (${count}/14)`); return; }
+
+        datosFinales = { nombre, fecha, hadsA: scoreA, hadsD: scoreD };
+        document.getElementById('test-form').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        window.scrollTo(0,0);
     }
-    function guardarLocalmente() { if(!datosFinales) return; let cur = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; let up = { ...cur, ...datosFinales }; localStorage.setItem(STORAGE_KEY, JSON.stringify(up)); alert("✅ Datos HADS guardados."); }
-    function enviarWhatsApp(){ if(!datosFinales) return; let m = `🏥 *HADS*%0A👤 ${datosFinales.nombre}%0A🅰️ Ans: ${datosFinales.hadsA}%0A🇩 Dep: ${datosFinales.hadsD}`; window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank'); }
+
+    function guardarLocalmente() {
+        if(!datosFinales) return;
+        let current = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let update = { ...current, ...datosFinales };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
+        alert("✅ Datos HADS guardados.");
+    }
+
+    function enviarWhatsApp(){
+        if(!datosFinales) return;
+        let m = `🏥 *HADS*%0A👤 ${datosFinales.nombre}%0A🅰️ Ansiedad: ${datosFinales.hadsA}%0A🇩 Depresión: ${datosFinales.hadsD}`;
+        window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank');
+    }
 </script>
 </body>
 </html>
