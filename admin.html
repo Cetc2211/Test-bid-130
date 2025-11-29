@@ -32,13 +32,14 @@
     .s-plut { border-left-color: #5d4037; } .s-plut h3 { color: #5d4037; }
     .s-goca { border-left-color: #ff8f00; } .s-goca h3 { color: #ff8f00; }
     .s-lira { border-left-color: #3949ab; } .s-lira h3 { color: #3949ab; }
-    .s-cdfr { border-left-color: #455a64; } .s-cdfr h3 { color: #455a64; } /* CDFR */
+    .s-cdfr { border-left-color: #455a64; } .s-cdfr h3 { color: #455a64; }
+    .s-ebma { border-left-color: #00897b; } .s-ebma h3 { color: #00897b; } /* EBMA */
 </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🏥 Generador Integral (V7)</h2>
+    <h2>🏥 Generador Integral (V8)</h2>
     
     <div id="memoryPanel" style="background:#fff3e0; border:1px solid #ffe0b2; padding:10px; border-radius:5px; margin-bottom:20px; display:none;">
         <span style="color:#e65100; font-weight:bold;">📂 Datos recuperados de memoria</span>
@@ -88,19 +89,26 @@
 
     <!-- PSICOPEDAGOGÍA -->
     <div class="row">
+        <div class="col section-box s-ebma">
+            <h3 class="header-sec">EBMA (Motivación)</h3>
+            <input type="number" id="ebmaIAR" placeholder="IAR">
+            <input type="text" id="ebmaPerfil" placeholder="Perfil" style="margin-top:5px">
+        </div>
         <div class="col section-box s-goca">
             <h3 class="header-sec">GOCA</h3>
-            <input type="number" id="scoreGOCA" placeholder="Riesgo (0-160)">
+            <input type="number" id="scoreGOCA" placeholder="Riesgo">
         </div>
         <div class="col section-box s-lira">
             <h3 class="header-sec">LIRA</h3>
             <input type="number" id="scoreLIRA" placeholder="Total">
-            <select id="liraCrisis" style="margin-top:5px"><option value="">-</option><option value="SI">CRISIS</option></select>
         </div>
-        <div class="col section-box s-cdfr">
-            <h3 class="header-sec">CDFR (Nuevo)</h3>
-            <input type="number" id="scoreCDFR" placeholder="Puntaje Riesgo">
-            <select id="cdfrCita" style="margin-top:5px"><option value="">Sin Cita</option><option value="Sí">Pide Cita</option></select>
+    </div>
+    
+    <div class="section-box s-cdfr">
+        <h3 class="header-sec">CDFR</h3>
+        <div class="row">
+            <div class="col"><input type="number" id="scoreCDFR" placeholder="Riesgo"></div>
+            <div class="col"><select id="cdfrCita"><option value="">Sin Cita</option><option value="Sí">Pide Cita</option></select></div>
         </div>
     </div>
 
@@ -147,8 +155,9 @@
             set('idareE', d.idareE); set('idareR', d.idareR);
             set('scoreBDI', d.bdi); set('scoreBHS', d.bhs);
             set('scoreSSI', d.ssi); 
-            set('scoreGOCA', d.goca); set('scoreLIRA', d.lira); set('liraCrisis', d.liraCrisis);
+            set('scoreGOCA', d.goca); set('scoreLIRA', d.lira);
             set('scoreCDFR', d.cdfr); set('cdfrCita', d.cdfrCita);
+            set('ebmaIAR', d.ebmaIAR); set('ebmaPerfil', d.ebmaPerfil);
             set('cssrsId', d.cId); set('cssrsPlan', d.cPlan); set('cssrsCond', d.cCond);
         }
     });
@@ -171,8 +180,9 @@
             bhs: document.getElementById('scoreBHS').value,
             ssi: document.getElementById('scoreSSI').value,
             goca: document.getElementById('scoreGOCA').value,
-            lira: document.getElementById('scoreLIRA').value, liraCrisis: document.getElementById('liraCrisis').value,
+            lira: document.getElementById('scoreLIRA').value, 
             cdfr: document.getElementById('scoreCDFR').value, cdfrCita: document.getElementById('cdfrCita').value,
+            ebma: document.getElementById('ebmaIAR').value, ebmaP: document.getElementById('ebmaPerfil').value,
             cId: document.getElementById('cssrsId').value, 
             cPlan: document.getElementById('cssrsPlan').value, 
             cCond: document.getElementById('cssrsCond').value
@@ -205,6 +215,7 @@
         if(d.gad) row("GAD-7", d.gad, d.gad>=10?"ALERTA":"Bajo", d.gad>=10);
         if(d.bai) row("BAI", d.bai, d.bai>15?"Significativo":"Bajo");
         if(d.bdi) row("BDI-II", d.bdi, d.bdi>18?"Significativo":"Bajo");
+        if(d.idareE) row("IDARE (Estado)", d.idareE, "");
         if(d.hadsA) row("HADS", `A:${d.hadsA} D:${d.hadsD}`, "");
 
         y+=5;
@@ -217,11 +228,8 @@
         // PSICOPEDAGOGÍA
         if(d.goca) row("GOCA", d.goca, d.goca>80?"ALERTA":"Bajo", d.goca>80);
         if(d.lira) row("LIRA", d.lira, d.lira>=5?"REFERIR":"Bajo", d.lira>=5);
-        if(d.cdfr) {
-            let n = d.cdfr>=17?"Riesgo Alto":d.cdfr>=9?"Moderado":"Bajo";
-            if(d.cdfrCita === "Sí") n += " (Pide Cita)";
-            row("CDFR (Contexto)", d.cdfr, n, d.cdfr>=17);
-        }
+        if(d.cdfr) row("CDFR", d.cdfr, d.cdfrCita==="Sí"?"Pide Cita":"-", d.cdfr>=17);
+        if(d.ebma) row("EBMA (Motiv)", `IAR: ${d.ebma}`, d.ebmaP);
 
         y+=15;
         doc.rect(20, y, 170, 40);
