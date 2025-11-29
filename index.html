@@ -39,7 +39,8 @@
     .bg-entr { background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); }
     .bg-goca { background: linear-gradient(135deg, #ff8f00 0%, #ffb300 100%); }
     .bg-lira { background: linear-gradient(135deg, #3949ab 0%, #5c6bc0 100%); }
-    .bg-cdfr { background: linear-gradient(135deg, #455a64 0%, #607d8b 100%); } /* Nuevo CDFR */
+    .bg-cdfr { background: linear-gradient(135deg, #455a64 0%, #607d8b 100%); }
+    .bg-ebma { background: linear-gradient(135deg, #00897b 0%, #004d40 100%); } /* Nuevo EBMA */
 
     .sender-box { background-color: #f8f9fa; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; margin-top: 30px; }
     .btn-whatsapp { width: 100%; background-color: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 15px; }
@@ -52,7 +53,7 @@
 
 <div class="card">
     <h1>CBTa No.130</h1>
-    <p class="subtitle">Panel de Control Clínico (v13.0)</p>
+    <p class="subtitle">Panel de Control Clínico (v14.0)</p>
 
     <div class="category-title cat-tam">🔍 Tamizaje</div>
     <div class="grid-buttons">
@@ -86,6 +87,7 @@
         <a href="goca.html" class="btn-access bg-goca">GOCA<small>Conductual</small></a>
         <a href="lira.html" class="btn-access bg-lira">LIRA<small>Riesgo Acad</small></a>
         <a href="cdfr.html" class="btn-access bg-cdfr">CDFR<small>Contexto</small></a>
+        <a href="ebma.html" class="btn-access bg-ebma">EBMA<small>Motivación</small></a>
     </div>
 
     <div class="category-title cat-admin">📂 Expediente y Heteroaplicación</div>
@@ -104,6 +106,7 @@
                 <label class="check-item"><input type="checkbox" id="chkHADS">HADS</label>
                 <label class="check-item"><input type="checkbox" id="chkBAI">BAI</label>
                 <label class="check-item"><input type="checkbox" id="chkIDARE">IDARE</label>
+                <label class="check-item"><input type="checkbox" id="chkEBMA">EBMA</label>
             </div>
             <div>
                 <label class="check-item"><input type="checkbox" id="chkBDI">BDI-II</label>
@@ -111,13 +114,13 @@
                 <label class="check-item"><input type="checkbox" id="chkCSS">Columbia</label>
                 <label class="check-item"><input type="checkbox" id="chkSSI">SSI</label>
                 <label class="check-item"><input type="checkbox" id="chkPlut">Plutchik</label>
+                <label class="check-item"><input type="checkbox" id="chkCDFR">CDFR</label>
             </div>
         </div>
         
         <div style="border-top:1px dashed #ccc; margin:10px 0; padding-top:10px;">
             <label class="check-item"><input type="checkbox" id="chkGOCA"> GOCA (Docente)</label>
             <label class="check-item"><input type="checkbox" id="chkLIRA"> LIRA (Docente)</label>
-            <label class="check-item"><input type="checkbox" id="chkCDFR"> CDFR (Alumno)</label>
         </div>
 
         <button class="btn-whatsapp" onclick="generarMensaje()">📲 Generar WhatsApp</button>
@@ -136,7 +139,7 @@
             {id:'chkBHS', n:'BHS', u:'bhs.html'}, {id:'chkCSS', n:'Columbia', u:'columbia.html'},
             {id:'chkSSI', n:'SSI', u:'ssibeck.html'}, {id:'chkPlut', n:'Plutchik', u:'plutchik.html'},
             {id:'chkGOCA', n:'GOCA (Docente)', u:'goca.html'}, {id:'chkLIRA', n:'LIRA (Docente)', u:'lira.html'},
-            {id:'chkCDFR', n:'CDFR (Contexto)', u:'cdfr.html'}
+            {id:'chkCDFR', n:'CDFR (Contexto)', u:'cdfr.html'}, {id:'chkEBMA', n:'EBMA (Motivación)', u:'ebma.html'}
         ];
 
         let msg = "Por favor contesta las siguientes evaluaciones:%0A%0A";
