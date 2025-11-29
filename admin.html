@@ -7,13 +7,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
     body { font-family: -apple-system, sans-serif; background-color: #eceff1; padding: 20px; margin: 0; }
+    
+    /* BARRA SUPERIOR DE NAVEGACIÓN */
+    .top-bar {
+        display: flex; justify-content: space-between; align-items: center;
+        background-color: #263238; color: white; padding: 15px 20px;
+        border-radius: 10px 10px 0 0;
+    }
+    .top-title { font-size: 1.1rem; font-weight: bold; margin: 0; }
+    .btn-home {
+        background-color: #455a64; color: white; text-decoration: none;
+        padding: 8px 15px; border-radius: 5px; font-size: 0.9rem; font-weight: bold;
+        display: flex; align-items: center; gap: 5px; transition: background 0.2s;
+    }
+    .btn-home:hover { background-color: #546e7a; }
+
     .main-container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
     
-    /* NAV TABS */
-    .nav-tabs { display: flex; background: #263238; }
-    .nav-tab { flex: 1; padding: 20px; text-align: center; color: #b0bec5; cursor: pointer; font-weight: bold; border-bottom: 4px solid transparent; transition: all 0.3s; }
-    .nav-tab:hover { background: #37474f; color: white; }
-    .nav-tab.active { background: #37474f; color: white; border-bottom-color: #00acc1; }
+    /* TABS */
+    .nav-tabs { display: flex; background: #37474f; }
+    .nav-tab { flex: 1; padding: 15px; text-align: center; color: #b0bec5; cursor: pointer; font-weight: bold; border-bottom: 4px solid transparent; transition: all 0.3s; }
+    .nav-tab:hover { background: #455a64; color: white; }
+    .nav-tab.active { background: #455a64; color: white; border-bottom-color: #00acc1; }
 
     /* CONTENIDO */
     .tab-content { padding: 30px; display: none; }
@@ -33,36 +48,50 @@
     label { font-size: 0.8rem; font-weight: bold; display: block; color: #546e7a; margin-bottom: 3px; }
     input, select { width: 100%; padding: 8px; border: 1px solid #cfd8dc; border-radius: 4px; box-sizing: border-box; }
     
-    /* EXPEDIENTES TABLE */
-    .search-bar { width: 100%; padding: 12px; font-size: 1rem; border: 2px solid #cfd8dc; border-radius: 8px; margin-bottom: 20px; }
-    .student-table { width: 100%; border-collapse: collapse; }
-    .student-table th { background: #eceff1; padding: 12px; text-align: left; color: #455a64; }
+    /* TABLA EXPEDIENTES */
+    .search-bar { width: 100%; padding: 12px; font-size: 1rem; border: 2px solid #cfd8dc; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
+    .student-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .student-table th { background: #eceff1; padding: 12px; text-align: left; color: #455a64; border-bottom: 2px solid #cfd8dc; }
     .student-table td { padding: 12px; border-bottom: 1px solid #eee; }
     .student-table tr:hover { background: #f5f5f5; }
-    .action-btn { padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.8rem; margin-right: 5px; }
+    
+    .action-btn { padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.85rem; margin-right: 5px; font-weight: bold; }
     .btn-edit { background: #1976D2; color: white; }
     .btn-del { background: #c62828; color: white; }
 
     /* BOTONES ACCIÓN */
-    .btn-main { background: #00897b; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
+    .btn-main { background: #00897b; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; transition: transform 0.1s; }
+    .btn-main:active { transform: scale(0.98); }
     .btn-save-db { background: #1565C0; }
     .btn-clear { background: #78909c; margin-top: 10px; }
+    
+    /* Footer */
+    .footer-note { text-align: center; margin-top: 20px; font-size: 0.8rem; color: #90a4ae; }
 </style>
 </head>
 <body>
 
 <div class="main-container">
-    <!-- NAVEGACIÓN -->
+    
+    <!-- BARRA SUPERIOR CON BOTÓN DE REGRESO -->
+    <div class="top-bar">
+        <h1 class="top-title">📂 Gestión de Expedientes</h1>
+        <a href="index.html" class="btn-home">
+            <span>🏠</span> Volver al Menú
+        </a>
+    </div>
+
+    <!-- NAVEGACIÓN PESTAÑAS -->
     <div class="nav-tabs">
         <div class="nav-tab active" onclick="switchTab('tab-captura')">📝 Captura / Edición</div>
-        <div class="nav-tab" onclick="switchTab('tab-expedientes')">📂 Base de Datos (Expedientes)</div>
+        <div class="nav-tab" onclick="switchTab('tab-expedientes')">🗂️ Base de Datos</div>
     </div>
 
     <!-- PESTAÑA 1: CAPTURA -->
     <div id="tab-captura" class="tab-content active">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2 style="margin:0; color:#37474f;">Ficha del Estudiante</h2>
-            <button onclick="limpiarFormulario()" class="action-btn btn-del">Limpiar Todo</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2 style="margin:0; color:#37474f; font-size:1.2rem;">Ficha del Estudiante</h2>
+            <button onclick="limpiarFormulario()" class="action-btn btn-del" style="background:#ef5350;">Limpiar Campos</button>
         </div>
 
         <!-- DATOS GENERALES -->
@@ -72,7 +101,7 @@
             <div class="input-wrapper"><label>Edad:</label><input type="number" id="edad"></div>
             <div class="input-wrapper"><label>Sexo:</label><select id="sexo"><option value="">--</option><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
             <div class="input-wrapper"><label>Fecha:</label><input type="date" id="fecha"></div>
-            <div class="input-wrapper"><label>ID Expediente (Auto):</label><input type="text" id="id_exp" readonly style="background:#eee;"></div>
+            <div class="input-wrapper"><label>ID Expediente (Auto):</label><input type="text" id="id_exp" readonly style="background:#eee; color:#777;"></div>
         </div>
 
         <!-- ÁREA CLÍNICA -->
@@ -125,15 +154,15 @@
 
         <!-- ACCIONES -->
         <div style="display:flex; gap:10px; margin-top:20px;">
-            <button onclick="guardarExpediente()" class="btn-main btn-save-db">💾 Guardar/Actualizar Expediente</button>
-            <button onclick="generarPDF()" class="btn-main" style="background:#bf360c;">📄 Generar PDF Integral</button>
+            <button onclick="guardarExpediente()" class="btn-main btn-save-db">💾 Guardar Cambios</button>
+            <button onclick="generarPDF()" class="btn-main" style="background:#bf360c;">📄 Generar PDF</button>
         </div>
     </div>
 
     <!-- PESTAÑA 2: EXPEDIENTES -->
     <div id="tab-expedientes" class="tab-content">
-        <h2>Base de Datos de Estudiantes</h2>
-        <input type="text" id="searchBox" class="search-bar" placeholder="🔍 Buscar por nombre..." onkeyup="renderTable()">
+        <h2 style="color:#37474f;">Base de Datos Local</h2>
+        <input type="text" id="searchBox" class="search-bar" placeholder="🔍 Buscar estudiante por nombre..." onkeyup="renderTable()">
         
         <div style="overflow-x:auto;">
             <table class="student-table">
@@ -142,8 +171,8 @@
                         <th>Nombre</th>
                         <th>Edad</th>
                         <th>Fecha Reg.</th>
-                        <th>Riesgo (SSI/GOCA)</th>
-                        <th>Acciones</th>
+                        <th>Alertas</th>
+                        <th style="text-align:right;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -151,19 +180,18 @@
                 </tbody>
             </table>
         </div>
-        <p style="text-align:center; color:#888; font-size:0.8rem; margin-top:20px;">Nota: Los datos se guardan en este dispositivo (iPad/PC). Si borras el caché, se pierden.</p>
+        <p style="text-align:center; color:#888; font-size:0.8rem; margin-top:20px;">
+            Nota: Los expedientes se guardan únicamente en este navegador.
+        </p>
     </div>
 </div>
 
-<div style="text-align:center; margin-top:20px;">
-    <a href="index.html" style="color:#546e7a; text-decoration:none;">← Volver al Panel Principal</a>
-</div>
+<div class="footer-note">CBTa No. 130 - Sistema de Gestión Escolar</div>
 
 <script>
     const DB_KEY = "cbta_db_expedientes";
-    const TEMP_KEY = "cbta_paciente_temp"; // Para leer lo que llega de los tests
+    const TEMP_KEY = "cbta_paciente_temp"; 
     
-    // Al iniciar
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('fecha').valueAsDate = new Date();
         cargarDesdeTemp();
@@ -175,29 +203,26 @@
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         
         document.getElementById(tabId).classList.add('active');
-        // Activar estilo en botón
-        event.target.classList.add('active');
+        event.currentTarget.classList.add('active'); // Corregido: event.target a event.currentTarget
         
         if(tabId === 'tab-expedientes') renderTable();
     }
 
-    // 1. CARGAR DATOS TEMPORALES (Si vienes de hacer un test)
     function cargarDesdeTemp() {
         const raw = localStorage.getItem(TEMP_KEY);
         if(raw) {
             const d = JSON.parse(raw);
             if(confirm("📥 Se detectaron datos nuevos de un test reciente. ¿Deseas cargarlos al formulario?")) {
                 llenarFormulario(d);
-                // No borramos temp aún por seguridad
             }
         }
     }
 
     function llenarFormulario(d) {
-        const set = (id, val) => { if(val !== undefined) document.getElementById(id).value = val; };
+        const set = (id, val) => { if(val !== undefined && document.getElementById(id)) document.getElementById(id).value = val; };
         
         set('nombre', d.nombre); set('edad', d.edad); set('sexo', d.sexo);
-        if(d.id) set('id_exp', d.id); // Si ya tenía ID
+        if(d.id) set('id_exp', d.id); 
 
         // Clínica
         set('phq', d.phq); set('phqFlag', d.phqFlag); set('gad', d.gad);
@@ -208,14 +233,13 @@
         
         // Riesgo
         set('ssi', d.ssi); set('ssiFlags', d.ssiFlags); set('plut', d.plut);
-        if(d.cId === "1" || d.cCond === "1") document.getElementById('cssrs').value = "2"; // Simplificado
+        if(d.cId === "1" || d.cCond === "1") document.getElementById('cssrs').value = "2"; 
         else if(d.cId === "1") document.getElementById('cssrs').value = "1";
 
         // Pedagógica
         set('goca', d.goca); set('gocaNivel', d.gocaNivel);
     }
 
-    // 2. GUARDAR EN BASE DE DATOS (Array en LocalStorage)
     function guardarExpediente() {
         const nombre = document.getElementById('nombre').value;
         if(!nombre) { alert("El nombre es obligatorio"); return; }
@@ -223,32 +247,27 @@
         let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
         let id = document.getElementById('id_exp').value;
         
-        // Objeto con TODOS los campos
         const inputs = document.querySelectorAll('input, select');
         let record = {};
         inputs.forEach(i => record[i.id] = i.value);
         record.fechaReg = new Date().toLocaleDateString();
 
         if(id) {
-            // Actualizar existente
             const index = db.findIndex(x => x.id_exp === id);
             if(index !== -1) db[index] = record;
         } else {
-            // Nuevo
-            record.id_exp = Date.now().toString(); // ID único basado en tiempo
+            record.id_exp = Date.now().toString(); 
             db.push(record);
             document.getElementById('id_exp').value = record.id_exp;
         }
 
         localStorage.setItem(DB_KEY, JSON.stringify(db));
-        // Limpiar temp para evitar confusiones
         localStorage.removeItem(TEMP_KEY);
         
-        alert("✅ Expediente guardado/actualizado correctamente.");
+        alert("✅ Expediente guardado correctamente.");
         renderTable();
     }
 
-    // 3. TABLA DE EXPEDIENTES
     function renderTable() {
         const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
         const tbody = document.getElementById('tableBody');
@@ -257,16 +276,18 @@
         tbody.innerHTML = "";
 
         db.filter(x => x.nombre.toLowerCase().includes(filtro)).forEach(x => {
+            let alertas = "";
+            if(x.ssi >= 6) alertas += "🔴 SSI ";
+            if(x.goca >= 80) alertas += "🟠 GOCA ";
+            if(x.phq >= 10) alertas += "🔵 PHQ ";
+
             let row = `<tr>
                 <td><strong>${x.nombre}</strong></td>
                 <td>${x.edad || '-'}</td>
                 <td>${x.fechaReg}</td>
-                <td>
-                    ${x.ssi ? '<span style="color:#c62828">SSI:'+x.ssi+'</span>' : ''} 
-                    ${x.goca ? '<span style="color:#e65100">GOCA:'+x.goca+'</span>' : ''}
-                </td>
-                <td>
-                    <button class="action-btn btn-edit" onclick="cargarExpediente('${x.id_exp}')">✏️ Ver/Editar</button>
+                <td style="font-size:0.85rem;">${alertas || '<span style="color:#aaa">Sin alertas</span>'}</td>
+                <td style="text-align:right;">
+                    <button class="action-btn btn-edit" onclick="cargarExpediente('${x.id_exp}')">✏️ Abrir</button>
                     <button class="action-btn btn-del" onclick="borrarExpediente('${x.id_exp}')">🗑️</button>
                 </td>
             </tr>`;
@@ -280,11 +301,14 @@
         if(record) {
             llenarFormulario(record);
             switchTab('tab-captura');
+            // Activar visualmente la primera pestaña
+            document.querySelectorAll('.nav-tab')[0].classList.add('active');
+            document.querySelectorAll('.nav-tab')[1].classList.remove('active');
         }
     }
 
     function borrarExpediente(id) {
-        if(confirm("¿Estás seguro de eliminar este expediente? No se puede deshacer.")) {
+        if(confirm("¿Eliminar expediente permanentemente?")) {
             let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
             db = db.filter(x => x.id_exp !== id);
             localStorage.setItem(DB_KEY, JSON.stringify(db));
@@ -293,13 +317,14 @@
     }
 
     function limpiarFormulario() {
-        document.querySelectorAll('input').forEach(i => i.value = "");
-        document.getElementById('fecha').valueAsDate = new Date();
+        if(confirm("¿Limpiar todos los campos para un nuevo registro?")) {
+            document.querySelectorAll('input').forEach(i => i.value = "");
+            document.querySelectorAll('select').forEach(i => i.selectedIndex = 0);
+            document.getElementById('fecha').valueAsDate = new Date();
+        }
     }
 
-    // 4. GENERACIÓN DE PDF (Tu función existente, adaptada)
     function generarPDF() {
-        // Recopilamos datos directo del formulario (que ya está lleno)
         const val = (id) => document.getElementById(id).value;
         const d = {
             nombre: val('nombre'), edad: val('edad'), fecha: val('fecha'),
@@ -308,7 +333,7 @@
             ssi: val('ssi'), goca: val('goca'), gocaNivel: val('gocaNivel'),
             hadsA: val('hadsA'), hadsD: val('hadsD'),
             idareE: val('idareE'), idareR: val('idareR'),
-            plut: val('plut')
+            plut: val('plut'), cssrs: val('cssrs')
         };
 
         const { jsPDF } = window.jspdf;
@@ -345,8 +370,8 @@
             y+=8;
         };
 
-        // CLINICA
-        section("I. EVALUACIÓN CLÍNICA", [13, 71, 161]); // Azul
+        // I. CLINICA
+        section("I. EVALUACIÓN CLÍNICA", [13, 71, 161]);
         if(d.phq) row("Depresión (PHQ-9)", d.phq, d.phq>=10?"ALERTA":"Bajo");
         if(d.gad) row("Ansiedad (GAD-7)", d.gad, d.gad>=10?"ALERTA":"Bajo");
         if(d.bai) row("Ansiedad (BAI)", d.bai, d.bai>15?"Significativo":"Bajo");
@@ -355,13 +380,14 @@
         if(d.hadsA) row("HADS", `A:${d.hadsA} D:${d.hadsD}`, "");
 
         y+=5;
-        section("II. RIESGO SUICIDA", [198, 40, 40]); // Rojo
+        section("II. RIESGO SUICIDA", [198, 40, 40]);
         if(d.ssi) row("SSI (Ideación)", d.ssi, d.ssi>5?"RIESGO":"Bajo");
         if(d.bhs) row("BHS (Desesperanza)", d.bhs, d.bhs>8?"Riesgo":"Bajo");
         if(d.plut) row("Plutchik", d.plut, "");
+        if(d.cssrs > 0) row("Columbia", "Positivo", "Riesgo Detectado");
 
         y+=5;
-        section("III. PSICOPEDAGOGÍA", [0, 105, 92]); // Verde
+        section("III. PSICOPEDAGOGÍA", [0, 105, 92]);
         if(d.goca) row("GOCA (Aula)", d.goca, d.gocaNivel);
 
         y+=15;
