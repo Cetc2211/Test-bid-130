@@ -3,392 +3,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestión de Expedientes - CBTa 130</title>
+<title>Admin - Generador de Informes</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    body { font-family: -apple-system, sans-serif; background-color: #eceff1; padding: 20px; margin: 0; }
+    body { font-family: -apple-system, sans-serif; background-color: #f5f5f5; padding: 20px; }
+    .card { background: white; max-width: 800px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2 { color: #1b5e20; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
+    .row { display: flex; gap: 15px; }
+    .col { flex: 1; }
+    .btn-generate { background-color: #1b5e20; color: white; border: none; width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+    .back-link { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; font-size: 0.9em; }
     
-    /* BARRA SUPERIOR DE NAVEGACIÓN */
-    .top-bar {
-        display: flex; justify-content: space-between; align-items: center;
-        background-color: #263238; color: white; padding: 15px 20px;
-        border-radius: 10px 10px 0 0;
-    }
-    .top-title { font-size: 1.1rem; font-weight: bold; margin: 0; }
-    .btn-home {
-        background-color: #455a64; color: white; text-decoration: none;
-        padding: 8px 15px; border-radius: 5px; font-size: 0.9rem; font-weight: bold;
-        display: flex; align-items: center; gap: 5px; transition: background 0.2s;
-    }
-    .btn-home:hover { background-color: #546e7a; }
-
-    .main-container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
+    .section-box { background:#fafafa; padding:15px; border-radius:10px; margin-bottom:15px; border-left: 5px solid #ccc; }
+    .header-sec { margin-top:0; font-size:1rem; display:flex; justify-content:space-between; }
     
-    /* TABS */
-    .nav-tabs { display: flex; background: #37474f; }
-    .nav-tab { flex: 1; padding: 15px; text-align: center; color: #b0bec5; cursor: pointer; font-weight: bold; border-bottom: 4px solid transparent; transition: all 0.3s; }
-    .nav-tab:hover { background: #455a64; color: white; }
-    .nav-tab.active { background: #455a64; color: white; border-bottom-color: #00acc1; }
-
-    /* CONTENIDO */
-    .tab-content { padding: 30px; display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
-    /* FORMULARIOS */
-    .header-section { 
-        background: #f5f5f5; padding: 10px 15px; border-left: 5px solid #546e7a; 
-        font-weight: bold; margin: 25px 0 15px 0; color: #37474f; text-transform: uppercase; font-size: 0.9rem; display: flex; justify-content: space-between;
-    }
-    .header-clinica { border-left-color: #1565C0; background: #e3f2fd; color: #0d47a1; }
-    .header-pedag { border-left-color: #00695c; background: #e0f2f1; color: #004d40; }
-
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-    .input-wrapper { margin-bottom: 5px; }
-    label { font-size: 0.8rem; font-weight: bold; display: block; color: #546e7a; margin-bottom: 3px; }
-    input, select { width: 100%; padding: 8px; border: 1px solid #cfd8dc; border-radius: 4px; box-sizing: border-box; }
-    
-    /* TABLA EXPEDIENTES */
-    .search-bar { width: 100%; padding: 12px; font-size: 1rem; border: 2px solid #cfd8dc; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
-    .student-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .student-table th { background: #eceff1; padding: 12px; text-align: left; color: #455a64; border-bottom: 2px solid #cfd8dc; }
-    .student-table td { padding: 12px; border-bottom: 1px solid #eee; }
-    .student-table tr:hover { background: #f5f5f5; }
-    
-    .action-btn { padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.85rem; margin-right: 5px; font-weight: bold; }
-    .btn-edit { background: #1976D2; color: white; }
-    .btn-del { background: #c62828; color: white; }
-
-    /* BOTONES ACCIÓN */
-    .btn-main { background: #00897b; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; transition: transform 0.1s; }
-    .btn-main:active { transform: scale(0.98); }
-    .btn-save-db { background: #1565C0; }
-    .btn-clear { background: #78909c; margin-top: 10px; }
-    
-    /* Footer */
-    .footer-note { text-align: center; margin-top: 20px; font-size: 0.8rem; color: #90a4ae; }
+    .s-phq { border-left-color: #00695c; } .s-phq h3 { color: #00695c; }
+    .s-gad { border-left-color: #e65100; } .s-gad h3 { color: #e65100; }
+    .s-bai { border-left-color: #2e7d32; } .s-bai h3 { color: #2e7d32; }
+    .s-idare { border-left-color: #37474f; } .s-idare h3 { color: #37474f; }
+    .s-bdi { border-left-color: #1565C0; } .s-bdi h3 { color: #1565C0; }
+    .s-hads { border-left-color: #880e4f; } .s-hads h3 { color: #880e4f; }
+    .s-ssi { border-left-color: #7b1fa2; } .s-ssi h3 { color: #7b1fa2; }
+    .s-bhs { border-left-color: #212121; } .s-bhs h3 { color: #212121; }
+    .s-cssrs { border-left-color: #c62828; } .s-cssrs h3 { color: #c62828; }
+    .s-plut { border-left-color: #5d4037; } .s-plut h3 { color: #5d4037; }
+    .s-goca { border-left-color: #ff8f00; } .s-goca h3 { color: #ff8f00; }
+    .s-lira { border-left-color: #3949ab; } .s-lira h3 { color: #3949ab; } /* LIRA */
 </style>
 </head>
 <body>
 
-<div class="main-container">
+<div class="card">
+    <h2>🏥 Generador Integral (V6)</h2>
     
-    <!-- BARRA SUPERIOR CON BOTÓN DE REGRESO -->
-    <div class="top-bar">
-        <h1 class="top-title">📂 Gestión de Expedientes</h1>
-        <a href="index.html" class="btn-home">
-            <span>🏠</span> Volver al Menú
-        </a>
+    <div id="memoryPanel" style="background:#fff3e0; border:1px solid #ffe0b2; padding:10px; border-radius:5px; margin-bottom:20px; display:none;">
+        <span style="color:#e65100; font-weight:bold;">📂 Datos recuperados de memoria</span>
+        <button onclick="borrarMemoria()" style="background:#c62828; color:white; border:none; padding:5px 10px; border-radius:4px; float:right;">Borrar</button>
     </div>
 
-    <!-- NAVEGACIÓN PESTAÑAS -->
-    <div class="nav-tabs">
-        <div class="nav-tab active" onclick="switchTab('tab-captura')">📝 Captura / Edición</div>
-        <div class="nav-tab" onclick="switchTab('tab-expedientes')">🗂️ Base de Datos</div>
+    <div class="row">
+        <div class="col"><label>Nombre:</label><input type="text" id="nombre"></div>
+        <div class="col"><label>Edad:</label><input type="number" id="edad"></div>
+        <div class="col"><label>Sexo (H/M):</label><input type="text" id="sexo"></div>
+        <div class="col"><label>Fecha:</label><input type="date" id="fecha"></div>
     </div>
+    <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
 
-    <!-- PESTAÑA 1: CAPTURA -->
-    <div id="tab-captura" class="tab-content active">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2 style="margin:0; color:#37474f; font-size:1.2rem;">Ficha del Estudiante</h2>
-            <button onclick="limpiarFormulario()" class="action-btn btn-del" style="background:#ef5350;">Limpiar Campos</button>
+    <div class="row">
+        <div class="col section-box s-phq">
+            <h3 class="header-sec">PHQ-9</h3>
+            <input type="number" id="scorePHQ" placeholder="Total">
+            <input type="number" id="flagPHQ" placeholder="Ítem 9" style="margin-top:5px">
         </div>
-
-        <!-- DATOS GENERALES -->
-        <div class="header-section">Datos de Identificación</div>
-        <div class="form-grid">
-            <div class="input-wrapper"><label>Nombre Completo:</label><input type="text" id="nombre"></div>
-            <div class="input-wrapper"><label>Edad:</label><input type="number" id="edad"></div>
-            <div class="input-wrapper"><label>Sexo:</label><select id="sexo"><option value="">--</option><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
-            <div class="input-wrapper"><label>Fecha:</label><input type="date" id="fecha"></div>
-            <div class="input-wrapper"><label>ID Expediente (Auto):</label><input type="text" id="id_exp" readonly style="background:#eee; color:#777;"></div>
+        <div class="col section-box s-gad">
+            <h3 class="header-sec">GAD-7</h3>
+            <input type="number" id="scoreGAD" placeholder="Total">
         </div>
-
-        <!-- ÁREA CLÍNICA -->
-        <div class="header-section header-clinica">ÁREA CLÍNICA (Psicología)</div>
-        
-        <!-- Tamizaje -->
-        <div class="form-grid">
-            <div class="input-wrapper"><label style="color:#00695c">PHQ-9 (Total):</label><input type="number" id="phq"></div>
-            <div class="input-wrapper"><label style="color:#00695c">PHQ-9 (Ítem 9):</label><input type="number" id="phqFlag"></div>
-            <div class="input-wrapper"><label style="color:#e65100">GAD-7 (Total):</label><input type="number" id="gad"></div>
-            <div class="input-wrapper"><label style="color:#880e4f">HADS (Ans):</label><input type="number" id="hadsA"></div>
-            <div class="input-wrapper"><label style="color:#880e4f">HADS (Dep):</label><input type="number" id="hadsD"></div>
-        </div>
-
-        <!-- Profundización -->
-        <div class="form-grid" style="margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
-            <div class="input-wrapper"><label style="color:#2e7d32">BAI (Total):</label><input type="number" id="bai"></div>
-            <div class="input-wrapper"><label style="color:#37474f">IDARE (Estado):</label><input type="number" id="idareE"></div>
-            <div class="input-wrapper"><label style="color:#37474f">IDARE (Rasgo):</label><input type="number" id="idareR"></div>
-            <div class="input-wrapper"><label style="color:#1565C0">BDI-II (Total):</label><input type="number" id="bdi"></div>
-            <div class="input-wrapper"><label style="color:#212121">BHS (Total):</label><input type="number" id="bhs"></div>
-        </div>
-        
-        <!-- Factores BAI Ocultos para PDF -->
-        <div style="display:none;">
-            <input id="f1"><input id="f2"><input id="f3"><input id="f4">
-        </div>
-
-        <!-- Riesgo -->
-        <div class="form-grid" style="margin-top:15px; background:#ffebee; padding:10px; border-radius:5px;">
-            <div class="input-wrapper"><label style="color:#c62828">SSI (Total):</label><input type="number" id="ssi"></div>
-            <div class="input-wrapper"><label style="color:#c62828">SSI (Flags):</label><input type="text" id="ssiFlags"></div>
-            <div class="input-wrapper"><label style="color:#5d4037">Plutchik:</label><input type="number" id="plut"></div>
-            <div class="input-wrapper"><label style="color:#b71c1c">Columbia (Positivo):</label>
-                <select id="cssrs">
-                    <option value="0">Negativo</option>
-                    <option value="1">Ideación</option>
-                    <option value="2">Plan/Conducta</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- ÁREA PSICOPEDAGÓGICA -->
-        <div class="header-section header-pedag">ÁREA PSICOPEDAGÓGICA</div>
-        <div class="form-grid">
-            <div class="input-wrapper"><label style="color:#ff6f00">GOCA (Riesgo):</label><input type="number" id="goca"></div>
-            <div class="input-wrapper"><label style="color:#ff6f00">GOCA (Nivel):</label><input type="text" id="gocaNivel"></div>
-            <div class="input-wrapper"><label style="color:#00838f">Entrevista (Folio):</label><input type="text" id="entrevFolio" placeholder="Si existe"></div>
-        </div>
-
-        <!-- ACCIONES -->
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button onclick="guardarExpediente()" class="btn-main btn-save-db">💾 Guardar Cambios</button>
-            <button onclick="generarPDF()" class="btn-main" style="background:#bf360c;">📄 Generar PDF</button>
+        <div class="col section-box s-hads">
+            <h3 class="header-sec">HADS</h3>
+            <input type="number" id="hadsA" placeholder="Ans">
+            <input type="number" id="hadsD" placeholder="Dep" style="margin-top:5px">
         </div>
     </div>
 
-    <!-- PESTAÑA 2: EXPEDIENTES -->
-    <div id="tab-expedientes" class="tab-content">
-        <h2 style="color:#37474f;">Base de Datos Local</h2>
-        <input type="text" id="searchBox" class="search-bar" placeholder="🔍 Buscar estudiante por nombre..." onkeyup="renderTable()">
-        
-        <div style="overflow-x:auto;">
-            <table class="student-table">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Edad</th>
-                        <th>Fecha Reg.</th>
-                        <th>Alertas</th>
-                        <th style="text-align:right;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Se llena con JS -->
-                </tbody>
-            </table>
+    <div class="row">
+        <div class="col section-box s-bai">
+            <h3 class="header-sec">BAI</h3>
+            <input type="number" id="scoreBAI" placeholder="Total">
         </div>
-        <p style="text-align:center; color:#888; font-size:0.8rem; margin-top:20px;">
-            Nota: Los expedientes se guardan únicamente en este navegador.
-        </p>
+        <div class="col section-box s-idare">
+            <h3 class="header-sec">IDARE</h3>
+            <input type="number" id="idareE" placeholder="Est">
+            <input type="number" id="idareR" placeholder="Ras" style="margin-top:5px">
+        </div>
+        <div class="col section-box s-bdi">
+            <h3 class="header-sec">BDI-II</h3>
+            <input type="number" id="scoreBDI" placeholder="Total">
+        </div>
     </div>
+
+    <div class="row">
+        <div class="col section-box s-goca">
+            <h3 class="header-sec">GOCA</h3>
+            <input type="number" id="scoreGOCA" placeholder="Riesgo (0-160)">
+        </div>
+        <div class="col section-box s-lira">
+            <h3 class="header-sec">LIRA (Nuevo)</h3>
+            <input type="number" id="scoreLIRA" placeholder="Total (0-32)">
+            <select id="liraCrisis" style="margin-top:5px"><option value="">Sin Crisis</option><option value="SI">CRISIS</option></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col section-box s-ssi">
+            <h3 class="header-sec">SSI</h3>
+            <input type="number" id="scoreSSI" placeholder="Total">
+        </div>
+        <div class="col section-box s-bhs">
+            <h3 class="header-sec">BHS</h3>
+            <input type="number" id="scoreBHS" placeholder="Total">
+        </div>
+    </div>
+
+    <div class="section-box s-cssrs">
+        <h3 class="header-sec">Columbia</h3>
+        <div class="row">
+            <div class="col"><select id="cssrsId"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><select id="cssrsPlan"><option value="0">No</option><option value="1">Sí</option></select></div>
+            <div class="col"><select id="cssrsCond"><option value="0">No</option><option value="1">Sí</option></select></div>
+        </div>
+    </div>
+    
+    <button class="btn-generate" onclick="generarReporte()">📄 Descargar Expediente Integrado</button>
+    <a href="index.html" class="back-link">← Volver al Menú Principal</a>
 </div>
 
-<div class="footer-note">CBTa No. 130 - Sistema de Gestión Escolar</div>
-
 <script>
-    const DB_KEY = "cbta_db_expedientes";
-    const TEMP_KEY = "cbta_paciente_temp"; 
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('fecha').valueAsDate = new Date();
-        cargarDesdeTemp();
-        renderTable();
+    const STORAGE_KEY = "cbta_paciente_temp";
+    document.getElementById('fecha').valueAsDate = new Date();
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+            const d = JSON.parse(raw);
+            document.getElementById('memoryPanel').style.display = 'block';
+            if(d.nombre) document.getElementById('nombre').value = d.nombre;
+            if(d.edad) document.getElementById('edad').value = d.edad;
+            
+            const set = (id, v) => { if(v) document.getElementById(id).value = v; };
+            set('scorePHQ', d.phq); set('flagPHQ', d.phqFlag);
+            set('scoreGAD', d.gad); set('scoreBAI', d.bai);
+            set('hadsA', d.hadsA); set('hadsD', d.hadsD);
+            set('idareE', d.idareE); set('idareR', d.idareR);
+            set('scoreBDI', d.bdi); set('scoreBHS', d.bhs);
+            set('scoreSSI', d.ssi); 
+            set('scoreGOCA', d.goca);
+            set('scoreLIRA', d.lira); set('liraCrisis', d.liraCrisis);
+            set('cssrsId', d.cId); set('cssrsPlan', d.cPlan); set('cssrsCond', d.cCond);
+        }
     });
 
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active'); // Corregido: event.target a event.currentTarget
-        
-        if(tabId === 'tab-expedientes') renderTable();
+    function borrarMemoria() {
+        if(confirm("¿Borrar datos?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
     }
 
-    function cargarDesdeTemp() {
-        const raw = localStorage.getItem(TEMP_KEY);
-        if(raw) {
-            const d = JSON.parse(raw);
-            if(confirm("📥 Se detectaron datos nuevos de un test reciente. ¿Deseas cargarlos al formulario?")) {
-                llenarFormulario(d);
-            }
-        }
-    }
-
-    function llenarFormulario(d) {
-        const set = (id, val) => { if(val !== undefined && document.getElementById(id)) document.getElementById(id).value = val; };
-        
-        set('nombre', d.nombre); set('edad', d.edad); set('sexo', d.sexo);
-        if(d.id) set('id_exp', d.id); 
-
-        // Clínica
-        set('phq', d.phq); set('phqFlag', d.phqFlag); set('gad', d.gad);
-        set('hadsA', d.hadsA); set('hadsD', d.hadsD);
-        set('bai', d.bai); set('f1', d.f1); set('f2', d.f2); set('f3', d.f3); set('f4', d.f4);
-        set('idareE', d.idareE); set('idareR', d.idareR);
-        set('bdi', d.bdi); set('bhs', d.bhs);
-        
-        // Riesgo
-        set('ssi', d.ssi); set('ssiFlags', d.ssiFlags); set('plut', d.plut);
-        if(d.cId === "1" || d.cCond === "1") document.getElementById('cssrs').value = "2"; 
-        else if(d.cId === "1") document.getElementById('cssrs').value = "1";
-
-        // Pedagógica
-        set('goca', d.goca); set('gocaNivel', d.gocaNivel);
-    }
-
-    function guardarExpediente() {
-        const nombre = document.getElementById('nombre').value;
-        if(!nombre) { alert("El nombre es obligatorio"); return; }
-
-        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        let id = document.getElementById('id_exp').value;
-        
-        const inputs = document.querySelectorAll('input, select');
-        let record = {};
-        inputs.forEach(i => record[i.id] = i.value);
-        record.fechaReg = new Date().toLocaleDateString();
-
-        if(id) {
-            const index = db.findIndex(x => x.id_exp === id);
-            if(index !== -1) db[index] = record;
-        } else {
-            record.id_exp = Date.now().toString(); 
-            db.push(record);
-            document.getElementById('id_exp').value = record.id_exp;
-        }
-
-        localStorage.setItem(DB_KEY, JSON.stringify(db));
-        localStorage.removeItem(TEMP_KEY);
-        
-        alert("✅ Expediente guardado correctamente.");
-        renderTable();
-    }
-
-    function renderTable() {
-        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        const tbody = document.getElementById('tableBody');
-        const filtro = document.getElementById('searchBox').value.toLowerCase();
-        
-        tbody.innerHTML = "";
-
-        db.filter(x => x.nombre.toLowerCase().includes(filtro)).forEach(x => {
-            let alertas = "";
-            if(x.ssi >= 6) alertas += "🔴 SSI ";
-            if(x.goca >= 80) alertas += "🟠 GOCA ";
-            if(x.phq >= 10) alertas += "🔵 PHQ ";
-
-            let row = `<tr>
-                <td><strong>${x.nombre}</strong></td>
-                <td>${x.edad || '-'}</td>
-                <td>${x.fechaReg}</td>
-                <td style="font-size:0.85rem;">${alertas || '<span style="color:#aaa">Sin alertas</span>'}</td>
-                <td style="text-align:right;">
-                    <button class="action-btn btn-edit" onclick="cargarExpediente('${x.id_exp}')">✏️ Abrir</button>
-                    <button class="action-btn btn-del" onclick="borrarExpediente('${x.id_exp}')">🗑️</button>
-                </td>
-            </tr>`;
-            tbody.innerHTML += row;
-        });
-    }
-
-    function cargarExpediente(id) {
-        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        const record = db.find(x => x.id_exp === id);
-        if(record) {
-            llenarFormulario(record);
-            switchTab('tab-captura');
-            // Activar visualmente la primera pestaña
-            document.querySelectorAll('.nav-tab')[0].classList.add('active');
-            document.querySelectorAll('.nav-tab')[1].classList.remove('active');
-        }
-    }
-
-    function borrarExpediente(id) {
-        if(confirm("¿Eliminar expediente permanentemente?")) {
-            let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-            db = db.filter(x => x.id_exp !== id);
-            localStorage.setItem(DB_KEY, JSON.stringify(db));
-            renderTable();
-        }
-    }
-
-    function limpiarFormulario() {
-        if(confirm("¿Limpiar todos los campos para un nuevo registro?")) {
-            document.querySelectorAll('input').forEach(i => i.value = "");
-            document.querySelectorAll('select').forEach(i => i.selectedIndex = 0);
-            document.getElementById('fecha').valueAsDate = new Date();
-        }
-    }
-
-    function generarPDF() {
-        const val = (id) => document.getElementById(id).value;
+    function generarReporte() {
         const d = {
-            nombre: val('nombre'), edad: val('edad'), fecha: val('fecha'),
-            phq: val('phq'), flagPHQ: val('phqFlag'), gad: val('gad'),
-            bai: val('bai'), bdi: val('bdi'), bhs: val('bhs'),
-            ssi: val('ssi'), goca: val('goca'), gocaNivel: val('gocaNivel'),
-            hadsA: val('hadsA'), hadsD: val('hadsD'),
-            idareE: val('idareE'), idareR: val('idareR'),
-            plut: val('plut'), cssrs: val('cssrs')
+            nombre: document.getElementById('nombre').value,
+            edad: document.getElementById('edad').value,
+            fecha: document.getElementById('fecha').value,
+            phq: document.getElementById('scorePHQ').value, flagPHQ: document.getElementById('flagPHQ').value,
+            gad: document.getElementById('scoreGAD').value,
+            hadsA: document.getElementById('hadsA').value, hadsD: document.getElementById('hadsD').value,
+            bai: document.getElementById('scoreBAI').value,
+            idareE: document.getElementById('idareE').value, idareR: document.getElementById('idareR').value,
+            bdi: document.getElementById('scoreBDI').value,
+            bhs: document.getElementById('scoreBHS').value,
+            ssi: document.getElementById('scoreSSI').value,
+            goca: document.getElementById('scoreGOCA').value,
+            lira: document.getElementById('scoreLIRA').value, liraCrisis: document.getElementById('liraCrisis').value,
+            cId: document.getElementById('cssrsId').value, 
+            cPlan: document.getElementById('cssrsPlan').value, 
+            cCond: document.getElementById('cssrsCond').value
         };
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-
-        // Header
-        doc.setFillColor(38, 50, 56); doc.rect(0, 0, 210, 40, 'F');
-        doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
-        doc.text("CBTa No. 130 - Informe Integral", 105, 20, null, null, "center");
-        doc.setFontSize(12);
-        doc.text("Área Clínica y Psicopedagógica", 105, 30, null, null, "center");
-
-        // Datos
-        doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
-        doc.text(`Estudiante: ${d.nombre}`, 20, 50);
-        doc.text(`Edad: ${d.edad} años`, 140, 50);
-        doc.text(`Fecha: ${d.fecha}`, 140, 55);
-        doc.line(20, 60, 190, 60);
-
-        let y = 70;
         
-        const section = (title, color) => {
-            doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(color[0], color[1], color[2]);
-            doc.text(title, 20, y); y+=8;
-            doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
-        };
+        doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
+        doc.text("CBTa No. 130 - Informe Integral", 105, 25, null, null, "center");
+        
+        doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.text(`Paciente: ${d.nombre} | Edad: ${d.edad} | Fecha: ${d.fecha}`, 20, 50);
+        doc.line(20, 55, 190, 55);
 
-        const row = (lbl, val, interp) => {
+        let y = 65;
+        const row = (t, s, i, alert=false) => {
             if(y>270){doc.addPage(); y=20;}
-            doc.text(lbl, 25, y);
-            doc.text(val ? val.toString() : "-", 80, y);
-            doc.text(interp || "", 100, y);
-            doc.setDrawColor(230); doc.line(25, y+2, 185, y+2);
-            y+=8;
+            doc.setFont("helvetica", "bold"); doc.text(t, 20, y);
+            doc.setFont("helvetica", "normal"); doc.text(s.toString(), 80, y);
+            if(alert) doc.setTextColor(200,0,0);
+            doc.text(i, 100, y);
+            doc.setTextColor(0);
+            doc.line(20, y+2, 190, y+2); y+=8;
         };
 
-        // I. CLINICA
-        section("I. EVALUACIÓN CLÍNICA", [13, 71, 161]);
-        if(d.phq) row("Depresión (PHQ-9)", d.phq, d.phq>=10?"ALERTA":"Bajo");
-        if(d.gad) row("Ansiedad (GAD-7)", d.gad, d.gad>=10?"ALERTA":"Bajo");
-        if(d.bai) row("Ansiedad (BAI)", d.bai, d.bai>15?"Significativo":"Bajo");
-        if(d.bdi) row("Depresión (BDI)", d.bdi, d.bdi>18?"Significativo":"Bajo");
-        if(d.idareE) row("IDARE (Estado)", d.idareE, "");
+        // CLINICA
+        if(d.phq) row("PHQ-9", d.phq, d.phq>=10?"ALERTA":"Bajo", d.phq>=10);
+        if(d.gad) row("GAD-7", d.gad, d.gad>=10?"ALERTA":"Bajo", d.gad>=10);
+        if(d.bdi) row("BDI-II", d.bdi, d.bdi>18?"Significativo":"Bajo", d.bdi>18);
         if(d.hadsA) row("HADS", `A:${d.hadsA} D:${d.hadsD}`, "");
 
         y+=5;
-        section("II. RIESGO SUICIDA", [198, 40, 40]);
-        if(d.ssi) row("SSI (Ideación)", d.ssi, d.ssi>5?"RIESGO":"Bajo");
-        if(d.bhs) row("BHS (Desesperanza)", d.bhs, d.bhs>8?"Riesgo":"Bajo");
-        if(d.plut) row("Plutchik", d.plut, "");
-        if(d.cssrs > 0) row("Columbia", "Positivo", "Riesgo Detectado");
+        // RIESGO
+        if(d.ssi) row("SSI", d.ssi, d.ssi>5?"RIESGO":"Bajo", d.ssi>5);
+        if(d.bhs) row("BHS", d.bhs, d.bhs>8?"Riesgo":"Bajo", d.bhs>8);
+        if(d.cId==="1" || d.cCond==="1") row("Columbia", "Positivo", "Riesgo Suicida Detectado", true);
 
         y+=5;
-        section("III. PSICOPEDAGOGÍA", [0, 105, 92]);
-        if(d.goca) row("GOCA (Aula)", d.goca, d.gocaNivel);
+        // PSICOPEDAGOGÍA
+        if(d.goca) row("GOCA (Aula)", d.goca, d.goca>80?"ALERTA":"Bajo", d.goca>80);
+        if(d.lira) {
+            let n = d.lira>=8?"URGENTE":d.lira>=5?"Referir":"Obs";
+            if(d.liraCrisis==="SI") n="CRISIS (E)";
+            row("LIRA (Riesgo Acad)", d.lira, n, d.lira>=8||d.liraCrisis==="SI");
+        }
 
         y+=15;
         doc.rect(20, y, 170, 40);
