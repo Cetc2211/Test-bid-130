@@ -3,309 +3,370 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Generador de Informes</title>
+<title>Gestión de Expedientes - CBTa 130</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    body { font-family: -apple-system, sans-serif; background-color: #f5f5f5; padding: 20px; }
-    .card { background: white; max-width: 800px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    h2 { color: #1b5e20; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-    input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
-    .row { display: flex; gap: 15px; }
-    .col { flex: 1; }
+    body { font-family: -apple-system, sans-serif; background-color: #eceff1; padding: 20px; margin: 0; }
+    .main-container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
     
-    .btn-generate { background-color: #1b5e20; color: white; border: none; width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; }
-    .back-link { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; font-size: 0.9em; }
+    /* NAV TABS */
+    .nav-tabs { display: flex; background: #263238; }
+    .nav-tab { flex: 1; padding: 20px; text-align: center; color: #b0bec5; cursor: pointer; font-weight: bold; border-bottom: 4px solid transparent; transition: all 0.3s; }
+    .nav-tab:hover { background: #37474f; color: white; }
+    .nav-tab.active { background: #37474f; color: white; border-bottom-color: #00acc1; }
+
+    /* CONTENIDO */
+    .tab-content { padding: 30px; display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    /* FORMULARIOS */
+    .header-section { 
+        background: #f5f5f5; padding: 10px 15px; border-left: 5px solid #546e7a; 
+        font-weight: bold; margin: 25px 0 15px 0; color: #37474f; text-transform: uppercase; font-size: 0.9rem; display: flex; justify-content: space-between;
+    }
+    .header-clinica { border-left-color: #1565C0; background: #e3f2fd; color: #0d47a1; }
+    .header-pedag { border-left-color: #00695c; background: #e0f2f1; color: #004d40; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+    .input-wrapper { margin-bottom: 5px; }
+    label { font-size: 0.8rem; font-weight: bold; display: block; color: #546e7a; margin-bottom: 3px; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #cfd8dc; border-radius: 4px; box-sizing: border-box; }
     
-    .section-box { background:#fafafa; padding:15px; border-radius:10px; margin-bottom:15px; border-left: 5px solid #ccc; }
-    .header-sec { margin-top:0; font-size:1rem; display:flex; justify-content:space-between; }
-    
-    /* Panel de Memoria */
-    .memory-panel { background: #fff3e0; border: 1px solid #ffe0b2; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-    .mem-text { color: #e65100; font-size: 0.9rem; }
-    .btn-clear { background: #c62828; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
-    
-    /* Colores Secciones */
-    .s-phq { border-left-color: #00695c; } .s-phq h3 { color: #00695c; }
-    .s-gad { border-left-color: #e65100; } .s-gad h3 { color: #e65100; }
-    .s-bai { border-left-color: #2e7d32; } .s-bai h3 { color: #2e7d32; }
-    .s-idare { border-left-color: #37474f; } .s-idare h3 { color: #37474f; }
-    .s-bdi { border-left-color: #1565C0; } .s-bdi h3 { color: #1565C0; }
-    .s-hads { border-left-color: #880e4f; } .s-hads h3 { color: #880e4f; }
-    .s-ssi { border-left-color: #7b1fa2; } .s-ssi h3 { color: #7b1fa2; }
-    .s-bhs { border-left-color: #212121; } .s-bhs h3 { color: #212121; }
-    .s-cssrs { border-left-color: #c62828; } .s-cssrs h3 { color: #c62828; }
-    .s-plut { border-left-color: #5d4037; } .s-plut h3 { color: #5d4037; }
+    /* EXPEDIENTES TABLE */
+    .search-bar { width: 100%; padding: 12px; font-size: 1rem; border: 2px solid #cfd8dc; border-radius: 8px; margin-bottom: 20px; }
+    .student-table { width: 100%; border-collapse: collapse; }
+    .student-table th { background: #eceff1; padding: 12px; text-align: left; color: #455a64; }
+    .student-table td { padding: 12px; border-bottom: 1px solid #eee; }
+    .student-table tr:hover { background: #f5f5f5; }
+    .action-btn { padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.8rem; margin-right: 5px; }
+    .btn-edit { background: #1976D2; color: white; }
+    .btn-del { background: #c62828; color: white; }
+
+    /* BOTONES ACCIÓN */
+    .btn-main { background: #00897b; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
+    .btn-save-db { background: #1565C0; }
+    .btn-clear { background: #78909c; margin-top: 10px; }
 </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>🏥 Generador Integral (V4 - Memoria)</h2>
-    
-    <!-- PANEL DE MEMORIA -->
-    <div id="memoryPanel" class="memory-panel" style="display:none;">
-        <div class="mem-text">
-            <strong>📂 Datos recuperados del dispositivo</strong><br>
-            Se cargaron automáticamente los resultados pendientes.
-        </div>
-        <button class="btn-clear" onclick="borrarMemoria()">🗑️ Borrar / Nuevo Paciente</button>
+<div class="main-container">
+    <!-- NAVEGACIÓN -->
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="switchTab('tab-captura')">📝 Captura / Edición</div>
+        <div class="nav-tab" onclick="switchTab('tab-expedientes')">📂 Base de Datos (Expedientes)</div>
     </div>
 
-    <div class="row">
-        <div class="col"><label>Nombre:</label><input type="text" id="nombre"></div>
-        <div class="col"><label>Edad:</label><input type="number" id="edad"></div>
-        <div class="col"><label>Sexo (H/M):</label><input type="text" id="sexo"></div>
-        <div class="col"><label>Fecha:</label><input type="date" id="fecha"></div>
-    </div>
-    <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
+    <!-- PESTAÑA 1: CAPTURA -->
+    <div id="tab-captura" class="tab-content active">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="margin:0; color:#37474f;">Ficha del Estudiante</h2>
+            <button onclick="limpiarFormulario()" class="action-btn btn-del">Limpiar Todo</button>
+        </div>
 
-    <!-- TAMIZAJE -->
-    <div class="row">
-        <div class="col section-box s-phq">
-            <h3 class="header-sec">PHQ-9</h3>
-            <input type="number" id="scorePHQ" placeholder="Total">
-            <input type="number" id="flagPHQ" placeholder="Ítem 9" style="margin-top:5px">
+        <!-- DATOS GENERALES -->
+        <div class="header-section">Datos de Identificación</div>
+        <div class="form-grid">
+            <div class="input-wrapper"><label>Nombre Completo:</label><input type="text" id="nombre"></div>
+            <div class="input-wrapper"><label>Edad:</label><input type="number" id="edad"></div>
+            <div class="input-wrapper"><label>Sexo:</label><select id="sexo"><option value="">--</option><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
+            <div class="input-wrapper"><label>Fecha:</label><input type="date" id="fecha"></div>
+            <div class="input-wrapper"><label>ID Expediente (Auto):</label><input type="text" id="id_exp" readonly style="background:#eee;"></div>
         </div>
-        <div class="col section-box s-gad">
-            <h3 class="header-sec">GAD-7</h3>
-            <input type="number" id="scoreGAD" placeholder="Total">
-        </div>
-        <div class="col section-box s-hads">
-            <h3 class="header-sec">HADS</h3>
-            <input type="number" id="hadsA" placeholder="Ansiedad">
-            <input type="number" id="hadsD" placeholder="Depresión" style="margin-top:5px">
-        </div>
-    </div>
 
-    <!-- ANSIEDAD -->
-    <div class="row">
-        <div class="col section-box s-bai">
-            <h3 class="header-sec">BAI (Beck)</h3>
-            <input type="number" id="scoreBAI" placeholder="Total">
-            <div style="display:flex; gap:5px; margin-top:5px;">
-                <input type="number" id="f1" placeholder="F1"><input type="number" id="f2" placeholder="F2">
-                <input type="number" id="f3" placeholder="F3"><input type="number" id="f4" placeholder="F4">
+        <!-- ÁREA CLÍNICA -->
+        <div class="header-section header-clinica">ÁREA CLÍNICA (Psicología)</div>
+        
+        <!-- Tamizaje -->
+        <div class="form-grid">
+            <div class="input-wrapper"><label style="color:#00695c">PHQ-9 (Total):</label><input type="number" id="phq"></div>
+            <div class="input-wrapper"><label style="color:#00695c">PHQ-9 (Ítem 9):</label><input type="number" id="phqFlag"></div>
+            <div class="input-wrapper"><label style="color:#e65100">GAD-7 (Total):</label><input type="number" id="gad"></div>
+            <div class="input-wrapper"><label style="color:#880e4f">HADS (Ans):</label><input type="number" id="hadsA"></div>
+            <div class="input-wrapper"><label style="color:#880e4f">HADS (Dep):</label><input type="number" id="hadsD"></div>
+        </div>
+
+        <!-- Profundización -->
+        <div class="form-grid" style="margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
+            <div class="input-wrapper"><label style="color:#2e7d32">BAI (Total):</label><input type="number" id="bai"></div>
+            <div class="input-wrapper"><label style="color:#37474f">IDARE (Estado):</label><input type="number" id="idareE"></div>
+            <div class="input-wrapper"><label style="color:#37474f">IDARE (Rasgo):</label><input type="number" id="idareR"></div>
+            <div class="input-wrapper"><label style="color:#1565C0">BDI-II (Total):</label><input type="number" id="bdi"></div>
+            <div class="input-wrapper"><label style="color:#212121">BHS (Total):</label><input type="number" id="bhs"></div>
+        </div>
+        
+        <!-- Factores BAI Ocultos para PDF -->
+        <div style="display:none;">
+            <input id="f1"><input id="f2"><input id="f3"><input id="f4">
+        </div>
+
+        <!-- Riesgo -->
+        <div class="form-grid" style="margin-top:15px; background:#ffebee; padding:10px; border-radius:5px;">
+            <div class="input-wrapper"><label style="color:#c62828">SSI (Total):</label><input type="number" id="ssi"></div>
+            <div class="input-wrapper"><label style="color:#c62828">SSI (Flags):</label><input type="text" id="ssiFlags"></div>
+            <div class="input-wrapper"><label style="color:#5d4037">Plutchik:</label><input type="number" id="plut"></div>
+            <div class="input-wrapper"><label style="color:#b71c1c">Columbia (Positivo):</label>
+                <select id="cssrs">
+                    <option value="0">Negativo</option>
+                    <option value="1">Ideación</option>
+                    <option value="2">Plan/Conducta</option>
+                </select>
             </div>
         </div>
-        <div class="col section-box s-idare">
-            <h3 class="header-sec">IDARE</h3>
-            <input type="number" id="idareE" placeholder="Estado">
-            <input type="number" id="idareR" placeholder="Rasgo" style="margin-top:5px">
+
+        <!-- ÁREA PSICOPEDAGÓGICA -->
+        <div class="header-section header-pedag">ÁREA PSICOPEDAGÓGICA</div>
+        <div class="form-grid">
+            <div class="input-wrapper"><label style="color:#ff6f00">GOCA (Riesgo):</label><input type="number" id="goca"></div>
+            <div class="input-wrapper"><label style="color:#ff6f00">GOCA (Nivel):</label><input type="text" id="gocaNivel"></div>
+            <div class="input-wrapper"><label style="color:#00838f">Entrevista (Folio):</label><input type="text" id="entrevFolio" placeholder="Si existe"></div>
+        </div>
+
+        <!-- ACCIONES -->
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button onclick="guardarExpediente()" class="btn-main btn-save-db">💾 Guardar/Actualizar Expediente</button>
+            <button onclick="generarPDF()" class="btn-main" style="background:#bf360c;">📄 Generar PDF Integral</button>
         </div>
     </div>
 
-    <!-- DEPRESIÓN & DESESPERANZA -->
-    <div class="row">
-        <div class="col section-box s-bdi">
-            <h3 class="header-sec">BDI-II</h3>
-            <input type="number" id="scoreBDI" placeholder="Total">
+    <!-- PESTAÑA 2: EXPEDIENTES -->
+    <div id="tab-expedientes" class="tab-content">
+        <h2>Base de Datos de Estudiantes</h2>
+        <input type="text" id="searchBox" class="search-bar" placeholder="🔍 Buscar por nombre..." onkeyup="renderTable()">
+        
+        <div style="overflow-x:auto;">
+            <table class="student-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Fecha Reg.</th>
+                        <th>Riesgo (SSI/GOCA)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Se llena con JS -->
+                </tbody>
+            </table>
         </div>
-        <div class="col section-box s-bhs">
-            <h3 class="header-sec">BHS</h3>
-            <input type="number" id="scoreBHS" placeholder="Total">
-        </div>
+        <p style="text-align:center; color:#888; font-size:0.8rem; margin-top:20px;">Nota: Los datos se guardan en este dispositivo (iPad/PC). Si borras el caché, se pierden.</p>
     </div>
+</div>
 
-    <!-- RIESGO ALTO -->
-    <div class="row">
-        <div class="col section-box s-ssi">
-            <h3 class="header-sec">SSI</h3>
-            <input type="number" id="scoreSSI" placeholder="Total">
-            <input type="text" id="flagsSSI" placeholder="Flags" style="margin-top:5px">
-        </div>
-        <div class="col section-box s-plut">
-            <h3 class="header-sec">Plutchik</h3>
-            <input type="number" id="scorePlut" placeholder="Total">
-        </div>
-    </div>
-
-    <div class="section-box s-cssrs">
-        <h3 class="header-sec">Columbia (C-SSRS)</h3>
-        <div class="row">
-            <div class="col"><label>Idea (1-5)</label><select id="cssrsId"><option value="0">No</option><option value="1">Sí</option></select></div>
-            <div class="col"><label>Plan (4-5)</label><select id="cssrsPlan"><option value="0">No</option><option value="1">Sí</option></select></div>
-            <div class="col"><label>Conducta</label><select id="cssrsCond"><option value="0">No</option><option value="1">Sí</option></select></div>
-            <div class="col"><label>Reciente</label><select id="cssrsRec"><option value="0">No</option><option value="1">Sí</option></select></div>
-        </div>
-    </div>
-    
-    <button class="btn-generate" onclick="generarReporte()">📄 Descargar Expediente Integrado</button>
-    <a href="index.html" class="back-link">← Volver al Menú Principal</a>
+<div style="text-align:center; margin-top:20px;">
+    <a href="index.html" style="color:#546e7a; text-decoration:none;">← Volver al Panel Principal</a>
 </div>
 
 <script>
-    const STORAGE_KEY = "cbta_paciente_temp";
-    document.getElementById('fecha').valueAsDate = new Date();
-
-    // --- CARGA AUTOMÁTICA AL ABRIR ---
-    window.addEventListener('DOMContentLoaded', () => {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-            const data = JSON.parse(raw);
-            document.getElementById('memoryPanel').style.display = 'flex';
-            
-            // Cargar Datos Generales
-            if(data.nombre) document.getElementById('nombre').value = data.nombre;
-            if(data.edad) document.getElementById('edad').value = data.edad;
-            if(data.sexo) document.getElementById('sexo').value = data.sexo;
-
-            // Cargar Scores (Solo si existen)
-            const setVal = (id, val) => { if(val !== undefined) document.getElementById(id).value = val; };
-            
-            setVal('scorePHQ', data.phq); setVal('flagPHQ', data.phqFlag);
-            setVal('scoreGAD', data.gad);
-            setVal('hadsA', data.hadsA); setVal('hadsD', data.hadsD);
-            setVal('scoreBAI', data.bai); setVal('f1', data.f1); setVal('f2', data.f2); setVal('f3', data.f3); setVal('f4', data.f4);
-            setVal('idareE', data.idareE); setVal('idareR', data.idareR);
-            setVal('scoreBDI', data.bdi);
-            setVal('scoreBHS', data.bhs);
-            setVal('scoreSSI', data.ssi); setVal('flagsSSI', data.ssiFlags);
-            setVal('scorePlut', data.plut);
-            
-            setVal('cssrsId', data.cId); setVal('cssrsPlan', data.cPlan); 
-            setVal('cssrsCond', data.cCond); setVal('cssrsRec', data.cRec);
-        }
+    const DB_KEY = "cbta_db_expedientes";
+    const TEMP_KEY = "cbta_paciente_temp"; // Para leer lo que llega de los tests
+    
+    // Al iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('fecha').valueAsDate = new Date();
+        cargarDesdeTemp();
+        renderTable();
     });
 
-    function borrarMemoria() {
-        if(confirm("¿Seguro que deseas borrar los datos guardados? Esto iniciará un expediente nuevo.")) {
-            localStorage.removeItem(STORAGE_KEY);
-            location.reload();
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        // Activar estilo en botón
+        event.target.classList.add('active');
+        
+        if(tabId === 'tab-expedientes') renderTable();
+    }
+
+    // 1. CARGAR DATOS TEMPORALES (Si vienes de hacer un test)
+    function cargarDesdeTemp() {
+        const raw = localStorage.getItem(TEMP_KEY);
+        if(raw) {
+            const d = JSON.parse(raw);
+            if(confirm("📥 Se detectaron datos nuevos de un test reciente. ¿Deseas cargarlos al formulario?")) {
+                llenarFormulario(d);
+                // No borramos temp aún por seguridad
+            }
         }
     }
 
-    function generarReporte() {
-        const d = {
-            nombre: document.getElementById('nombre').value,
-            edad: parseInt(document.getElementById('edad').value),
-            sexo: document.getElementById('sexo').value.toUpperCase(),
-            fecha: document.getElementById('fecha').value,
-            // Scores
-            phq: document.getElementById('scorePHQ').value, flagPHQ: document.getElementById('flagPHQ').value,
-            gad: document.getElementById('scoreGAD').value,
-            hadsA: document.getElementById('hadsA').value, hadsD: document.getElementById('hadsD').value,
-            bai: document.getElementById('scoreBAI').value, f1: document.getElementById('f1').value, f2: document.getElementById('f2').value, f3: document.getElementById('f3').value, f4: document.getElementById('f4').value,
-            idareE: document.getElementById('idareE').value, idareR: document.getElementById('idareR').value,
-            bdi: document.getElementById('scoreBDI').value,
-            bhs: document.getElementById('scoreBHS').value,
-            ssi: document.getElementById('scoreSSI').value, flagsSSI: document.getElementById('flagsSSI').value,
-            plut: document.getElementById('scorePlut').value,
-            cId: document.getElementById('cssrsId').value, cPlan: document.getElementById('cssrsPlan').value,
-            cCond: document.getElementById('cssrsCond').value, cRec: document.getElementById('cssrsRec').value
-        };
-
-        if(!d.nombre) { alert("Falta nombre"); return; }
+    function llenarFormulario(d) {
+        const set = (id, val) => { if(val !== undefined) document.getElementById(id).value = val; };
         
-        const img = new Image(); img.src = "logo.jpg";
-        img.onload = () => createPDF(d, img);
-        img.onerror = () => createPDF(d, null);
+        set('nombre', d.nombre); set('edad', d.edad); set('sexo', d.sexo);
+        if(d.id) set('id_exp', d.id); // Si ya tenía ID
+
+        // Clínica
+        set('phq', d.phq); set('phqFlag', d.phqFlag); set('gad', d.gad);
+        set('hadsA', d.hadsA); set('hadsD', d.hadsD);
+        set('bai', d.bai); set('f1', d.f1); set('f2', d.f2); set('f3', d.f3); set('f4', d.f4);
+        set('idareE', d.idareE); set('idareR', d.idareR);
+        set('bdi', d.bdi); set('bhs', d.bhs);
+        
+        // Riesgo
+        set('ssi', d.ssi); set('ssiFlags', d.ssiFlags); set('plut', d.plut);
+        if(d.cId === "1" || d.cCond === "1") document.getElementById('cssrs').value = "2"; // Simplificado
+        else if(d.cId === "1") document.getElementById('cssrs').value = "1";
+
+        // Pedagógica
+        set('goca', d.goca); set('gocaNivel', d.gocaNivel);
     }
 
-    function createPDF(d, img) {
+    // 2. GUARDAR EN BASE DE DATOS (Array en LocalStorage)
+    function guardarExpediente() {
+        const nombre = document.getElementById('nombre').value;
+        if(!nombre) { alert("El nombre es obligatorio"); return; }
+
+        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        let id = document.getElementById('id_exp').value;
+        
+        // Objeto con TODOS los campos
+        const inputs = document.querySelectorAll('input, select');
+        let record = {};
+        inputs.forEach(i => record[i.id] = i.value);
+        record.fechaReg = new Date().toLocaleDateString();
+
+        if(id) {
+            // Actualizar existente
+            const index = db.findIndex(x => x.id_exp === id);
+            if(index !== -1) db[index] = record;
+        } else {
+            // Nuevo
+            record.id_exp = Date.now().toString(); // ID único basado en tiempo
+            db.push(record);
+            document.getElementById('id_exp').value = record.id_exp;
+        }
+
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        // Limpiar temp para evitar confusiones
+        localStorage.removeItem(TEMP_KEY);
+        
+        alert("✅ Expediente guardado/actualizado correctamente.");
+        renderTable();
+    }
+
+    // 3. TABLA DE EXPEDIENTES
+    function renderTable() {
+        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const tbody = document.getElementById('tableBody');
+        const filtro = document.getElementById('searchBox').value.toLowerCase();
+        
+        tbody.innerHTML = "";
+
+        db.filter(x => x.nombre.toLowerCase().includes(filtro)).forEach(x => {
+            let row = `<tr>
+                <td><strong>${x.nombre}</strong></td>
+                <td>${x.edad || '-'}</td>
+                <td>${x.fechaReg}</td>
+                <td>
+                    ${x.ssi ? '<span style="color:#c62828">SSI:'+x.ssi+'</span>' : ''} 
+                    ${x.goca ? '<span style="color:#e65100">GOCA:'+x.goca+'</span>' : ''}
+                </td>
+                <td>
+                    <button class="action-btn btn-edit" onclick="cargarExpediente('${x.id_exp}')">✏️ Ver/Editar</button>
+                    <button class="action-btn btn-del" onclick="borrarExpediente('${x.id_exp}')">🗑️</button>
+                </td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function cargarExpediente(id) {
+        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const record = db.find(x => x.id_exp === id);
+        if(record) {
+            llenarFormulario(record);
+            switchTab('tab-captura');
+        }
+    }
+
+    function borrarExpediente(id) {
+        if(confirm("¿Estás seguro de eliminar este expediente? No se puede deshacer.")) {
+            let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+            db = db.filter(x => x.id_exp !== id);
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            renderTable();
+        }
+    }
+
+    function limpiarFormulario() {
+        document.querySelectorAll('input').forEach(i => i.value = "");
+        document.getElementById('fecha').valueAsDate = new Date();
+    }
+
+    // 4. GENERACIÓN DE PDF (Tu función existente, adaptada)
+    function generarPDF() {
+        // Recopilamos datos directo del formulario (que ya está lleno)
+        const val = (id) => document.getElementById(id).value;
+        const d = {
+            nombre: val('nombre'), edad: val('edad'), fecha: val('fecha'),
+            phq: val('phq'), flagPHQ: val('phqFlag'), gad: val('gad'),
+            bai: val('bai'), bdi: val('bdi'), bhs: val('bhs'),
+            ssi: val('ssi'), goca: val('goca'), gocaNivel: val('gocaNivel'),
+            hadsA: val('hadsA'), hadsD: val('hadsD'),
+            idareE: val('idareE'), idareR: val('idareR'),
+            plut: val('plut')
+        };
+
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Encabezado
-        doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
-        if (img) doc.addImage(img, 'JPEG', 10, 7, 25, 25);
+        // Header
+        doc.setFillColor(38, 50, 56); doc.rect(0, 0, 210, 40, 'F');
         doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
-        doc.text("Centro de Bachillerato Tecnológico Agropecuario No. 130", 105, 25, null, null, "center");
-        
-        doc.setTextColor(0); doc.setFontSize(14); doc.text("Informe Psicopedagógico Integral", 105, 55, null, null, "center");
-        doc.setFontSize(10); doc.setFont("helvetica", "normal");
-        doc.text(`Paciente: ${d.nombre} | Edad: ${d.edad} | Fecha: ${d.fecha}`, 20, 65);
-        doc.line(20, 70, 190, 70);
+        doc.text("CBTa No. 130 - Informe Integral", 105, 20, null, null, "center");
+        doc.setFontSize(12);
+        doc.text("Área Clínica y Psicopedagógica", 105, 30, null, null, "center");
 
-        let yPos = 80;
+        // Datos
+        doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.text(`Estudiante: ${d.nombre}`, 20, 50);
+        doc.text(`Edad: ${d.edad} años`, 140, 50);
+        doc.text(`Fecha: ${d.fecha}`, 140, 55);
+        doc.line(20, 60, 190, 60);
+
+        let y = 70;
         
-        const drawRow = (title, score, interp, colorRisk = false) => {
-            if (yPos > 270) { doc.addPage(); yPos = 20; }
-            doc.setFont("helvetica", "bold");
-            doc.text(title, 20, yPos);
-            doc.setFont("helvetica", "normal");
-            doc.text(score ? score.toString() : "-", 80, yPos);
-            if(colorRisk) doc.setTextColor(200,0,0);
-            doc.text(interp, 100, yPos);
-            doc.setTextColor(0);
-            doc.line(20, yPos+2, 190, yPos+2);
-            yPos += 8;
+        const section = (title, color) => {
+            doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(color[0], color[1], color[2]);
+            doc.text(title, 20, y); y+=8;
+            doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
         };
 
-        // 1. TAMIZAJE
-        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(0, 105, 92);
-        doc.text("1. ESCALAS DE TAMIZAJE", 20, yPos); yPos += 10;
-        doc.setFontSize(9); doc.setTextColor(0);
+        const row = (lbl, val, interp) => {
+            if(y>270){doc.addPage(); y=20;}
+            doc.text(lbl, 25, y);
+            doc.text(val ? val.toString() : "-", 80, y);
+            doc.text(interp || "", 100, y);
+            doc.setDrawColor(230); doc.line(25, y+2, 185, y+2);
+            y+=8;
+        };
 
-        if(d.phq) {
-            let v=parseInt(d.phq), n=""; if(v<=4)n="Mínima";else if(v<=9)n="Leve";else if(v<=14)n="Moderada";else if(v<=19)n="Mod-Sev";else n="Severa";
-            if(d.flagPHQ>0) n+=" (ALERTA I9)";
-            drawRow("PHQ-9 (Dep)", d.phq, n, v>=10);
-        }
-        if(d.gad) {
-            let v=parseInt(d.gad), n=""; if(v<=4)n="Mínima";else if(v<=9)n="Leve";else if(v<=14)n="Moderada";else n="Severa";
-            drawRow("GAD-7 (Ans)", d.gad, n, v>=10);
-        }
-        if(d.hadsA) {
-            let v=parseInt(d.hadsA), n=""; if(v<=7)n="Normal";else if(v<=10)n="Dudoso";else n="Caso Clínico";
-            drawRow("HADS-A (Ans)", d.hadsA, n, v>=11);
-        }
-        if(d.hadsD) {
-            let v=parseInt(d.hadsD), n=""; if(v<=7)n="Normal";else if(v<=10)n="Dudoso";else n="Caso Clínico";
-            drawRow("HADS-D (Dep)", d.hadsD, n, v>=11);
-        }
-        yPos += 5;
+        // CLINICA
+        section("I. EVALUACIÓN CLÍNICA", [13, 71, 161]); // Azul
+        if(d.phq) row("Depresión (PHQ-9)", d.phq, d.phq>=10?"ALERTA":"Bajo");
+        if(d.gad) row("Ansiedad (GAD-7)", d.gad, d.gad>=10?"ALERTA":"Bajo");
+        if(d.bai) row("Ansiedad (BAI)", d.bai, d.bai>15?"Significativo":"Bajo");
+        if(d.bdi) row("Depresión (BDI)", d.bdi, d.bdi>18?"Significativo":"Bajo");
+        if(d.idareE) row("IDARE (Estado)", d.idareE, "");
+        if(d.hadsA) row("HADS", `A:${d.hadsA} D:${d.hadsD}`, "");
 
-        // 2. PROFUNDIZACIÓN
-        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(21, 101, 192);
-        doc.text("2. EVALUACIÓN PROFUNDA", 20, yPos); yPos += 10;
-        doc.setFontSize(9); doc.setTextColor(0);
+        y+=5;
+        section("II. RIESGO SUICIDA", [198, 40, 40]); // Rojo
+        if(d.ssi) row("SSI (Ideación)", d.ssi, d.ssi>5?"RIESGO":"Bajo");
+        if(d.bhs) row("BHS (Desesperanza)", d.bhs, d.bhs>8?"Riesgo":"Bajo");
+        if(d.plut) row("Plutchik", d.plut, "");
 
-        if(d.bai) {
-            let v=parseInt(d.bai), n=""; if(v<=7)n="Normal";else if(v<=15)n="Leve";else if(v<=25)n="Moderada";else n="Severa";
-            drawRow("BAI (Beck)", d.bai, n, v>15);
-        }
-        if(d.bdi) {
-            let v=parseInt(d.bdi), n=""; if(v<=12)n="Sin dep";else if(v<=18)n="Leve";else if(v<=27)n="Moderada";else n="Severa";
-            drawRow("BDI-II", d.bdi, n, v>=19);
-        }
-        if(d.idareE) {
-            let v=parseInt(d.idareE), n="Media"; if(v<32)n="Baja"; if(v>45)n="Alta";
-            drawRow("IDARE-E", d.idareE, n, v>45);
-        }
-        if(d.bhs) {
-            let v=parseInt(d.bhs), n=""; if(v<=3)n="Normal";else if(v<=8)n="Leve";else if(v<=14)n="Moderada";else n="Severa";
-            drawRow("BHS (Desesp)", d.bhs, n, v>=9);
-        }
-        yPos += 5;
+        y+=5;
+        section("III. PSICOPEDAGOGÍA", [0, 105, 92]); // Verde
+        if(d.goca) row("GOCA (Aula)", d.goca, d.gocaNivel);
 
-        // 3. RIESGO SUICIDA
-        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(198, 40, 40);
-        doc.text("3. EVALUACIÓN DE RIESGO", 20, yPos); yPos += 10;
-        doc.setFontSize(9); doc.setTextColor(0);
-
-        if(d.ssi) {
-            let v=parseInt(d.ssi), n=""; if(v<=5)n="Bajo";else if(v<=9)n="Moderado";else if(v<=14)n="Alto";else n="Muy Alto";
-            drawRow("SSI", d.ssi, n, v>=6);
-        }
-        if(d.plut) {
-            let v=parseInt(d.plut), n=""; if(v<=4)n="Sin riesgo";else if(v<=6)n="Leve";else if(v<=8)n="Moderado";else n="Alto";
-            drawRow("Plutchik", d.plut, n, v>=6);
-        }
-        
-        if(d.cId === "1" || d.cCond === "1") {
-            let risk = "Bajo";
-            if(d.cId==="1") risk="Ideación Presente";
-            if(d.cPlan==="1") risk="ALTO (Con Plan)";
-            if(d.cCond==="1") risk="ALTO (Historial)";
-            if(d.cRec==="1") risk="MUY ALTO (Reciente)";
-            drawRow("C-SSRS", "Positivo", risk, true);
-        }
-
-        yPos += 20;
-        doc.rect(20, yPos, 170, 40);
-        doc.text("Observaciones Clínicas:", 22, yPos+5);
+        y+=15;
+        doc.rect(20, y, 170, 40);
+        doc.text("Conclusiones y Recomendaciones:", 22, y+5);
 
         doc.save(`Expediente_${d.nombre}.pdf`);
     }
