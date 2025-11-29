@@ -7,7 +7,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
     body { font-family: "Segoe UI", Roboto, sans-serif; background-color: #f0f2f5; color: #1c1c1e; margin: 0; }
-    /* Encabezado TEAL */
     header { background: linear-gradient(135deg, #00897b 0%, #004d40 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .container { max-width: 900px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #00695c; text-align: center; margin-top: 0; border-bottom: 2px solid #b2dfdb; padding-bottom: 10px; }
@@ -21,13 +20,31 @@
         margin-top: 30px; border-left: 5px solid #00897b; border-radius: 4px;
     }
     
-    /* TABLA FIJA */
+    /* TABLA MEJORADA PARA TEXTO LARGO */
     .table-container { overflow-x: auto; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; min-width: 800px; table-layout: fixed; }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 10px; 
+        font-size: 0.85rem; 
+        min-width: 900px; /* Más ancho para que quepa el texto */
+        table-layout: fixed; 
+    }
     
-    th, td { padding: 8px 5px; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
-    th:first-child, td:first-child { width: 40%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; }
-    th:not(:first-child), td:not(:first-child) { width: 12%; }
+    th, td { padding: 10px 5px; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
+    
+    /* Columna Pregunta más ancha (50%) para texto completo */
+    th:first-child, td:first-child { 
+        width: 50%; 
+        text-align: left; 
+        padding-left: 10px; 
+        font-weight: 500; 
+        white-space: normal; /* Permite saltos de línea */
+        line-height: 1.3;
+    }
+    
+    /* Columnas de opciones (10% cada una) */
+    th:not(:first-child), td:not(:first-child) { width: 10%; }
     
     th { background-color: #e0f2f1; color: #00695c; font-weight: bold; position: sticky; top: 0; }
     tr:nth-child(even) { background-color: #fafafa; }
@@ -38,7 +55,7 @@
     .score-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; }
     
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .whatsapp { background-color: #25D366; }
     .local-save { background-color: #1565C0; }
     .btn-pdf { background-color: #00897b; }
@@ -60,7 +77,7 @@
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha"></div>
 
         <div style="background:#e0f2f1; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #004d40;">
-            <strong>Instrucciones:</strong> Marca qué tan de acuerdo estás con cada razón para venir a la escuela (1=Totalmente en desacuerdo, 5=Totalmente de acuerdo).
+            <strong>Instrucciones:</strong> Lee cada afirmación y marca qué tan de acuerdo estás con ella. No hay respuestas correctas o incorrectas.
         </div>
 
         <form id="ebmaForm">
@@ -69,7 +86,7 @@
 
         <div class="buttons">
             <button type="button" class="whatsapp" onclick="calcularEBMA()">📊 Calcular Perfil Motivacional</button>
-            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
         </div>
     </div>
 
@@ -103,26 +120,57 @@
     const STORAGE_KEY = "cbta_paciente_temp";
     document.getElementById('fecha').valueAsDate = new Date();
 
+    // TEXTOS COMPLETOS Y PRECISOS
     const secciones = [
         { 
             id: 'A', title: 'A. MOTIVACIÓN INTRÍNSECA', 
-            items: ["1. Disfruto aprendiendo cosas nuevas", "2. Satisfacción al superar retos", "3. Me gusta lo que estudio", "4. Curiosidad por temas", "5. Emoción al descubrir cosas"]
+            items: [
+                "1. Disfruto mucho aprendiendo cosas nuevas",
+                "2. Me da satisfacción personal superar retos académicos difíciles",
+                "3. Me gusta lo que estudio, especialmente las materias de mi especialidad",
+                "4. Siento curiosidad por conocer más sobre los temas que vemos",
+                "5. Me emociona descubrir cosas que no sabía"
+            ]
         },
         { 
             id: 'B', title: 'B. REGULACIÓN IDENTIFICADA', 
-            items: ["6. Importante para futuro profesional", "7. Conseguir trabajo deseado", "8. Ser alguien preparado", "9. Lograr metas personales", "10. Ayudar familia/comunidad"]
+            items: [
+                "6. Sé que es importante para mi futuro profesional",
+                "7. Me ayudará a conseguir el trabajo que quiero",
+                "8. Quiero ser alguien preparado y con conocimientos",
+                "9. Es el camino para lograr mis metas personales",
+                "10. Me permitirá ayudar mejor a mi familia y comunidad"
+            ]
         },
         { 
             id: 'C', title: 'C. REGULACIÓN INTROYECTADA', 
-            items: ["11. Sentiría mal conmigo si no", "12. No decepcionar familia", "13. Se espera de mi edad", "14. Culpable si desperdicio", "15. Padres orgullosos"]
+            items: [
+                "11. Me sentiría mal conmigo mismo si no lo hago",
+                "12. No quiero decepcionar a mi familia",
+                "13. Es lo que se espera de alguien de mi edad",
+                "14. Me sentiría culpable si desperdicio esta oportunidad",
+                "15. Quiero que mis padres se sientan orgullosos de mí"
+            ]
         },
         { 
             id: 'D', title: 'D. REGULACIÓN EXTERNA', 
-            items: ["16. Padres obligan", "17. Es obligatorio", "18. Evitar castigos", "19. No tengo otra opción", "20. Me quitan privilegios"]
+            items: [
+                "16. Mis padres me obligan a venir",
+                "17. Es obligatorio hasta los 18 años",
+                "18. Para evitar problemas o castigos en casa",
+                "19. No tengo otra opción",
+                "20. Me quitan privilegios si no vengo"
+            ]
         },
         { 
             id: 'E', title: 'E. DESMOTIVACIÓN', 
-            items: ["21. No sé para qué vengo", "22. Pierdo el tiempo", "23. No veo sentido", "24. No sirve para nada", "25. No me importa terminar"]
+            items: [
+                "21. Honestamente, no sé para qué vengo",
+                "22. Siento que pierdo el tiempo aquí",
+                "23. No le veo sentido a seguir estudiando",
+                "24. Creo que la escuela no me sirve para nada",
+                "25. Ya no me importa si termino o no"
+            ]
         }
     ];
 
@@ -130,11 +178,22 @@
     secciones.forEach(sec => {
         let html = `<div class="section-title">${sec.title}</div>
         <div class="table-container"><table><thead>
-            <tr><th>Afirmación</th><th>1<br>T.Des</th><th>2<br>Des</th><th>3<br>Neu</th><th>4<br>Acu</th><th>5<br>T.Acu</th></tr>
+            <tr>
+                <th>Afirmación</th>
+                <th>1<br>T.Desacuerdo</th>
+                <th>2<br>Desacuerdo</th>
+                <th>3<br>Neutral</th>
+                <th>4<br>De acuerdo</th>
+                <th>5<br>T.De acuerdo</th>
+            </tr>
         </thead><tbody>`;
+        
         sec.items.forEach(txt => {
             let id = parseInt(txt.split('.')[0]); 
-            html += `<tr><td>${txt}</td>${[1,2,3,4,5].map(v => `<td><input type="radio" name="m${id}" value="${v}"></td>`).join('')}</tr>`;
+            html += `<tr>
+                <td>${txt}</td>
+                ${[1,2,3,4,5].map(v => `<td><input type="radio" name="m${id}" value="${v}"></td>`).join('')}
+            </tr>`;
         });
         html += `</tbody></table></div>`;
         container.innerHTML += html;
@@ -301,4 +360,5 @@
 </script>
 </body>
 </html>
+
 
