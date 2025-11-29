@@ -20,30 +20,11 @@
         margin-top: 30px; border-left: 5px solid #00897b; border-radius: 4px;
     }
     
-    /* TABLA MEJORADA PARA TEXTO LARGO */
     .table-container { overflow-x: auto; margin-bottom: 20px; }
-    table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        margin-top: 10px; 
-        font-size: 0.85rem; 
-        min-width: 900px; /* Más ancho para que quepa el texto */
-        table-layout: fixed; 
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; min-width: 900px; table-layout: fixed; }
     
     th, td { padding: 10px 5px; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
-    
-    /* Columna Pregunta más ancha (50%) para texto completo */
-    th:first-child, td:first-child { 
-        width: 50%; 
-        text-align: left; 
-        padding-left: 10px; 
-        font-weight: 500; 
-        white-space: normal; /* Permite saltos de línea */
-        line-height: 1.3;
-    }
-    
-    /* Columnas de opciones (10% cada una) */
+    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; line-height: 1.3; }
     th:not(:first-child), td:not(:first-child) { width: 10%; }
     
     th { background-color: #e0f2f1; color: #00695c; font-weight: bold; position: sticky; top: 0; }
@@ -51,11 +32,20 @@
     
     input[type="radio"] { width: 20px; height: 20px; margin: 0 auto; display: block; cursor: pointer; accent-color: #00897b; }
 
-    .results-panel { background: #e0f2f1; padding: 20px; border-radius: 10px; margin-top: 30px; display: none; border: 1px solid #004d40; }
+    /* Panel de Resultados */
+    .results-panel { background: #e0f2f1; padding: 25px; border-radius: 10px; margin-top: 30px; display: none; border: 1px solid #004d40; }
+    
+    .score-card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #00897b; }
     .score-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; }
     
+    .interpretation-box { background: #fffde7; padding: 15px; border-radius: 8px; border: 1px solid #fbc02d; margin-top: 15px; }
+    .alert-list { color: #c62828; font-weight: bold; margin-top: 10px; list-style-type: none; padding: 0; }
+    .alert-list li::before { content: "⚠️ "; }
+
+    .rec-box { background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #1976d2; }
+
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
     .whatsapp { background-color: #25D366; }
     .local-save { background-color: #1565C0; }
     .btn-pdf { background-color: #00897b; }
@@ -77,7 +67,7 @@
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha"></div>
 
         <div style="background:#e0f2f1; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #004d40;">
-            <strong>Instrucciones:</strong> Lee cada afirmación y marca qué tan de acuerdo estás con ella. No hay respuestas correctas o incorrectas.
+            <strong>Instrucciones:</strong> Marca qué tan de acuerdo estás con cada afirmación (1=Totalmente en desacuerdo, 5=Totalmente de acuerdo).
         </div>
 
         <form id="ebmaForm">
@@ -85,32 +75,57 @@
         </form>
 
         <div class="buttons">
-            <button type="button" class="whatsapp" onclick="calcularEBMA()">📊 Calcular Perfil Motivacional</button>
-            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
+            <button type="button" class="whatsapp" onclick="calcularEBMA()">📊 Calcular Diagnóstico Motivacional</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar</button>
         </div>
     </div>
 
-    <!-- RESULTADOS -->
+    <!-- RESULTADOS COMPLETOS -->
     <div id="results-area" class="results-panel">
-        <h3 style="color:#004d40; text-align:center;">Perfil Motivacional</h3>
+        <h3 style="color:#004d40; text-align:center; margin-top:0;">Diagnóstico EBMA</h3>
         
-        <div id="score-details" style="margin-bottom:15px;"></div>
-        
-        <div style="background:white; padding:15px; border-radius:8px; text-align:center; border:2px solid #00897b;">
-            <div style="font-size:0.9rem; color:#666;">ÍNDICE DE AUTODETERMINACIÓN (IAR)</div>
-            <div id="iar-score" style="font-size:1.8em; font-weight:bold; color:#004d40;"></div>
-            <div id="iar-interp" style="font-weight:bold; margin-top:5px;"></div>
+        <!-- PUNTUACIONES -->
+        <div class="score-card">
+            <h4 style="margin:0 0 10px 0; color:#00695c;">Puntuaciones por Dimensión (1-5)</h4>
+            <div id="score-details"></div>
         </div>
 
-        <div id="profile-desc" style="margin-top:15px; font-weight:bold; color:#d81b60; text-align:center;"></div>
-        <div id="intervention-rec" style="margin-top:10px; font-size:0.9rem; font-style:italic; text-align:center;"></div>
+        <!-- IAR -->
+        <div class="score-card" style="text-align:center; background:#f1f8e9; border-left-color:#33691e;">
+            <div style="font-size:0.9rem; color:#558b2f; font-weight:bold;">ÍNDICE DE AUTODETERMINACIÓN (IAR)</div>
+            <div id="iar-score" style="font-size:2em; font-weight:bold; color:#33691e;"></div>
+            <div id="iar-interp" style="font-weight:bold; color:#558b2f;"></div>
+            <div id="iar-desc" style="font-size:0.85rem; margin-top:5px; font-style:italic;"></div>
+        </div>
+
+        <!-- PERFIL Y ALERTAS -->
+        <div class="interpretation-box">
+            <h4 style="margin:0 0 5px 0; color:#f57f17;">Perfil Motivacional Identificado</h4>
+            <div id="profile-title" style="font-weight:bold; font-size:1.1em; color:#e65100;"></div>
+            <div id="profile-desc" style="font-size:0.9rem; margin-top:5px;"></div>
+            
+            <div id="alerts-container" style="display:none; margin-top:15px; border-top:1px dashed #f9a825; padding-top:10px;">
+                <span style="font-weight:bold; color:#c62828;">SEÑALES DE ALERTA DETECTADAS:</span>
+                <ul id="alert-list" class="alert-list"></ul>
+            </div>
+        </div>
+
+        <!-- RECOMENDACIONES -->
+        <div class="rec-box">
+            <h4 style="margin:0 0 10px 0; color:#0d47a1;">Plan de Intervención Sugerido</h4>
+            <div id="interv-main" style="font-weight:bold; color:#1565C0;"></div>
+            <ul id="interv-list" style="margin:10px 0; padding-left:20px; font-size:0.9rem;"></ul>
+            
+            <div style="margin-top:15px; border-top:1px solid #90caf9; padding-top:10px;">
+                <strong>Seguimiento:</strong> <span id="follow-up"></span>
+            </div>
+        </div>
 
         <div class="buttons">
             <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
-            <button type="button" class="btn-pdf" onclick="generarPDFEBMA()">📄 Generar Reporte PDF</button>
-            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Resumen WhatsApp</button>
-            <button type="button" class="reset" onclick="location.reload()">🔄 Nueva Evaluación</button>
-            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Ir al Menú</button>
+            <button type="button" class="btn-pdf" onclick="generarPDFEBMA()">📄 Generar Informe PDF</button>
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Resumen</button>
+            <button type="button" class="btn-back" onclick="location.reload()">🔄 Nueva Evaluación</button>
         </div>
     </div>
 </div>
@@ -120,80 +135,21 @@
     const STORAGE_KEY = "cbta_paciente_temp";
     document.getElementById('fecha').valueAsDate = new Date();
 
-    // TEXTOS COMPLETOS Y PRECISOS
     const secciones = [
-        { 
-            id: 'A', title: 'A. MOTIVACIÓN INTRÍNSECA', 
-            items: [
-                "1. Disfruto mucho aprendiendo cosas nuevas",
-                "2. Me da satisfacción personal superar retos académicos difíciles",
-                "3. Me gusta lo que estudio, especialmente las materias de mi especialidad",
-                "4. Siento curiosidad por conocer más sobre los temas que vemos",
-                "5. Me emociona descubrir cosas que no sabía"
-            ]
-        },
-        { 
-            id: 'B', title: 'B. REGULACIÓN IDENTIFICADA', 
-            items: [
-                "6. Sé que es importante para mi futuro profesional",
-                "7. Me ayudará a conseguir el trabajo que quiero",
-                "8. Quiero ser alguien preparado y con conocimientos",
-                "9. Es el camino para lograr mis metas personales",
-                "10. Me permitirá ayudar mejor a mi familia y comunidad"
-            ]
-        },
-        { 
-            id: 'C', title: 'C. REGULACIÓN INTROYECTADA', 
-            items: [
-                "11. Me sentiría mal conmigo mismo si no lo hago",
-                "12. No quiero decepcionar a mi familia",
-                "13. Es lo que se espera de alguien de mi edad",
-                "14. Me sentiría culpable si desperdicio esta oportunidad",
-                "15. Quiero que mis padres se sientan orgullosos de mí"
-            ]
-        },
-        { 
-            id: 'D', title: 'D. REGULACIÓN EXTERNA', 
-            items: [
-                "16. Mis padres me obligan a venir",
-                "17. Es obligatorio hasta los 18 años",
-                "18. Para evitar problemas o castigos en casa",
-                "19. No tengo otra opción",
-                "20. Me quitan privilegios si no vengo"
-            ]
-        },
-        { 
-            id: 'E', title: 'E. DESMOTIVACIÓN', 
-            items: [
-                "21. Honestamente, no sé para qué vengo",
-                "22. Siento que pierdo el tiempo aquí",
-                "23. No le veo sentido a seguir estudiando",
-                "24. Creo que la escuela no me sirve para nada",
-                "25. Ya no me importa si termino o no"
-            ]
-        }
+        { id: 'A', title: 'A. MOTIVACIÓN INTRÍNSECA', items: ["1. Disfruto mucho aprendiendo cosas nuevas", "2. Me da satisfacción personal superar retos académicos difíciles", "3. Me gusta lo que estudio, especialmente las materias de mi especialidad", "4. Siento curiosidad por conocer más sobre los temas que vemos", "5. Me emociona descubrir cosas que no sabía"] },
+        { id: 'B', title: 'B. REGULACIÓN IDENTIFICADA', items: ["6. Sé que es importante para mi futuro profesional", "7. Me ayudará a conseguir el trabajo que quiero", "8. Quiero ser alguien preparado y con conocimientos", "9. Es el camino para lograr mis metas personales", "10. Me permitirá ayudar mejor a mi familia y comunidad"] },
+        { id: 'C', title: 'C. REGULACIÓN INTROYECTADA', items: ["11. Me sentiría mal conmigo mismo si no lo hago", "12. No quiero decepcionar a mi familia", "13. Es lo que se espera de alguien de mi edad", "14. Me sentiría culpable si desperdicio esta oportunidad", "15. Quiero que mis padres se sientan orgullosos de mí"] },
+        { id: 'D', title: 'D. REGULACIÓN EXTERNA', items: ["16. Mis padres me obligan a venir", "17. Es obligatorio hasta los 18 años", "18. Para evitar problemas o castigos en casa", "19. No tengo otra opción", "20. Me quitan privilegios si no vengo"] },
+        { id: 'E', title: 'E. DESMOTIVACIÓN', items: ["21. Honestamente, no sé para qué vengo", "22. Siento que pierdo el tiempo aquí", "23. No le veo sentido a seguir estudiando", "24. Creo que la escuela no me sirve para nada", "25. Ya no me importa si termino o no"] }
     ];
 
     const container = document.getElementById('sections-container');
     secciones.forEach(sec => {
         let html = `<div class="section-title">${sec.title}</div>
-        <div class="table-container"><table><thead>
-            <tr>
-                <th>Afirmación</th>
-                <th>1<br>T.Desacuerdo</th>
-                <th>2<br>Desacuerdo</th>
-                <th>3<br>Neutral</th>
-                <th>4<br>De acuerdo</th>
-                <th>5<br>T.De acuerdo</th>
-            </tr>
-        </thead><tbody>`;
-        
+        <div class="table-container"><table><thead><tr><th>Afirmación</th><th>1<br>T.Des</th><th>2<br>Des</th><th>3<br>Neu</th><th>4<br>Acu</th><th>5<br>T.Acu</th></tr></thead><tbody>`;
         sec.items.forEach(txt => {
             let id = parseInt(txt.split('.')[0]); 
-            html += `<tr>
-                <td>${txt}</td>
-                ${[1,2,3,4,5].map(v => `<td><input type="radio" name="m${id}" value="${v}"></td>`).join('')}
-            </tr>`;
+            html += `<tr><td>${txt}</td>${[1,2,3,4,5].map(v => `<td><input type="radio" name="m${id}" value="${v}"></td>`).join('')}</tr>`;
         });
         html += `</tbody></table></div>`;
         container.innerHTML += html;
@@ -213,69 +169,94 @@
             const el = document.querySelector(`input[name="m${i}"]:checked`);
             if(el) {
                 let val = parseInt(el.value);
-                if(i<=5) sums.A += val;
-                else if(i<=10) sums.B += val;
-                else if(i<=15) sums.C += val;
-                else if(i<=20) sums.D += val;
-                else sums.E += val;
+                if(i<=5) sums.A += val; else if(i<=10) sums.B += val; else if(i<=15) sums.C += val; else if(i<=20) sums.D += val; else sums.E += val;
                 count++;
             }
         }
 
         if(count < 25) { alert(`Faltan preguntas (${count}/25)`); return; }
-
-        // Promedios
         for(let k in sums) avgs[k] = sums[k] / 5;
 
-        // IAR Calculation: (2*MI) + (1*RI) - (1*RIn) - (2*RE)
-        // A=MI, B=RI, C=RIn, D=RE
+        // IAR Calculation
         let iar = (2 * avgs.A) + (1 * avgs.B) - (1 * avgs.C) - (2 * avgs.D);
         iar = parseFloat(iar.toFixed(2));
 
-        // Interpretación IAR
-        let iarInterp = "";
-        if(iar > 10) iarInterp = "ALTAMENTE AUTODETERMINADO";
-        else if(iar >= 5) iarInterp = "MODERADAMENTE AUTODETERMINADO";
-        else if(iar >= 0) iarInterp = "MOTIVACIÓN MIXTA";
-        else if(iar >= -5) iarInterp = "MODERADAMENTE CONTROLADO";
-        else iarInterp = "ALTAMENTE CONTROLADO (Riesgo Abandono)";
+        // Lógica de Interpretación Completa
+        let iarData = getIARInterpretation(iar);
+        let profileData = getProfile(avgs);
+        let alerts = getAlerts(avgs, iar);
+        let interv = getInterventions(profileData.id);
 
-        // Perfil
-        let perfil = "No definido";
-        let interv = "Evaluación general";
-        
-        if(avgs.A >= 4 && avgs.B >= 3.5 && avgs.D < 2.5 && avgs.E < 2) {
-            perfil = "1. INTRÍNSECAMENTE MOTIVADO"; interv = "Mantener y potenciar";
-        } else if(avgs.A < 3 && avgs.B >= 4 && avgs.D < 3 && avgs.E < 2) {
-            perfil = "2. MOTIVADO POR METAS"; interv = "Conectar con futuro profesional";
-        } else if(avgs.A < 3 && avgs.B < 3 && avgs.C >= 4 && avgs.D < 3) {
-            perfil = "3. PRESIÓN SOCIAL/CULPA"; interv = "Desarrollar autonomía";
-        } else if(avgs.A < 2.5 && avgs.B < 3 && avgs.D >= 4) {
-            perfil = "4. EXTERNAMENTE CONTROLADO"; interv = "Trabajo en sentido";
-        } else if(avgs.E >= 3.5) {
-            perfil = "5. DESMOTIVADO (RIESGO)"; interv = "Intervención Intensiva";
-        } else {
-            perfil = "Perfil Mixto / No Específico";
-        }
+        resultados = { nombre, avgs, iar, iarData, profileData, alerts, interv };
+        mostrarResultados();
+    }
 
-        resultados = { nombre, avgs, iar, iarInterp, perfil, interv };
-        
-        // Mostrar
+    function getIARInterpretation(iar) {
+        if(iar > 10) return { title: "ALTAMENTE AUTODETERMINADO", desc: "Motivación intrínseca. Estudia por satisfacción y metas propias. Pronóstico favorable." };
+        if(iar >= 5) return { title: "MODERADAMENTE AUTODETERMINADO", desc: "Balance positivo. Combina interés personal con metas futuras." };
+        if(iar >= 0) return { title: "MOTIVACIÓN MIXTA", desc: "Equilibrio entre motivación autónoma y controlada. Requiere fortalecimiento." };
+        if(iar >= -5) return { title: "MODERADAMENTE CONTROLADO", desc: "Predomina la presión externa. Riesgo moderado de abandono." };
+        return { title: "ALTAMENTE CONTROLADO", desc: "Motivación externa o ausente. Alto riesgo de abandono. Intervención inmediata." };
+    }
+
+    function getProfile(a) {
+        if(a.A >= 4 && a.B >= 3.5 && a.D < 2.5 && a.E < 2) return { id: 1, title: "PERFIL 1: INTRÍNSECAMENTE MOTIVADO", desc: "Disfruta aprender, ve valor en la educación." };
+        if(a.A < 3 && a.B >= 4 && a.D < 3 && a.E < 2) return { id: 2, title: "PERFIL 2: MOTIVADO POR METAS", desc: "Enfocado en utilidad práctica y futuro profesional." };
+        if(a.A < 3 && a.B < 3 && a.C >= 4 && a.D < 3) return { id: 3, title: "PERFIL 3: PRESIÓN SOCIAL / CULPA", desc: "Estudia para no decepcionar a otros." };
+        if(a.A < 2.5 && a.B < 3 && a.D >= 4 && a.E < 3) return { id: 4, title: "PERFIL 4: EXTERNAMENTE CONTROLADO", desc: "Estudia por obligación o evitar castigos." };
+        if(a.E >= 3.5) return { id: 5, title: "PERFIL 5: DESMOTIVADO", desc: "Sin conexión con la escuela. Riesgo crítico." };
+        return { id: 0, title: "PERFIL MIXTO", desc: "Patrón no específico. Requiere análisis individual." };
+    }
+
+    function getAlerts(a, iar) {
+        let list = [];
+        if(a.E >= 4.0) list.push("Desmotivación Alta (≥ 4.0)");
+        if(a.A < 2.0) list.push("Motivación Intrínseca Muy Baja (< 2.0)");
+        if(a.D >= 4.5) list.push("Regulación Externa Excesiva (≥ 4.5)");
+        if(iar < 0) list.push("IAR Negativo (Predominio de Control)");
+        if(a.B < 2.5) list.push("Ausencia de Metas Identificadas (< 2.5)");
+        return list;
+    }
+
+    function getInterventions(pid) {
+        let main = [], freq = "";
+        if(pid === 1) { main = ["Potenciar autonomía", "Apoyo académico si se requiere"]; freq = "Mensual"; }
+        else if(pid === 2) { main = ["Mentoría con Egresados", "Conexión Metas-Estudios"]; freq = "Mensual"; }
+        else if(pid === 3) { main = ["Entrevista Motivacional", "Desarrollar autonomía", "Trabajo con familia"]; freq = "Quincenal"; }
+        else if(pid === 4) { main = ["Entrevista Motivacional", "Programa 'Reconecta'", "Explorar valores"]; freq = "Semanal"; }
+        else if(pid === 5) { main = ["Entrevista Motivacional", "Activación Conductual", "Apoyo Intensivo"]; freq = "Semanal"; }
+        else { main = ["Entrevista exploratoria", "Definir metas"]; freq = "Quincenal"; }
+        return { main, freq };
+    }
+
+    function mostrarResultados() {
         document.getElementById('test-form').style.display = 'none';
         document.getElementById('results-area').style.display = 'block';
         
-        let html = "";
-        html += `<div class="score-row"><span>Intrínseca (A):</span> <b>${avgs.A.toFixed(1)}</b></div>`;
-        html += `<div class="score-row"><span>Identificada (B):</span> <b>${avgs.B.toFixed(1)}</b></div>`;
-        html += `<div class="score-row"><span>Introyectada (C):</span> <b>${avgs.C.toFixed(1)}</b></div>`;
-        html += `<div class="score-row"><span>Externa (D):</span> <b>${avgs.D.toFixed(1)}</b></div>`;
-        html += `<div class="score-row" style="color:#c62828;"><span>Desmotivación (E):</span> <b>${avgs.E.toFixed(1)}</b></div>`;
-        
+        let av = resultados.avgs;
+        let html = `
+            <div class="score-row"><span>A. Intrínseca:</span> <b>${av.A.toFixed(1)}</b></div>
+            <div class="score-row"><span>B. Identificada:</span> <b>${av.B.toFixed(1)}</b></div>
+            <div class="score-row"><span>C. Introyectada:</span> <b>${av.C.toFixed(1)}</b></div>
+            <div class="score-row"><span>D. Externa:</span> <b>${av.D.toFixed(1)}</b></div>
+            <div class="score-row" style="color:#c62828;"><span>E. Desmotivación:</span> <b>${av.E.toFixed(1)}</b></div>
+        `;
         document.getElementById('score-details').innerHTML = html;
-        document.getElementById('iar-score').innerText = iar;
-        document.getElementById('iar-interp').innerText = iarInterp;
-        document.getElementById('profile-desc').innerText = perfil;
-        document.getElementById('intervention-rec').innerText = `Recomendación: ${interv}`;
+        document.getElementById('iar-score').innerText = resultados.iar;
+        document.getElementById('iar-interp').innerText = resultados.iarData.title;
+        document.getElementById('iar-desc').innerText = resultados.iarData.desc;
+        
+        document.getElementById('profile-title').innerText = resultados.profileData.title;
+        document.getElementById('profile-desc').innerText = resultados.profileData.desc;
+
+        if(resultados.alerts.length > 0) {
+            document.getElementById('alerts-container').style.display = 'block';
+            document.getElementById('alert-list').innerHTML = resultados.alerts.map(a => `<li>${a}</li>`).join('');
+        }
+
+        document.getElementById('interv-main').innerText = "Acciones Recomendadas:";
+        document.getElementById('interv-list').innerHTML = resultados.interv.main.map(i => `<li>${i}</li>`).join('');
+        document.getElementById('follow-up').innerText = resultados.interv.freq;
         
         window.scrollTo(0,0);
     }
@@ -288,8 +269,7 @@
             nombre: resultados.nombre,
             grupo: document.getElementById('grupo').value,
             ebmaIAR: resultados.iar,
-            ebmaPerfil: resultados.perfil,
-            ebmaDesmot: resultados.avgs.E
+            ebmaPerfil: resultados.profileData.title
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(up));
         alert("✅ EBMA guardado en expediente.");
@@ -301,48 +281,69 @@
         const doc = new jsPDF();
         let y = 20;
 
+        // Encabezado
         doc.setFillColor(0, 77, 64); doc.rect(0, 0, 210, 40, 'F');
         doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
         doc.text("CBTa No. 130", 105, 20, null, null, "center");
-        doc.setFontSize(14);
-        doc.text("ESCALA DE MOTIVACIÓN ACADÉMICA (EBMA)", 105, 30, null, null, "center");
+        doc.setFontSize(14); doc.text("ESCALA DE MOTIVACIÓN ACADÉMICA (EBMA)", 105, 30, null, null, "center");
         
         doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
         doc.text(`Estudiante: ${resultados.nombre}`, 20, 50);
         doc.text(`Fecha: ${document.getElementById('fecha').value}`, 140, 50);
         doc.line(20, 55, 190, 55);
 
+        // Resultados Numéricos
         y = 70;
-        doc.setFont("helvetica", "bold"); doc.text("RESULTADOS POR DIMENSIÓN (1-5)", 20, y); y+=10;
-        
-        const row = (lbl, val) => {
-            doc.setFont("helvetica", "normal"); doc.text(lbl, 25, y);
-            doc.setFont("helvetica", "bold"); doc.text(val.toFixed(1), 150, y);
+        doc.setFont("helvetica", "bold"); doc.text("RESULTADOS POR DIMENSIÓN (Promedio 1-5)", 20, y); y+=10;
+        const addS = (l, v) => {
+            doc.setFont("helvetica", "normal"); doc.text(l, 25, y);
+            doc.setFont("helvetica", "bold"); doc.text(v.toFixed(1), 160, y);
             y+=8;
         };
-
-        row("A. Motivación Intrínseca (Gusto)", resultados.avgs.A);
-        row("B. Regulación Identificada (Metas)", resultados.avgs.B);
-        row("C. Regulación Introyectada (Culpa)", resultados.avgs.C);
-        row("D. Regulación Externa (Obligación)", resultados.avgs.D);
+        addS("A. Motivación Intrínseca (Gusto/Interés)", resultados.avgs.A);
+        addS("B. Regulación Identificada (Metas/Futuro)", resultados.avgs.B);
+        addS("C. Regulación Introyectada (Culpa/Deber)", resultados.avgs.C);
+        addS("D. Regulación Externa (Obligación/Castigo)", resultados.avgs.D);
         doc.setTextColor(198, 40, 40);
-        row("E. Desmotivación (Riesgo)", resultados.avgs.E);
+        addS("E. Desmotivación (Sin sentido)", resultados.avgs.E);
         doc.setTextColor(0);
 
-        y+=10;
+        // IAR
+        y+=5;
         doc.setFillColor(224, 242, 241); doc.rect(20, y, 170, 25, 'F');
         doc.setTextColor(0, 77, 64);
-        doc.text(`ÍNDICE DE AUTODETERMINACIÓN (IAR): ${resultados.iar}`, 25, y+10);
+        doc.setFont("helvetica", "bold");
+        doc.text(`ÍNDICE IAR: ${resultados.iar}`, 25, y+10);
         doc.setFont("helvetica", "normal");
-        doc.text(`Interpretación: ${resultados.iarInterp}`, 25, y+18);
-
+        doc.text(resultados.iarData.title, 90, y+10);
+        doc.setFontSize(9);
+        doc.text(resultados.iarData.desc, 25, y+18);
+        
         y+=35;
-        doc.setTextColor(0);
-        doc.setFont("helvetica", "bold"); doc.text("PERFIL IDENTIFICADO:", 20, y);
-        doc.setFont("helvetica", "normal"); doc.text(resultados.perfil, 70, y);
-        y+=10;
-        doc.setFont("helvetica", "bold"); doc.text("INTERVENCIÓN SUGERIDA:", 20, y);
-        doc.setFont("helvetica", "normal"); doc.text(resultados.interv, 80, y);
+        doc.setFontSize(11); doc.setTextColor(0);
+        
+        // Perfil
+        doc.setFont("helvetica", "bold"); doc.text("PERFIL MOTIVACIONAL:", 20, y); y+=7;
+        doc.setTextColor(230, 81, 0);
+        doc.text(resultados.profileData.title, 25, y); y+=7;
+        doc.setTextColor(0); doc.setFont("helvetica", "normal");
+        doc.text(resultados.profileData.desc, 25, y); y+=10;
+
+        // Alertas
+        if(resultados.alerts.length > 0) {
+            doc.setTextColor(198, 40, 40); doc.setFont("helvetica", "bold");
+            doc.text("SEÑALES DE ALERTA:", 20, y); y+=7;
+            doc.setFont("helvetica", "normal");
+            resultados.alerts.forEach(a => { doc.text(`• ${a}`, 25, y); y+=6; });
+            y+=5;
+        }
+
+        // Recomendaciones
+        doc.setTextColor(0); doc.setFont("helvetica", "bold");
+        doc.text("INTERVENCIONES RECOMENDADAS:", 20, y); y+=7;
+        doc.setFont("helvetica", "normal");
+        resultados.interv.main.forEach(i => { doc.text(`- ${i}`, 25, y); y+=6; });
+        doc.text(`Frecuencia de Seguimiento: ${resultados.interv.freq}`, 25, y+5);
 
         y+=30;
         doc.line(70, y, 140, y);
@@ -353,8 +354,8 @@
 
     function enviarWhatsApp() {
         if(!resultados) return;
-        let m = `🎓 *EBMA*%0A👤 ${resultados.nombre}%0A📊 IAR: ${resultados.iar} (${resultados.iarInterp})%0A🏷️ Perfil: ${resultados.perfil}`;
-        if(resultados.avgs.E >= 3.5) m += `%0A⚠️ ALTA DESMOTIVACIÓN`;
+        let m = `🎓 *EBMA*%0A👤 ${resultados.nombre}%0A📊 IAR: ${resultados.iar}%0A🏷️ Perfil: ${resultados.profileData.title}`;
+        if(resultados.alerts.length > 0) m += `%0A⚠️ ${resultados.alerts.length} Alertas detectadas`;
         window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank');
     }
 </script>
