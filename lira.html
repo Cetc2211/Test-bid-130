@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIRA - Riesgo Académico</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    body { font-family: "Segoe UI", Roboto, sans-serif; background-color: #f0f2f5; color: #1c1c1e; margin: 0; }
+    /* Encabezado ÍNDIGO */
+    header { background: linear-gradient(135deg, #3949ab 0%, #5c6bc0 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    h2 { color: #283593; text-align: center; margin-top: 0; border-bottom: 2px solid #9fa8da; padding-bottom: 10px; }
+    
+    .input-group { margin-bottom: 15px; }
+    label { font-weight: 600; display: block; margin-bottom: 5px; color: #333; }
+    input[type="text"], input[type="date"], input[type="time"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    
+    /* Secciones de Checklist */
+    .section-box { margin-bottom: 20px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+    .section-header { padding: 10px 15px; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
+    
+    /* Colores por sección */
+    .sec-a { background: #e3f2fd; color: #1565C0; }
+    .sec-b { background: #fff3e0; color: #e65100; }
+    .sec-c { background: #e8f5e9; color: #2e7d32; }
+    .sec-d { background: #f3e5f5; color: #7b1fa2; }
+    .sec-e { background: #ffebee; color: #c62828; border: 2px solid #ef5350; }
+
+    .checklist-container { padding: 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+    .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px; border-radius: 5px; transition: background 0.2s; cursor: pointer; }
+    .check-item:hover { background: #f5f5f5; }
+    .check-item input { transform: scale(1.3); margin-top: 3px; }
+    .check-text { font-size: 0.9rem; line-height: 1.3; }
+
+    /* Resultados */
+    .results-panel { background: #e8eaf6; padding: 20px; border-radius: 10px; margin-top: 30px; display: none; border: 1px solid #3949ab; }
+    .score-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; border-bottom: 1px dashed #ccc; padding-bottom: 2px; }
+    
+    .alert-critical { background: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; font-weight: bold; text-align: center; border: 2px solid #b71c1c; margin-bottom: 15px; animation: pulse 2s infinite; display: none; }
+    @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.4);} 70% {box-shadow: 0 0 0 10px rgba(198, 40, 40, 0);} 100% {box-shadow: 0 0 0 0 rgba(198, 40, 40, 0);} }
+
+    .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .whatsapp { background-color: #25D366; }
+    .local-save { background-color: #1565C0; }
+    .btn-pdf { background-color: #3949ab; }
+    .btn-back { background-color: #78909c; }
+</style>
+</head>
+<body>
+<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Lista de Riesgo Académico (LIRA)</span></header>
+
+<div class="container">
+    <div id="test-form">
+        <h2>Datos Básicos</h2>
+        <div class="input-group"><label>Estudiante:</label><input type="text" id="nombre"></div>
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1"><label>Grupo:</label><input type="text" id="grupo"></div>
+            <div style="flex:1"><label>Asignatura:</label><input type="text" id="asignatura"></div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1"><label>Docente:</label><input type="text" id="docente"></div>
+            <div style="flex:1"><label>Fecha:</label><input type="date" id="fecha"></div>
+        </div>
+
+        <div style="background:#e8eaf6; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #3949ab;">
+            <strong>Instrucciones:</strong> Marque ÚNICAMENTE las señales que observe actualmente. Si marca 3 o más en total, se requiere acción.
+        </div>
+
+        <form id="liraForm">
+            <!-- A. ACADÉMICOS -->
+            <div class="section-box">
+                <div class="section-header sec-a">A. INDICADORES ACADÉMICOS</div>
+                <div class="checklist-container" id="listA"></div>
+            </div>
+
+            <!-- B. CONDUCTUALES -->
+            <div class="section-box">
+                <div class="section-header sec-b">B. INDICADORES CONDUCTUALES</div>
+                <div class="checklist-container" id="listB"></div>
+            </div>
+
+            <!-- C. FÍSICOS -->
+            <div class="section-box">
+                <div class="section-header sec-c">C. FÍSICOS Y DE SALUD</div>
+                <div class="checklist-container" id="listC"></div>
+            </div>
+
+            <!-- D. CONTEXTUALES -->
+            <div class="section-box">
+                <div class="section-header sec-d">D. CONTEXTUALES (Si se conocen)</div>
+                <div class="checklist-container" id="listD"></div>
+            </div>
+
+            <!-- E. EMERGENCIA -->
+            <div class="section-box" style="border-color:#ef5350;">
+                <div class="section-header sec-e">⚠️ E. SEÑALES CRÍTICAS DE EMERGENCIA</div>
+                <div class="checklist-container" id="listE"></div>
+            </div>
+
+            <div class="input-group">
+                <label>Observaciones Adicionales:</label>
+                <input type="text" id="obs" placeholder="Detalles relevantes...">
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button type="button" class="whatsapp" onclick="calcularLIRA()">📊 Calcular Riesgo</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar</button>
+        </div>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="results-area" class="results-panel">
+        <h3 style="color:#283593; text-align:center; margin-top:0;">Diagnóstico LIRA</h3>
+        
+        <div id="alert-critical-box" class="alert-critical">
+            🚨 ¡ALERTA DE CRISIS DETECTADA!<br>Activar protocolo inmediatamente.
+        </div>
+
+        <div id="score-details"></div>
+        
+        <div style="background:white; padding:15px; border-radius:8px; margin-top:15px; text-align:center;">
+            <div style="font-size:0.9rem; color:#666;">ACCIÓN REQUERIDA:</div>
+            <div id="action-required" style="font-size:1.2rem; font-weight:bold; color:#3949ab;"></div>
+        </div>
+
+        <div class="buttons">
+            <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
+            <button type="button" class="btn-pdf" onclick="generarPDFLIRA()">📄 Generar Reporte PDF</button>
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Notificar a Orientación</button>
+            <button type="button" class="btn-back" onclick="location.reload()">🔄 Nuevo LIRA</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const NUMERO_DESTINO = "523111477413"; 
+    const STORAGE_KEY = "cbta_paciente_temp";
+    document.getElementById('fecha').valueAsDate = new Date();
+
+    const dataA = [
+        "A1. No entrega 3+ tareas consecutivas", "A2. Reprobó 2+ exámenes recientes",
+        "A3. Solicita salir frecuentemente (3+)", "A4. Sin materiales básicos",
+        "A5. Se niega a trabajar/participar", "A6. Bajó 2+ puntos promedio",
+        "A7. Falta 2+ veces por semana", "A8. No entregó proyecto importante"
+    ];
+    const dataB = [
+        "B1. Se duerme en clase", "B2. Aislamiento social repentino",
+        "B3. Agresividad verbal", "B4. Agresividad física/amenazas",
+        "B5. Llanto o crisis emocional", "B6. Verbaliza deserción",
+        "B7. Conducta desafiante", "B8. Cambios bruscos comportamiento"
+    ];
+    const dataC = [
+        "C1. Cambio peso notorio", "C2. Lesiones/moretones visibles",
+        "C3. Higiene descuidada", "C4. Agotamiento extremo/ojeras",
+        "C5. Signos consumo sustancias", "C6. Quejas malestares físicos",
+        "C7. Desmayos o mareos", "C8. Temblores/tics/sudoración"
+    ];
+    const dataD = [
+        "D1. Problemas familiares graves", "D2. Crisis económica",
+        "D3. Enfermedad grave (propia/fam)", "D4. Muerte reciente cercano",
+        "D5. Ruptura sentimental", "D6. Víctima bullying",
+        "D7. Víctima violencia/abuso", "D8. Trabaja o cuida hermanos"
+    ];
+    const dataE = [
+        "E1. Ideación suicida/autolesiones", "E2. Evidencia autolesiones (cortes)",
+        "E3. Amenazas a terceros", "E4. Intoxicación evidente",
+        "E5. Sospecha abuso sexual", "E6. Descompensación severa",
+        "E7. Fuga de hogar", "E8. Pérdida contacto realidad"
+    ];
+
+    function renderList(id, data, prefix) {
+        const div = document.getElementById(id);
+        data.forEach((txt, i) => {
+            div.innerHTML += `
+                <label class="check-item">
+                    <input type="checkbox" name="${prefix}" value="1">
+                    <span class="check-text">${txt}</span>
+                </label>`;
+        });
+    }
+
+    renderList('listA', dataA, 'A');
+    renderList('listB', dataB, 'B');
+    renderList('listC', dataC, 'C');
+    renderList('listD', dataD, 'D');
+    renderList('listE', dataE, 'E');
+
+    let resultados = null;
+
+    function calcularLIRA() {
+        const nombre = document.getElementById('nombre').value;
+        if(!nombre) { alert("Nombre requerido"); return; }
+
+        const count = (name) => document.querySelectorAll(`input[name="${name}"]:checked`).length;
+        
+        let sA = count('A'), sB = count('B'), sC = count('C'), sD = count('D'), sE = count('E');
+        let total = sA + sB + sC + sD; // E no suma al total numérico, es cualitativo crítico
+        
+        // Protocolo Acción
+        let accion = "";
+        let nivel = "";
+        
+        if (sE > 0) {
+            nivel = "CRISIS / EMERGENCIA";
+            accion = "ACTIVAR PROTOCOLO DE CRISIS INMEDIATO (No dejar solo)";
+        } else if (total >= 8) {
+            nivel = "Riesgo Alto";
+            accion = "INTERVENCIÓN URGENTE (Orientación + Padres)";
+        } else if (total >= 5) {
+            nivel = "Riesgo Medio";
+            accion = "REFERENCIA A ORIENTACIÓN (Hoy)";
+        } else if (total >= 3) {
+            nivel = "Riesgo Bajo";
+            accion = "NOTIFICAR TUTOR GRUPAL";
+        } else {
+            nivel = "Sin Riesgo Aparente";
+            accion = "OBSERVACIÓN CONTINUA";
+        }
+
+        resultados = { nombre, sA, sB, sC, sD, sE, total, nivel, accion };
+        mostrarResultados();
+    }
+
+    function mostrarResultados() {
+        document.getElementById('test-form').style.display = 'none';
+        document.getElementById('results-area').style.display = 'block';
+        
+        if(resultados.sE > 0) document.getElementById('alert-critical-box').style.display = 'block';
+        else document.getElementById('alert-critical-box').style.display = 'none';
+
+        let html = `
+            <div class="score-row"><span>Académicos (A):</span> <b>${resultados.sA} / 8</b></div>
+            <div class="score-row"><span>Conductuales (B):</span> <b>${resultados.sB} / 8</b></div>
+            <div class="score-row"><span>Físicos (C):</span> <b>${resultados.sC} / 8</b></div>
+            <div class="score-row"><span>Contextuales (D):</span> <b>${resultados.sD} / 8</b></div>
+            <div class="score-row" style="color:#c62828; border:none;"><span>🚨 CRÍTICOS (E):</span> <b>${resultados.sE}</b></div>
+            <div style="text-align:right; font-size:1.1em; margin-top:10px;">TOTAL: <b>${resultados.total} / 32</b></div>
+        `;
+        document.getElementById('score-details').innerHTML = html;
+        document.getElementById('action-required').innerText = resultados.accion;
+        window.scrollTo(0,0);
+    }
+
+    function guardarLocalmente() {
+        if(!resultados) return;
+        let cur = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let up = { 
+            ...cur, 
+            nombre: resultados.nombre, 
+            lira: resultados.total,
+            liraNivel: resultados.nivel,
+            liraCrisis: (resultados.sE > 0 ? "SI" : "NO")
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(up));
+        alert("✅ LIRA guardado en expediente.");
+    }
+
+    function generarPDFLIRA() {
+        if(!resultados) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        let y = 20;
+
+        doc.setFillColor(57, 73, 171); doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
+        doc.text("CBTa No. 130", 105, 20, null, null, "center");
+        doc.setFontSize(14);
+        doc.text("LISTA DE RIESGO ACADÉMICO (LIRA)", 105, 30, null, null, "center");
+        
+        doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        const docente = document.getElementById('docente').value;
+        const asig = document.getElementById('asignatura').value;
+        const fecha = document.getElementById('fecha').value;
+        
+        doc.text(`Estudiante: ${resultados.nombre}`, 15, 50); 
+        doc.text(`Fecha: ${fecha}`, 140, 50);
+        doc.text(`Docente: ${docente}`, 15, 56);
+        doc.text(`Asignatura: ${asig}`, 140, 56);
+
+        y = 70;
+        doc.setFont("helvetica", "bold"); doc.text("RESUMEN DE INDICADORES", 15, y); y+=10;
+        
+        const row = (lbl, val, max) => {
+            doc.setFont("helvetica", "normal");
+            doc.text(lbl, 20, y);
+            doc.text(`${val} de ${max}`, 150, y);
+            doc.line(20, y+2, 190, y+2);
+            y+=8;
+        };
+
+        row("A. Académicos", resultados.sA, 8);
+        row("B. Conductuales", resultados.sB, 8);
+        row("C. Físicos y Salud", resultados.sC, 8);
+        row("D. Contextuales", resultados.sD, 8);
+        
+        doc.setTextColor(198, 40, 40); doc.setFont("helvetica", "bold");
+        row("E. SEÑALES CRÍTICAS (Emergencia)", resultados.sE, 8);
+        doc.setTextColor(0);
+
+        y+=5;
+        doc.setFontSize(12); doc.setFont("helvetica", "bold");
+        doc.text(`TOTAL ACUMULADO: ${resultados.total} / 32`, 20, y); y+=10;
+        doc.text(`NIVEL DE RIESGO: ${resultados.nivel}`, 20, y); y+=15;
+
+        doc.setFillColor(232, 234, 246); doc.rect(15, y, 180, 25, 'F');
+        doc.setTextColor(40, 53, 147);
+        doc.text("ACCIÓN REQUERIDA:", 20, y+8);
+        doc.setFont("helvetica", "normal");
+        doc.text(resultados.accion, 20, y+16);
+
+        y+=35;
+        doc.setTextColor(0); doc.setFontSize(10);
+        doc.text("Observaciones:", 15, y);
+        const obs = document.getElementById('obs').value;
+        doc.text(obs, 15, y+6);
+
+        y+=30;
+        doc.line(70, y, 140, y);
+        doc.text("Firma del Docente", 105, y+5, null, null, "center");
+
+        doc.save(`LIRA_${resultados.nombre}.pdf`);
+    }
+
+    function enviarWhatsApp() {
+        if(!resultados) return;
+        let m = `📉 *REPORTE LIRA*%0A👤 ${resultados.nombre}%0A📊 Riesgo: ${resultados.nivel} (${resultados.total} pts)%0A⚡ Acción: ${resultados.accion}`;
+        if(resultados.sE > 0) m += `%0A🚨 CRÍTICO: ${resultados.sE} señales de emergencia.`;
+        window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank');
+    }
+</script>
+</body>
+</html>
+
