@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación EBMA - CBTa 130</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    body { font-family: "Segoe UI", Roboto, sans-serif; background-color: #f0f2f5; color: #1c1c1e; margin: 0; }
+    /* Encabezado TEAL */
+    header { background: linear-gradient(135deg, #00897b 0%, #004d40 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .container { max-width: 900px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    h2 { color: #00695c; text-align: center; margin-top: 0; border-bottom: 2px solid #b2dfdb; padding-bottom: 10px; }
+    
+    .input-group { margin-bottom: 15px; }
+    label { font-weight: 600; display: block; margin-bottom: 5px; color: #333; }
+    input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    
+    .section-title { 
+        background: #e0f2f1; color: #00695c; padding: 10px; font-weight: bold; 
+        margin-top: 30px; border-left: 5px solid #00897b; border-radius: 4px;
+    }
+    
+    /* TABLA FIJA */
+    .table-container { overflow-x: auto; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; min-width: 800px; table-layout: fixed; }
+    
+    th, td { padding: 8px 5px; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
+    th:first-child, td:first-child { width: 40%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; }
+    th:not(:first-child), td:not(:first-child) { width: 12%; }
+    
+    th { background-color: #e0f2f1; color: #00695c; font-weight: bold; position: sticky; top: 0; }
+    tr:nth-child(even) { background-color: #fafafa; }
+    
+    input[type="radio"] { width: 20px; height: 20px; margin: 0 auto; display: block; cursor: pointer; accent-color: #00897b; }
+
+    .results-panel { background: #e0f2f1; padding: 20px; border-radius: 10px; margin-top: 30px; display: none; border: 1px solid #004d40; }
+    .score-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; }
+    
+    .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+    button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
+    .whatsapp { background-color: #25D366; }
+    .local-save { background-color: #1565C0; }
+    .btn-pdf { background-color: #00897b; }
+    .btn-back { background-color: #78909c; }
+    .reset { background-color: #757575; }
+</style>
+</head>
+<body>
+<header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Escala de Motivación (EBMA)</span></header>
+
+<div class="container">
+    <div id="test-form">
+        <h2>Datos del Estudiante</h2>
+        <div class="input-group"><label>Nombre:</label><input type="text" id="nombre"></div>
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1"><label>Grupo:</label><input type="text" id="grupo"></div>
+            <div style="flex:1"><label>Semestre:</label><input type="text" id="semestre"></div>
+        </div>
+        <div class="input-group"><label>Fecha:</label><input type="date" id="fecha"></div>
+
+        <div style="background:#e0f2f1; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #004d40;">
+            <strong>Instrucciones:</strong> Marca qué tan de acuerdo estás con cada razón para venir a la escuela (1=Totalmente en desacuerdo, 5=Totalmente de acuerdo).
+        </div>
+
+        <form id="ebmaForm">
+            <div id="sections-container"></div>
+        </form>
+
+        <div class="buttons">
+            <button type="button" class="whatsapp" onclick="calcularEBMA()">📊 Calcular Perfil Motivacional</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar</button>
+        </div>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="results-area" class="results-panel">
+        <h3 style="color:#004d40; text-align:center;">Perfil Motivacional</h3>
+        
+        <div id="score-details" style="margin-bottom:15px;"></div>
+        
+        <div style="background:white; padding:15px; border-radius:8px; text-align:center; border:2px solid #00897b;">
+            <div style="font-size:0.9rem; color:#666;">ÍNDICE DE AUTODETERMINACIÓN (IAR)</div>
+            <div id="iar-score" style="font-size:1.8em; font-weight:bold; color:#004d40;"></div>
+            <div id="iar-interp" style="font-weight:bold; margin-top:5px;"></div>
+        </div>
+
+        <div id="profile-desc" style="margin-top:15px; font-weight:bold; color:#d81b60; text-align:center;"></div>
+        <div id="intervention-rec" style="margin-top:10px; font-size:0.9rem; font-style:italic; text-align:center;"></div>
+
+        <div class="buttons">
+            <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
+            <button type="button" class="btn-pdf" onclick="generarPDFEBMA()">📄 Generar Reporte PDF</button>
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Resumen WhatsApp</button>
+            <button type="button" class="reset" onclick="location.reload()">🔄 Nueva Evaluación</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Ir al Menú</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const NUMERO_DESTINO = "523111477413"; 
+    const STORAGE_KEY = "cbta_paciente_temp";
+    document.getElementById('fecha').valueAsDate = new Date();
+
+    const secciones = [
+        { 
+            id: 'A', title: 'A. MOTIVACIÓN INTRÍNSECA', 
+            items: ["1. Disfruto aprendiendo cosas nuevas", "2. Satisfacción al superar retos", "3. Me gusta lo que estudio", "4. Curiosidad por temas", "5. Emoción al descubrir cosas"]
+        },
+        { 
+            id: 'B', title: 'B. REGULACIÓN IDENTIFICADA', 
+            items: ["6. Importante para futuro profesional", "7. Conseguir trabajo deseado", "8. Ser alguien preparado", "9. Lograr metas personales", "10. Ayudar familia/comunidad"]
+        },
+        { 
+            id: 'C', title: 'C. REGULACIÓN INTROYECTADA', 
+            items: ["11. Sentiría mal conmigo si no", "12. No decepcionar familia", "13. Se espera de mi edad", "14. Culpable si desperdicio", "15. Padres orgullosos"]
+        },
+        { 
+            id: 'D', title: 'D. REGULACIÓN EXTERNA', 
+            items: ["16. Padres obligan", "17. Es obligatorio", "18. Evitar castigos", "19. No tengo otra opción", "20. Me quitan privilegios"]
+        },
+        { 
+            id: 'E', title: 'E. DESMOTIVACIÓN', 
+            items: ["21. No sé para qué vengo", "22. Pierdo el tiempo", "23. No veo sentido", "24. No sirve para nada", "25. No me importa terminar"]
+        }
+    ];
+
+    const container = document.getElementById('sections-container');
+    secciones.forEach(sec => {
+        let html = `<div class="section-title">${sec.title}</div>
+        <div class="table-container"><table><thead>
+            <tr><th>Afirmación</th><th>1<br>T.Des</th><th>2<br>Des</th><th>3<br>Neu</th><th>4<br>Acu</th><th>5<br>T.Acu</th></tr>
+        </thead><tbody>`;
+        sec.items.forEach(txt => {
+            let id = parseInt(txt.split('.')[0]); 
+            html += `<tr><td>${txt}</td>${[1,2,3,4,5].map(v => `<td><input type="radio" name="m${id}" value="${v}"></td>`).join('')}</tr>`;
+        });
+        html += `</tbody></table></div>`;
+        container.innerHTML += html;
+    });
+
+    let resultados = null;
+
+    function calcularEBMA() {
+        const nombre = document.getElementById('nombre').value;
+        if(!nombre) { alert("Nombre requerido"); return; }
+
+        let sums = { A:0, B:0, C:0, D:0, E:0 };
+        let avgs = { A:0, B:0, C:0, D:0, E:0 };
+        let count = 0;
+
+        for(let i=1; i<=25; i++) {
+            const el = document.querySelector(`input[name="m${i}"]:checked`);
+            if(el) {
+                let val = parseInt(el.value);
+                if(i<=5) sums.A += val;
+                else if(i<=10) sums.B += val;
+                else if(i<=15) sums.C += val;
+                else if(i<=20) sums.D += val;
+                else sums.E += val;
+                count++;
+            }
+        }
+
+        if(count < 25) { alert(`Faltan preguntas (${count}/25)`); return; }
+
+        // Promedios
+        for(let k in sums) avgs[k] = sums[k] / 5;
+
+        // IAR Calculation: (2*MI) + (1*RI) - (1*RIn) - (2*RE)
+        // A=MI, B=RI, C=RIn, D=RE
+        let iar = (2 * avgs.A) + (1 * avgs.B) - (1 * avgs.C) - (2 * avgs.D);
+        iar = parseFloat(iar.toFixed(2));
+
+        // Interpretación IAR
+        let iarInterp = "";
+        if(iar > 10) iarInterp = "ALTAMENTE AUTODETERMINADO";
+        else if(iar >= 5) iarInterp = "MODERADAMENTE AUTODETERMINADO";
+        else if(iar >= 0) iarInterp = "MOTIVACIÓN MIXTA";
+        else if(iar >= -5) iarInterp = "MODERADAMENTE CONTROLADO";
+        else iarInterp = "ALTAMENTE CONTROLADO (Riesgo Abandono)";
+
+        // Perfil
+        let perfil = "No definido";
+        let interv = "Evaluación general";
+        
+        if(avgs.A >= 4 && avgs.B >= 3.5 && avgs.D < 2.5 && avgs.E < 2) {
+            perfil = "1. INTRÍNSECAMENTE MOTIVADO"; interv = "Mantener y potenciar";
+        } else if(avgs.A < 3 && avgs.B >= 4 && avgs.D < 3 && avgs.E < 2) {
+            perfil = "2. MOTIVADO POR METAS"; interv = "Conectar con futuro profesional";
+        } else if(avgs.A < 3 && avgs.B < 3 && avgs.C >= 4 && avgs.D < 3) {
+            perfil = "3. PRESIÓN SOCIAL/CULPA"; interv = "Desarrollar autonomía";
+        } else if(avgs.A < 2.5 && avgs.B < 3 && avgs.D >= 4) {
+            perfil = "4. EXTERNAMENTE CONTROLADO"; interv = "Trabajo en sentido";
+        } else if(avgs.E >= 3.5) {
+            perfil = "5. DESMOTIVADO (RIESGO)"; interv = "Intervención Intensiva";
+        } else {
+            perfil = "Perfil Mixto / No Específico";
+        }
+
+        resultados = { nombre, avgs, iar, iarInterp, perfil, interv };
+        
+        // Mostrar
+        document.getElementById('test-form').style.display = 'none';
+        document.getElementById('results-area').style.display = 'block';
+        
+        let html = "";
+        html += `<div class="score-row"><span>Intrínseca (A):</span> <b>${avgs.A.toFixed(1)}</b></div>`;
+        html += `<div class="score-row"><span>Identificada (B):</span> <b>${avgs.B.toFixed(1)}</b></div>`;
+        html += `<div class="score-row"><span>Introyectada (C):</span> <b>${avgs.C.toFixed(1)}</b></div>`;
+        html += `<div class="score-row"><span>Externa (D):</span> <b>${avgs.D.toFixed(1)}</b></div>`;
+        html += `<div class="score-row" style="color:#c62828;"><span>Desmotivación (E):</span> <b>${avgs.E.toFixed(1)}</b></div>`;
+        
+        document.getElementById('score-details').innerHTML = html;
+        document.getElementById('iar-score').innerText = iar;
+        document.getElementById('iar-interp').innerText = iarInterp;
+        document.getElementById('profile-desc').innerText = perfil;
+        document.getElementById('intervention-rec').innerText = `Recomendación: ${interv}`;
+        
+        window.scrollTo(0,0);
+    }
+
+    function guardarLocalmente() {
+        if(!resultados) return;
+        let cur = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let up = { 
+            ...cur, 
+            nombre: resultados.nombre,
+            grupo: document.getElementById('grupo').value,
+            ebmaIAR: resultados.iar,
+            ebmaPerfil: resultados.perfil,
+            ebmaDesmot: resultados.avgs.E
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(up));
+        alert("✅ EBMA guardado en expediente.");
+    }
+
+    function generarPDFEBMA() {
+        if(!resultados) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        let y = 20;
+
+        doc.setFillColor(0, 77, 64); doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
+        doc.text("CBTa No. 130", 105, 20, null, null, "center");
+        doc.setFontSize(14);
+        doc.text("ESCALA DE MOTIVACIÓN ACADÉMICA (EBMA)", 105, 30, null, null, "center");
+        
+        doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.text(`Estudiante: ${resultados.nombre}`, 20, 50);
+        doc.text(`Fecha: ${document.getElementById('fecha').value}`, 140, 50);
+        doc.line(20, 55, 190, 55);
+
+        y = 70;
+        doc.setFont("helvetica", "bold"); doc.text("RESULTADOS POR DIMENSIÓN (1-5)", 20, y); y+=10;
+        
+        const row = (lbl, val) => {
+            doc.setFont("helvetica", "normal"); doc.text(lbl, 25, y);
+            doc.setFont("helvetica", "bold"); doc.text(val.toFixed(1), 150, y);
+            y+=8;
+        };
+
+        row("A. Motivación Intrínseca (Gusto)", resultados.avgs.A);
+        row("B. Regulación Identificada (Metas)", resultados.avgs.B);
+        row("C. Regulación Introyectada (Culpa)", resultados.avgs.C);
+        row("D. Regulación Externa (Obligación)", resultados.avgs.D);
+        doc.setTextColor(198, 40, 40);
+        row("E. Desmotivación (Riesgo)", resultados.avgs.E);
+        doc.setTextColor(0);
+
+        y+=10;
+        doc.setFillColor(224, 242, 241); doc.rect(20, y, 170, 25, 'F');
+        doc.setTextColor(0, 77, 64);
+        doc.text(`ÍNDICE DE AUTODETERMINACIÓN (IAR): ${resultados.iar}`, 25, y+10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Interpretación: ${resultados.iarInterp}`, 25, y+18);
+
+        y+=35;
+        doc.setTextColor(0);
+        doc.setFont("helvetica", "bold"); doc.text("PERFIL IDENTIFICADO:", 20, y);
+        doc.setFont("helvetica", "normal"); doc.text(resultados.perfil, 70, y);
+        y+=10;
+        doc.setFont("helvetica", "bold"); doc.text("INTERVENCIÓN SUGERIDA:", 20, y);
+        doc.setFont("helvetica", "normal"); doc.text(resultados.interv, 80, y);
+
+        y+=30;
+        doc.line(70, y, 140, y);
+        doc.text("Firma del Evaluador", 105, y+5, null, null, "center");
+
+        doc.save(`EBMA_${resultados.nombre}.pdf`);
+    }
+
+    function enviarWhatsApp() {
+        if(!resultados) return;
+        let m = `🎓 *EBMA*%0A👤 ${resultados.nombre}%0A📊 IAR: ${resultados.iar} (${resultados.iarInterp})%0A🏷️ Perfil: ${resultados.perfil}`;
+        if(resultados.avgs.E >= 3.5) m += `%0A⚠️ ALTA DESMOTIVACIÓN`;
+        window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank');
+    }
+</script>
+</body>
+</html>
+
