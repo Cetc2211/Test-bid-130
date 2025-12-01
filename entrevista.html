@@ -5,71 +5,97 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Entrevista Clínica Integral - CBTa 130</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- Iconos -->
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+
 <style>
-    body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #eceff1; color: #263238; padding: 20px; line-height: 1.5; }
-    .paper { background: white; max-width: 950px; margin: 0 auto; padding: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+    /* Estilos Base (Estilo Escritorio Clínico) */
+    body { font-family: "Segoe UI", Roboto, sans-serif; background-color: #f1f5f9; color: #334155; margin: 0; padding: 20px; }
+    
+    /* Hoja de Papel */
+    .paper { 
+        background: white; 
+        max-width: 900px; 
+        margin: 0 auto 80px auto; 
+        padding: 50px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+        border-radius: 8px; 
+        border: 1px solid #e2e8f0;
+    }
     
     /* Encabezados */
-    .header { text-align: center; border-bottom: 3px solid #37474f; padding-bottom: 15px; margin-bottom: 25px; }
-    .header h1 { font-size: 1.4rem; margin: 0; color: #37474f; }
-    .header h2 { font-size: 1.1rem; margin: 5px 0; color: #546e7a; }
+    .header { text-align: center; border-bottom: 2px solid #334155; padding-bottom: 20px; margin-bottom: 30px; }
+    .header h1 { font-size: 16pt; margin: 0; color: #1e293b; font-weight: 800; letter-spacing: -0.5px; }
+    .header h2 { font-size: 11pt; margin: 5px 0; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
     
+    /* Secciones */
     .section-header { 
-        background: #455a64; color: white; padding: 10px 15px; 
-        font-weight: bold; margin-top: 40px; margin-bottom: 15px; 
-        border-radius: 4px; text-transform: uppercase; font-size: 1rem; border-left: 5px solid #263238;
+        background: #f8fafc; color: #0f172a; padding: 8px 15px; 
+        font-weight: 700; margin-top: 35px; margin-bottom: 15px; 
+        border-radius: 6px; text-transform: uppercase; font-size: 0.85rem; 
+        border-left: 4px solid #334155; letter-spacing: 0.5px;
     }
     
     .sub-header { 
-        color: #006064; border-bottom: 1px solid #b2ebf2; 
-        padding-bottom: 5px; margin-top: 25px; margin-bottom: 10px; font-weight: bold; font-size: 0.95rem;
+        color: #0d9488; border-bottom: 1px solid #ccfbf1; 
+        padding-bottom: 4px; margin-top: 25px; margin-bottom: 12px; 
+        font-weight: 700; font-size: 0.9rem;
     }
 
-    /* Alertas */
-    .alert-box { background-color: #ffebee; border: 1px solid #ef5350; color: #c62828; padding: 10px; border-radius: 5px; font-weight: bold; margin: 10px 0; display: none; }
+    /* Alertas de Riesgo */
+    .alert-box { 
+        background-color: #fef2f2; border: 1px solid #ef4444; color: #b91c1c; 
+        padding: 15px; border-radius: 8px; font-weight: bold; margin: 15px 0; 
+        display: none; animation: pulse 2s infinite; 
+        font-size: 0.9rem; text-align: center;
+    }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
-    /* Formulario */
-    .row { display: flex; gap: 15px; margin-bottom: 12px; flex-wrap: wrap; }
+    /* Grids y Formulario */
+    .row { display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
     .col { flex: 1; min-width: 200px; }
     
-    label { font-weight: 600; font-size: 0.85rem; display: block; color: #455a64; margin-bottom: 4px; }
+    label { font-weight: 600; font-size: 0.8rem; display: block; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
     
-    input[type="text"], input[type="number"], input[type="date"], input[type="time"], select { 
-        width: 100%; padding: 8px; border: 1px solid #cfd8dc; border-radius: 4px; 
-        font-size: 0.95rem; box-sizing: border-box; background: #fafafa;
+    input[type="text"], input[type="number"], input[type="date"], select, textarea { 
+        width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; 
+        font-size: 0.95rem; box-sizing: border-box; background: #fff; color: #334155;
+        transition: all 0.2s; font-family: inherit;
     }
-    input:focus, textarea:focus { border-color: #006064; outline: none; background: #fff; }
-
-    textarea { 
-        width: 100%; padding: 10px; border: 1px solid #cfd8dc; border-radius: 4px; 
-        font-size: 0.95rem; min-height: 60px; resize: vertical; font-family: inherit;
+    input:focus, textarea:focus, select:focus { 
+        border-color: #0d9488; outline: none; ring: 2px solid #ccfbf1; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1); 
     }
+    
+    textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
 
     /* Tablas */
     .styled-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-    .styled-table th { background: #cfd8dc; padding: 8px; text-align: left; border: 1px solid #b0bec5; }
-    .styled-table td { border: 1px solid #e0e0e0; padding: 6px; }
-    .styled-table input[type="radio"] { margin: 0 auto; display: block; }
+    .styled-table th { background: #f1f5f9; padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0; color: #475569; font-weight: 700; }
+    .styled-table td { border-bottom: 1px solid #e2e8f0; padding: 8px; }
+    .styled-table input[type="checkbox"] { width: 18px; height: 18px; accent-color: #0d9488; cursor: pointer; }
 
-    /* Checkboxes & Radios */
-    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 5px; }
-    .check-label { display: flex; align-items: flex-start; gap: 6px; font-size: 0.9rem; cursor: pointer; }
-    .check-label input { margin-top: 3px; }
+    /* Checkboxes Grid */
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 8px; }
+    .check-label { 
+        display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; 
+        padding: 8px; border-radius: 6px; transition: background 0.2s;
+    }
+    .check-label:hover { background: #f1f5f9; }
+    .check-label input { width: 16px; height: 16px; accent-color: #0f172a; margin: 0; cursor: pointer; }
 
     /* Botones Flotantes */
-    .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+    .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 12px; z-index: 100; }
     .btn-fab { 
-        background: #263238; color: white; border: none; padding: 15px 20px; 
-        border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-        display: flex; align-items: center; gap: 10px; transition: transform 0.2s;
+        border: none; padding: 12px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; 
+        transition: transform 0.2s, box-shadow 0.2s; font-family: "Segoe UI", sans-serif; font-size: 0.9rem;
     }
-    .btn-fab:hover { transform: scale(1.05); }
-    .btn-pdf { background: #bf360c; }
-    .btn-save { background: #0277bd; }
-    .btn-menu { background: #546e7a; }
+    .btn-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+    .btn-save { background: #0f172a; color: white; }
+    .btn-pdf { background: #be123c; color: white; }
+    .btn-home { background: #fff; color: #334155; border: 1px solid #cbd5e1; }
 
-    /* Impresión */
-    @media print { .fab-container { display: none; } body { background: white; padding: 0; } .paper { box-shadow: none; max-width: 100%; padding: 20px; } }
+    @media print { .fab-container { display: none; } body { background: white; padding: 0; } .paper { box-shadow: none; margin: 0; padding: 20px; border: none; } }
 </style>
 </head>
 <body>
@@ -77,211 +103,209 @@
 <div class="paper">
     <div class="header">
         <h1>CENTRO DE BACHILLERATO TECNOLÓGICO AGROPECUARIO No. 130</h1>
-        <h2>ENTREVISTA CLÍNICA PSICOPEDAGÓGICA INTEGRAL (v3.0)</h2>
+        <h2>ENTREVISTA CLÍNICA PSICOPEDAGÓGICA INTEGRAL</h2>
     </div>
 
     <!-- CONTROL -->
-    <div class="row" style="background:#eceff1; padding:10px; border-radius:5px;">
-        <div class="col"><label>Expediente No.:</label><input type="text" id="expediente"></div>
-        <div class="col"><label>Fecha:</label><input type="date" id="fecha"></div>
+    <div class="row" style="background:#f8fafc; padding:15px; border-radius:8px; border: 1px solid #e2e8f0;">
+        <div class="col" style="max-width: 150px;"><label>Expediente:</label><input type="text" id="expediente" style="font-family: monospace; font-weight: bold;"></div>
+        <div class="col" style="max-width: 180px;"><label>Fecha:</label><input type="date" id="fecha"></div>
         <div class="col"><label>Entrevistador:</label><input type="text" id="entrevistador" value="Psic. Cecilio Topete Cruz"></div>
     </div>
 
     <!-- A. ENCUADRE -->
-    <div class="section-header">SECCIÓN A: DATOS DE IDENTIFICACIÓN</div>
+    <div class="section-header">A. FICHA DE IDENTIFICACIÓN</div>
     <div class="row">
-        <div class="col" style="flex:2"><label>Nombre Completo:</label><input type="text" id="nombre"></div>
+        <div class="col" style="flex:2"><label>Nombre del Estudiante:</label><input type="text" id="nombre" placeholder="Nombre Completo"></div>
         <div class="col"><label>Edad:</label><input type="number" id="edad"></div>
-        <div class="col"><label>Semestre/Grupo:</label><input type="text" id="semestre"></div>
+        <div class="col"><label>Semestre y Grupo:</label><input type="text" id="semestre"></div>
     </div>
 
     <!-- B. MOTIVO -->
-    <div class="section-header">SECCIÓN B: MOTIVO DE CONSULTA</div>
-    <textarea id="motivoConsulta" placeholder="¿Qué te trae por aquí?"></textarea>
-    <label style="margin-top:10px;">Historia del Problema (Inicio, evolución):</label>
-    <textarea id="historiaProblema" style="height:100px;"></textarea>
+    <div class="section-header">B. MOTIVO DE CONSULTA</div>
+    <label>Motivo manifiesto (Lo que dice el estudiante):</label>
+    <textarea id="motivoConsulta" placeholder="Describa el motivo..."></textarea>
+    <div style="margin-top: 15px;">
+        <label>Historia del Problema (Inicio, evolución, factores desencadenantes):</label>
+        <textarea id="historiaProblema" style="height:120px;"></textarea>
+    </div>
 
     <!-- C. FAMILIA -->
-    <div class="section-header">SECCIÓN C: HISTORIA FAMILIAR</div>
-    <label>Dinámica Familiar y Conflictos:</label>
+    <div class="section-header">C. CONTEXTO FAMILIAR</div>
+    <label>Dinámica Familiar (Estructura, comunicación, conflictos):</label>
     <textarea id="dinamiaFamiliar"></textarea>
 
     <!-- D. ACADÉMICA -->
-    <div class="section-header">SECCIÓN D: HISTORIA ACADÉMICA</div>
+    <div class="section-header">D. HISTORIA ACADÉMICA</div>
     <div class="row">
-        <div class="col"><label>Promedio:</label><input type="text" id="promedio"></div>
-        <div class="col"><label>Materias Difíciles:</label><input type="text" id="matDif"></div>
+        <div class="col"><label>Promedio Actual:</label><input type="text" id="promedio"></div>
+        <div class="col" style="flex:2"><label>Materias con Dificultad:</label><input type="text" id="matDif"></div>
     </div>
-    <label>Hábitos de Estudio:</label>
+    <label>Hábitos de Estudio y Actitud escolar:</label>
     <textarea id="habitos"></textarea>
 
-    <!-- F. EMOCIONAL (AMPLIADO) -->
-    <div class="section-header">SECCIÓN F: ÁREA EMOCIONAL Y PSICOLÓGICA</div>
+    <!-- F. EMOCIONAL -->
+    <div class="section-header">E. EXPLORACIÓN EMOCIONAL</div>
     
-    <div class="sub-header">12. Estado Emocional Actual</div>
+    <div class="sub-header">Estado Emocional Actual</div>
     <div class="row">
         <div class="col"><label>Escala de Ánimo (1-10):</label><input type="number" id="animoScale" min="1" max="10"></div>
         <div class="col">
-            <label>Predominio:</label>
+            <label>Estado Predominante:</label>
             <select id="predominioEmocional">
                 <option value="">-- Seleccione --</option>
-                <option value="Tristeza">Tristeza persistente</option>
-                <option value="Ansiedad">Ansiedad/Nerviosismo</option>
-                <option value="Irritabilidad">Irritabilidad/Enojo</option>
-                <option value="Apatía">Apatía/Desgano</option>
-                <option value="Estable">Estable y positivo</option>
+                <option value="Tristeza">Tristeza / Melancolía</option>
+                <option value="Ansiedad">Ansiedad / Nerviosismo</option>
+                <option value="Irritabilidad">Irritabilidad / Enojo</option>
+                <option value="Apatía">Apatía / Indiferencia</option>
+                <option value="Eutimico">Estable / Eutímico</option>
+                <option value="Labil">Lábil / Cambiante</option>
             </select>
         </div>
     </div>
 
-    <label style="margin-top:10px;">Síntomas Específicos (Últimas 2 semanas):</label>
+    <label style="margin-top:15px;">Sintomatología presente (Últimas 2 semanas):</label>
     <div class="check-grid">
-        <label class="check-label"><input type="checkbox" id="sin1"> Tristeza sin razón</label>
-        <label class="check-label"><input type="checkbox" id="sin2"> Ganas de llorar</label>
-        <label class="check-label"><input type="checkbox" id="sin3"> Pérdida interés</label>
-        <label class="check-label"><input type="checkbox" id="sin4"> Fatiga/Energía baja</label>
-        <label class="check-label"><input type="checkbox" id="sin5"> Problemas sueño</label>
-        <label class="check-label"><input type="checkbox" id="sin6"> Cambios apetito</label>
+        <label class="check-label"><input type="checkbox" id="sin1"> Tristeza persistente</label>
+        <label class="check-label"><input type="checkbox" id="sin2"> Llanto fácil</label>
+        <label class="check-label"><input type="checkbox" id="sin3"> Anhedonia (Pérdida interés)</label>
+        <label class="check-label"><input type="checkbox" id="sin4"> Fatiga / Baja energía</label>
+        <label class="check-label"><input type="checkbox" id="sin5"> Alteración del sueño</label>
+        <label class="check-label"><input type="checkbox" id="sin6"> Alteración del apetito</label>
         <label class="check-label"><input type="checkbox" id="sin7"> Dif. Concentración</label>
-        <label class="check-label"><input type="checkbox" id="sin8"> Culpa excesiva</label>
-        <label class="check-label"><input type="checkbox" id="sin9"> Ataques pánico</label>
+        <label class="check-label"><input type="checkbox" id="sin8"> Culpa / Inutilidad</label>
+        <label class="check-label"><input type="checkbox" id="sin9"> Crisis de ansiedad</label>
     </div>
 
-    <!-- ALERTA DE CRISIS -->
-    <div class="sub-header" style="color:#c62828; border-color:#ef5350;">⚠️ Exploración de Riesgo (Protocolo Crisis)</div>
+    <!-- ALERTA DE RIESGO -->
+    <div class="section-header" style="background:#fef2f2; border-color:#ef4444; color:#991b1b;">⚠️ PROTOCOLO DE RIESGO</div>
     <div class="row">
-        <div class="col"><label>¿Ideas de muerte?</label><select id="ideaMuerte" onchange="checkRisk()"><option value="No">No</option><option value="Si">Sí</option></select></div>
-        <div class="col"><label>¿Ideas de daño?</label><select id="ideaDano" onchange="checkRisk()"><option value="No">No</option><option value="Si">Sí</option></select></div>
-        <div class="col"><label>¿Plan específico?</label><select id="planSuicida" onchange="checkRisk()"><option value="No">No</option><option value="Si">Sí</option></select></div>
+        <div class="col"><label>Ideación Suicida:</label><select id="ideaMuerte" onchange="checkRisk()"><option value="Negada">Negada</option><option value="Pasiva">Pasiva (Deseo muerte)</option><option value="Activa">Activa (Pensamientos)</option></select></div>
+        <div class="col"><label>Planificación:</label><select id="planSuicida" onchange="checkRisk()"><option value="Sin Plan">Sin Plan</option><option value="Vago">Plan Inespecífico</option><option value="Estructurado">Plan Estructurado</option></select></div>
+        <div class="col"><label>Autolesiones:</label><select id="autolesiones"><option value="Niega">Niega</option><option value="Histórico">En el pasado</option><option value="Reciente">Reciente/Actual</option></select></div>
     </div>
     
-    <div id="riskAlert" class="alert-box">🚨 ALERTA: INDICADORES DE RIESGO DETECTADOS. ACTIVAR PROTOCOLO.</div>
-    <textarea id="detalleRiesgo" placeholder="Detalles del riesgo, plan, medios y factores protectores..." style="border-color:#ef5350;"></textarea>
-
-    <div class="sub-header">13. Historia Salud Mental</div>
-    <div class="row">
-        <div class="col"><label>Atención Previa:</label><input type="text" id="atencionPrevia" placeholder="Psicológica / Psiquiátrica"></div>
-        <div class="col"><label>Autolesiones:</label><select id="autolesiones"><option value="Nunca">Nunca</option><option value="Pasado">Pasado</option><option value="Actual">Actual</option></select></div>
+    <div id="riskAlert" class="alert-box">
+        <i class="ph-bold ph-warning-octagon"></i> ALERTA CLÍNICA ACTIVADA: Evaluar necesidad de referencia psiquiátrica urgente.
     </div>
+    <label>Detalles del Riesgo y Factores Protectores:</label>
+    <textarea id="detalleRiesgo" placeholder="Describir frecuencia, método, intención y redes de apoyo..." style="border-color:#fca5a5;"></textarea>
 
-    <!-- G. FACTORES DE RIESGO -->
-    <div class="section-header">SECCIÓN G: FACTORES Y CONDUCTAS DE RIESGO</div>
-    
-    <div class="sub-header">15. Consumo de Sustancias</div>
+    <!-- G. CONDUCTAS DE RIESGO -->
+    <div class="section-header">F. CONDUCTAS DE RIESGO</div>
     <table class="styled-table">
-        <thead><tr><th>Sustancia</th><th>Consumo</th><th>Frecuencia</th><th>Edad Inicio</th></tr></thead>
+        <thead><tr><th style="width:30%">Sustancia</th><th style="width:10%">Uso</th><th>Frecuencia y Patrón de Consumo</th></tr></thead>
         <tbody>
-            <tr><td>Tabaco</td><td><input type="checkbox" id="usoTabaco"></td><td><input type="text" id="frecTabaco"></td><td><input type="text" id="edadTabaco"></td></tr>
-            <tr><td>Alcohol</td><td><input type="checkbox" id="usoAlcohol"></td><td><input type="text" id="frecAlcohol"></td><td><input type="text" id="edadAlcohol"></td></tr>
-            <tr><td>Marihuana</td><td><input type="checkbox" id="usoMarihuana"></td><td><input type="text" id="frecMarihuana"></td><td><input type="text" id="edadMarihuana"></td></tr>
-            <tr><td>Otras</td><td><input type="checkbox" id="usoOtras"></td><td><input type="text" id="frecOtras"></td><td><input type="text" id="edadOtras"></td></tr>
+            <tr><td>Tabaco / Vape</td><td><input type="checkbox" id="usoTabaco"></td><td><input type="text" id="frecTabaco"></td></tr>
+            <tr><td>Alcohol</td><td><input type="checkbox" id="usoAlcohol"></td><td><input type="text" id="frecAlcohol"></td></tr>
+            <tr><td>Marihuana</td><td><input type="checkbox" id="usoMarihuana"></td><td><input type="text" id="frecMarihuana"></td></tr>
+            <tr><td>Otras drogas</td><td><input type="checkbox" id="usoOtras"></td><td><input type="text" id="frecOtras"></td></tr>
         </tbody>
     </table>
 
-    <div class="sub-header">16-18. Otros Riesgos</div>
+    <label style="margin-top:15px;">Otros Indicadores de Riesgo:</label>
     <div class="check-grid">
-        <label class="check-label"><input type="checkbox" id="riesgoSexual"> Actividad sexual riesgo</label>
-        <label class="check-label"><input type="checkbox" id="riesgoPeleas"> Peleas frecuentes</label>
-        <label class="check-label"><input type="checkbox" id="riesgoRedes"> Uso excesivo redes</label>
-        <label class="check-label"><input type="checkbox" id="riesgoBullying"> Acoso/Bullying</label>
-        <label class="check-label"><input type="checkbox" id="riesgoAlim"> Conducta alimentaria</label>
+        <label class="check-label"><input type="checkbox" id="riesgoSexual"> Conducta sexual riesgo</label>
+        <label class="check-label"><input type="checkbox" id="riesgoViolencia"> Violencia/Pandillerismo</label>
+        <label class="check-label"><input type="checkbox" id="riesgoRedes"> Ciberadicción</label>
+        <label class="check-label"><input type="checkbox" id="riesgoBullying"> Acoso Escolar (Víctima/Agresor)</label>
+        <label class="check-label"><input type="checkbox" id="riesgoAlim"> Trastorno Alimentario</label>
     </div>
 
     <!-- H. COGNITIVO -->
-    <div class="section-header">SECCIÓN H: FUNCIONAMIENTO COGNITIVO</div>
+    <div class="section-header">G. EXAMEN MENTAL</div>
     <div class="row">
-        <div class="col"><label>Atención/Concentración:</label><input type="text" id="cogAtencion"></div>
-        <div class="col"><label>Memoria:</label><input type="text" id="cogMemoria"></div>
-    </div>
-    <label>Dificultades de Aprendizaje (Lectura, Escritura, Matemáticas):</label>
-    <textarea id="difAprendizaje"></textarea>
-
-    <!-- I. VOCACIONAL -->
-    <div class="section-header">SECCIÓN I: VOCACIONAL Y PROYECTO DE VIDA</div>
-    <label>Intereses Principales:</label>
-    <input type="text" id="interesesVoc">
-    <label>Metas a Corto/Mediano Plazo:</label>
-    <textarea id="metasVida"></textarea>
-
-    <!-- K. ESTADO MENTAL -->
-    <div class="section-header">SECCIÓN K: EXAMEN MENTAL (Observación)</div>
-    <div class="row">
-        <div class="col"><label>Apariencia:</label><input type="text" id="emApariencia"></div>
-        <div class="col"><label>Habla/Lenguaje:</label><input type="text" id="emHabla"></div>
-        <div class="col"><label>Ánimo/Afecto:</label><input type="text" id="emAfecto"></div>
+        <div class="col"><label>Apariencia/Aliño:</label><input type="text" id="emApariencia"></div>
+        <div class="col"><label>Lenguaje/Discurso:</label><input type="text" id="emHabla"></div>
+        <div class="col"><label>Orientación (T/E/P):</label><input type="text" id="emOrientacion"></div>
     </div>
     <div class="row">
-        <div class="col"><label>Pensamiento:</label><input type="text" id="emPensamiento"></div>
+        <div class="col"><label>Curso Pensamiento:</label><input type="text" id="emPensamiento"></div>
         <div class="col"><label>Juicio/Insight:</label><input type="text" id="emJuicio"></div>
     </div>
 
+    <!-- I. VOCACIONAL -->
+    <div class="section-header">H. PROYECTO DE VIDA</div>
+    <label>Intereses y Metas a Futuro:</label>
+    <textarea id="metasVida" style="height:60px;"></textarea>
+
     <!-- M. IMPRESIÓN CLÍNICA -->
-    <div class="section-header">SECCIÓN M: IMPRESIÓN Y FORMULACIÓN</div>
+    <div class="section-header">I. FORMULACIÓN CLÍNICA</div>
     
-    <label>35. Impresión Diagnóstica (Problema principal):</label>
-    <textarea id="impDiagnostica"></textarea>
+    <label>Impresión Diagnóstica (Síntesis del caso):</label>
+    <textarea id="impDiagnostica" style="background:#f0f9ff; border-color:#bae6fd;"></textarea>
 
-    <label>36. Hipótesis (DSM-5 / CIE-11):</label>
-    <input type="text" id="hipotesisDiag">
-
-    <label>37. Evaluación de Riesgo Global:</label>
-    <div class="check-inline">
-        <label class="check-label"><input type="radio" name="riesgoGlobal" value="Bajo"> Bajo</label>
-        <label class="check-label"><input type="radio" name="riesgoGlobal" value="Moderado"> Moderado</label>
-        <label class="check-label"><input type="radio" name="riesgoGlobal" value="Alto"> Alto</label>
-        <label class="check-label"><input type="radio" name="riesgoGlobal" value="Inminente"> Inminente</label>
+    <div class="row" style="margin-top:10px;">
+        <div class="col" style="flex:2"><label>Hipótesis Diagnóstica (CIE-11 / DSM-5):</label><input type="text" id="hipotesisDiag"></div>
+        <div class="col">
+            <label>Nivel de Riesgo Global:</label>
+            <select id="riesgoGlobal" style="font-weight:bold;">
+                <option value="Bajo">🟢 Bajo</option>
+                <option value="Moderado">🟡 Moderado</option>
+                <option value="Alto">🟠 Alto</option>
+                <option value="Inminente">🔴 Inminente</option>
+            </select>
+        </div>
     </div>
 
-    <label style="margin-top:10px;">39. Plan de Intervención Recomendado:</label>
-    <textarea id="planIntervencion" placeholder="Psicoterapia, canalización, seguimiento..."></textarea>
+    <label style="margin-top:15px;">Plan de Intervención y Acuerdos:</label>
+    <textarea id="planIntervencion" placeholder="Acciones a seguir, citatorios, canalización..." style="height:100px;"></textarea>
 
-    <div class="sub-header">Firmas</div>
-    <div class="row" style="margin-top:30px;">
-        <div class="col" style="text-align:center; border-top:1px solid #ccc; padding-top:5px;">Firma Entrevistador</div>
-        <div class="col" style="text-align:center; border-top:1px solid #ccc; padding-top:5px;">Vo.Bo. Coordinación</div>
+    <div class="row" style="margin-top:50px; gap:50px;">
+        <div class="col" style="text-align:center;">
+            <div style="border-bottom:1px solid #94a3b8; height:30px;"></div>
+            <label style="margin-top:5px;">Firma del Entrevistador</label>
+        </div>
+        <div class="col" style="text-align:center;">
+            <div style="border-bottom:1px solid #94a3b8; height:30px;"></div>
+            <label style="margin-top:5px;">Vo.Bo. Coordinación</label>
+        </div>
     </div>
 
 </div>
 
-<!-- BOTONES -->
+<!-- BOTONES FLOTANTES -->
 <div class="fab-container">
-    <button class="btn-fab btn-save" onclick="guardarLocal()">💾 Guardar</button>
-    <button class="btn-fab btn-pdf" onclick="generarPDFCompleto()">📄 PDF Oficial</button>
-    <button class="btn-fab btn-menu" onclick="location.href='index.html'">🏠 Salir</button>
+    <button class="btn-fab btn-save" onclick="guardarLocal()">
+        <i class="ph-bold ph-floppy-disk text-xl"></i> Guardar
+    </button>
+    <button class="btn-fab btn-pdf" onclick="generarPDFCompleto()">
+        <i class="ph-bold ph-file-pdf text-xl"></i> Generar PDF
+    </button>
+    <button class="btn-fab btn-home" onclick="location.href='index.html'">
+        <i class="ph-bold ph-house text-xl"></i> Salir
+    </button>
 </div>
 
 <script>
-    const STORAGE_KEY = "cbta_entrevista_full_v3";
+    const STORAGE_KEY = "cbta_entrevista_data";
     document.getElementById('fecha').valueAsDate = new Date();
 
     function checkRisk() {
         const i1 = document.getElementById('ideaMuerte').value;
-        const i2 = document.getElementById('ideaDano').value;
-        const i3 = document.getElementById('planSuicida').value;
+        const i2 = document.getElementById('planSuicida').value;
         const alertBox = document.getElementById('riskAlert');
         
-        if(i1 === "Si" || i2 === "Si" || i3 === "Si") {
+        if(i1 !== "Negada" || i2 !== "Sin Plan") {
             alertBox.style.display = "block";
         } else {
             alertBox.style.display = "none";
         }
     }
 
-    // Cargar datos
+    // Auto-Guardado y Carga
     window.onload = function() {
         const saved = localStorage.getItem(STORAGE_KEY);
         if(saved) {
             const data = JSON.parse(saved);
             const inputs = document.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
-                if(input.id && data[input.id]) {
+                if(input.id && data[input.id] !== undefined) {
                     if(input.type === "checkbox") input.checked = data[input.id];
-                    else if(input.type === "radio") {
-                        if(input.value === data[input.name]) input.checked = true;
-                    } else input.value = data[input.id];
+                    else input.value = data[input.id];
                 }
             });
-            checkRisk(); // Verificar alerta al cargar
+            checkRisk();
         }
     };
 
@@ -291,12 +315,20 @@
         inputs.forEach(input => {
             if(input.id) {
                 if(input.type === "checkbox") data[input.id] = input.checked;
-                else if(input.type === "radio") { if(input.checked) data[input.name] = input.value; }
                 else data[input.id] = input.value;
             }
         });
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        alert("✅ Entrevista guardada en dispositivo.");
+        
+        // Feedback visual simple
+        const btn = document.querySelector('.btn-save');
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="ph-bold ph-check text-xl"></i> Guardado';
+        btn.style.backgroundColor = "#059669";
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.style.backgroundColor = "#0f172a";
+        }, 2000);
     }
 
     function generarPDFCompleto() {
@@ -308,86 +340,97 @@
         const val = (id) => document.getElementById(id).value || "---";
         const chk = (id) => document.getElementById(id).checked ? "SÍ" : "NO";
         
-        const addTitle = (t) => {
-            if(y>270) { doc.addPage(); y=20; }
-            doc.setFillColor(230); doc.rect(10, y, 190, 7, 'F');
-            doc.setFont("helvetica", "bold"); doc.setFontSize(10);
-            doc.text(t, 12, y+5); y+=12;
+        // Configuración
+        doc.setFont("helvetica", "normal");
+        
+        // --- HEADER ---
+        doc.setFontSize(12); doc.setFont("helvetica", "bold");
+        doc.text("CENTRO DE BACHILLERATO TECNOLÓGICO AGROPECUARIO No. 130", 105, y, null, null, "center"); y+=7;
+        doc.setFontSize(10);
+        doc.text("ENTREVISTA CLÍNICA PSICOPEDAGÓGICA", 105, y, null, null, "center"); y+=10;
+        
+        doc.setFontSize(8); doc.setFont("helvetica", "normal");
+        doc.text(`EXPEDIENTE: ${val('expediente')}   |   FECHA: ${val('fecha')}   |   ENTREVISTADOR: ${val('entrevistador')}`, 15, y); y+=8;
+
+        const addSection = (title) => {
+            if(y > 275) { doc.addPage(); y=20; }
+            doc.setFillColor(241, 245, 249); doc.rect(12, y, 186, 6, 'F');
+            doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(15, 23, 42);
+            doc.text(title, 15, y+4); y+=10;
+            doc.setFont("helvetica", "normal"); doc.setTextColor(0);
         };
         
         const addField = (lbl, txt) => {
-            if(y>270) { doc.addPage(); y=20; }
-            doc.setFont("helvetica", "bold"); doc.text(lbl, 12, y);
-            
-            const lines = doc.splitTextToSize(txt, 140);
-            doc.setFont("helvetica", "normal");
-            doc.text(lines, 60, y);
-            y += (lines.length * 5) + 3;
+            if(y > 275) { doc.addPage(); y=20; }
+            doc.setFont("helvetica", "bold"); doc.text(lbl, 15, y);
+            const lines = doc.splitTextToSize(txt, 130);
+            doc.setFont("helvetica", "normal"); doc.text(lines, 65, y);
+            y += (lines.length * 4) + 3;
         };
 
-        // Header
-        doc.setFontSize(14); doc.setFont("helvetica", "bold");
-        doc.text("ENTREVISTA CLÍNICA INTEGRAL (CBTa 130)", 105, y, null, null, "center"); y+=10;
-        
-        doc.setFontSize(9); doc.setFont("helvetica", "normal");
-        doc.text(`Expediente: ${val('expediente')} | Fecha: ${val('fecha')} | Entrevistador: ${val('entrevistador')}`, 12, y); y+=10;
-
-        addTitle("A. DATOS GENERALES");
+        // --- CONTENIDO ---
+        addSection("A. FICHA DE IDENTIFICACIÓN");
         addField("Estudiante:", `${val('nombre')} (${val('edad')} años)`);
         addField("Escolar:", val('semestre'));
 
-        addTitle("B. MOTIVO Y C. FAMILIA");
+        addSection("B. MOTIVO Y C. FAMILIA");
         addField("Motivo:", val('motivoConsulta'));
-        addField("Historia:", val('historiaProblema'));
-        addField("Dinámica Fam:", val('dinamiaFamiliar'));
+        addField("Historia Problema:", val('historiaProblema'));
+        addField("Dinámica Familiar:", val('dinamiaFamiliar'));
 
-        addTitle("F. ÁREA EMOCIONAL Y RIESGO");
-        addField("Estado Ánimo:", `Nivel: ${val('animoScale')}/10 | Predominio: ${val('predominioEmocional')}`);
+        addSection("D. ACADÉMICO Y E. EMOCIONAL");
+        addField("Académico:", `Prom: ${val('promedio')} | Dif: ${val('matDif')} | Hábitos: ${val('habitos')}`);
+        addField("Estado Emocional:", `Ánimo: ${val('animoScale')}/10 | Predominio: ${val('predominioEmocional')}`);
         
-        let riskText = `Muerte: ${val('ideaMuerte')} | Daño: ${val('ideaDano')} | Plan: ${val('planSuicida')}`;
-        doc.setTextColor(198, 40, 40); // Rojo
-        addField("Riesgo Suicida:", riskText);
-        doc.setTextColor(0);
-        
-        if(val('detalleRiesgo') !== "---") addField("Detalle Riesgo:", val('detalleRiesgo'));
-        addField("Autolesiones:", val('autolesiones'));
+        // Síntomas en una línea
+        let sint = [];
+        if(document.getElementById('sin1').checked) sint.push("Tristeza");
+        if(document.getElementById('sin2').checked) sint.push("Llanto");
+        if(document.getElementById('sin4').checked) sint.push("Fatiga");
+        if(document.getElementById('sin5').checked) sint.push("Sueño");
+        if(document.getElementById('sin9').checked) sint.push("Ansiedad");
+        if(sint.length > 0) addField("Síntomas:", sint.join(", "));
 
-        addTitle("G. CONDUCTAS DE RIESGO");
+        // RIESGO
+        if(val('ideaMuerte') !== "Negada" || val('planSuicida') !== "Sin Plan") {
+            doc.setTextColor(185, 28, 28);
+            addField("ALERTA RIESGO:", `Ideación: ${val('ideaMuerte')} | Plan: ${val('planSuicida')}`);
+            doc.setTextColor(0);
+            if(val('detalleRiesgo')!=="---") addField("Detalle Riesgo:", val('detalleRiesgo'));
+        }
+
+        addSection("F. CONDUCTAS DE RIESGO");
         let sust = [];
-        if(document.getElementById('usoTabaco').checked) sust.push("Tabaco");
-        if(document.getElementById('usoAlcohol').checked) sust.push("Alcohol");
-        if(document.getElementById('usoMarihuana').checked) sust.push("Marihuana");
-        if(document.getElementById('usoOtras').checked) sust.push("Otras");
-        addField("Sustancias:", sust.join(", ") || "Ninguna reportada");
-        
-        let otrosR = [];
-        if(document.getElementById('riesgoSexual').checked) otrosR.push("Sexual");
-        if(document.getElementById('riesgoPeleas').checked) otrosR.push("Violencia");
-        if(document.getElementById('riesgoBullying').checked) otrosR.push("Bullying");
-        addField("Otros Riesgos:", otrosR.join(", ") || "Negados");
+        if(document.getElementById('usoTabaco').checked) sust.push(`Tabaco(${val('frecTabaco')})`);
+        if(document.getElementById('usoAlcohol').checked) sust.push(`Alcohol(${val('frecAlcohol')})`);
+        if(document.getElementById('usoMarihuana').checked) sust.push(`Marihuana(${val('frecMarihuana')})`);
+        addField("Sustancias:", sust.join(", ") || "Niega consumo");
 
-        addTitle("K. EXAMEN MENTAL");
-        addField("Observación:", `Apariencia: ${val('emApariencia')} | Juicio: ${val('emJuicio')}`);
-        addField("Procesos:", `Pensamiento: ${val('emPensamiento')} | Afecto: ${val('emAfecto')}`);
+        addSection("G. EXAMEN MENTAL");
+        addField("Observación:", `Apariencia: ${val('emApariencia')} | Lenguaje: ${val('emHabla')}`);
+        addField("Procesos:", `Pensamiento: ${val('emPensamiento')} | Juicio: ${val('emJuicio')}`);
 
-        addTitle("M. IMPRESIÓN Y PLAN");
+        addSection("H. IMPRESIÓN DIAGNÓSTICA Y PLAN");
         addField("Impresión Dx:", val('impDiagnostica'));
         addField("Hipótesis:", val('hipotesisDiag'));
         
-        const rG = document.querySelector('input[name="riesgoGlobal"]:checked');
         doc.setFont("helvetica", "bold");
-        doc.text(`RIESGO GLOBAL ESTIMADO: ${rG ? rG.value : "No evaluado"}`, 12, y); y+=8;
+        doc.text(`RIESGO GLOBAL: ${document.getElementById('riesgoGlobal').value}`, 15, y); y+=6;
         
         addField("Plan Intervención:", val('planIntervencion'));
 
-        y += 15;
+        // FIRMAS
+        y = Math.max(y, 250); // Empujar al final si hay espacio
+        if(y > 260) { doc.addPage(); y=40; } else y+=20;
+        
+        doc.setLineWidth(0.5);
         doc.line(70, y, 140, y);
-        doc.text("Firma Profesional", 105, y+5, null, null, "center");
+        doc.setFont("helvetica", "normal");
+        doc.text("Firma del Entrevistador", 105, y+5, null, null, "center");
 
-        doc.save(`Entrevista_${val('nombre')}.pdf`);
+        doc.save(`Entrevista_${val('nombre').replace(/\s+/g, '_')}.pdf`);
     }
 </script>
 </body>
 </html>
-
 
