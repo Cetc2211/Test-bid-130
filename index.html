@@ -50,8 +50,8 @@
         <div>
             <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider">Gestión & Admin</p>
             
-            <a href="suite.html" class="block w-full group relative overflow-hidden rounded-2xl bg-slate-900 p-6 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl ring-1 ring-slate-900/5">
-                <!-- Decoración de fondo -->
+            <!-- Botón Suite -->
+            <a href="suite.html" class="block w-full group relative overflow-hidden rounded-2xl bg-slate-900 p-6 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl ring-1 ring-slate-900/5 mb-4">
                 <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-slate-800/50 transition-all group-hover:scale-150"></div>
                 <div class="absolute -right-4 -bottom-8 h-24 w-24 rounded-full bg-brand-500 opacity-20 blur-2xl"></div>
                 
@@ -62,7 +62,7 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-white leading-tight">Gestor de Evaluaciones</h3>
-                            <p class="text-xs text-slate-400 mt-1 font-medium">Crear baterías, links y reportes.</p>
+                            <p class="text-xs text-slate-400 mt-1 font-medium">Baterías, Resultados y Expedientes.</p>
                         </div>
                     </div>
                     <div class="text-white opacity-60 transition-transform group-hover:translate-x-1 group-hover:opacity-100">
@@ -70,46 +70,43 @@
                     </div>
                 </div>
             </a>
+
+            <!-- Botón Consentimiento -->
+            <a href="consentimiento.html" class="block w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between hover:border-slate-400 transition-colors group">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                        <i class="ph-bold ph-file-text text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-700 text-sm">Consentimiento Informado</h3>
+                        <p class="text-xs text-slate-400">Generar documento PDF legal.</p>
+                    </div>
+                </div>
+                <i class="ph-bold ph-arrow-right text-slate-300 group-hover:text-slate-600"></i>
+            </a>
         </div>
 
         <!-- ============================================== -->
         <!-- PRUEBAS INDIVIDUALES (Acceso Rápido)           -->
         <!-- ============================================== -->
         <div>
-            <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider mt-6">Acceso Rápido (Individual)</p>
+            <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider mt-6">Acceso Rápido (Consulta)</p>
             
-            <div class="space-y-3">
-                <!-- Test IPA -->
-                <button onclick="alert('Usa el Gestor de Evaluaciones para enviar esta prueba')" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between hover:border-brand-300 transition-colors group text-left">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center">
-                            <i class="ph-bold ph-brain text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-700 text-sm group-hover:text-brand-700">Test IPA</h3>
-                            <p class="text-xs text-slate-400">Pensamientos Automáticos</p>
-                        </div>
+            <div class="space-y-3 opacity-60 pointer-events-none grayscale">
+                <!-- Deshabilitados porque ahora se usa la Suite -->
+                <div class="w-full bg-white p-4 rounded-xl border border-gray-100 flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-50 text-gray-300 flex items-center justify-center">
+                        <i class="ph-bold ph-brain text-xl"></i>
                     </div>
-                    <i class="ph-bold ph-lock-key text-slate-300"></i>
-                </button>
-
-                <!-- Test Beck -->
-                <button onclick="alert('Usa el Gestor de Evaluaciones para enviar esta prueba')" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between hover:border-blue-300 transition-colors group text-left">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <i class="ph-bold ph-heartbeat text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-700 text-sm group-hover:text-blue-700">Inventario Beck</h3>
-                            <p class="text-xs text-slate-400">Escala de Ansiedad</p>
-                        </div>
+                    <div>
+                        <h3 class="font-bold text-gray-400 text-sm">Pruebas Individuales</h3>
+                        <p class="text-xs text-gray-300">Usa el Gestor de arriba.</p>
                     </div>
-                    <i class="ph-bold ph-lock-key text-slate-300"></i>
-                </button>
+                </div>
             </div>
             
-            <p class="text-[10px] text-center text-slate-400 mt-6 opacity-60">
-                Sistema Integral v2.1 • CBTa 130
+            <p class="text-[10px] text-center text-slate-400 mt-8 opacity-60">
+                Sistema Integral v2.4 • CBTa 130
             </p>
         </div>
 
