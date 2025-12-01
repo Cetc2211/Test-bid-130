@@ -22,6 +22,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .columbia-btn input:checked + div { ring-width: 2px; ring-offset-width: 2px; }
     </style>
 </head>
 <body class="bg-gray-50 text-slate-800 min-h-screen font-sans selection:bg-brand-100">
@@ -31,75 +32,64 @@
     <!-- ========================================= -->
     <div id="view-admin" class="hidden max-w-7xl mx-auto p-4 md:p-6 space-y-6 pb-20">
         
-        <!-- Header con Botón de Regreso -->
         <header class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4 w-full md:w-auto">
-                <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-3 rounded-xl transition-colors" title="Volver al Menú Principal">
+                <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-3 rounded-xl transition-colors" title="Volver al Menú">
                     <i class="ph-bold ph-arrow-left text-xl"></i>
                 </a>
-                
                 <div class="flex items-center gap-3">
                     <div class="bg-gradient-to-br from-brand-800 to-brand-600 text-white p-3 rounded-xl shadow-lg shadow-brand-600/20">
                         <i class="ph-bold ph-stack text-2xl"></i>
                     </div>
                     <div>
                         <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
-                        <p class="text-sm text-slate-500">Suite Integral v2.2</p>
+                        <p class="text-sm text-slate-500">Suite Integral v2.6</p>
                     </div>
                 </div>
             </div>
-            
             <button onclick="toggleImportModal()" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-95">
                 <i class="ph-bold ph-download-simple"></i> IMPORTAR CÓDIGO
             </button>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- PANEL IZQUIERDO: Generador (4 columnas) -->
+            <!-- PANEL IZQUIERDO -->
             <div class="lg:col-span-4 space-y-6">
                 <section class="bg-white rounded-2xl shadow-lg border-t-4 border-brand-600 overflow-hidden sticky top-6">
                     <div class="p-6">
                         <h2 class="text-lg font-bold text-slate-800 mb-1 flex items-center gap-2">
                             <i class="ph-duotone ph-paper-plane-tilt text-brand-600"></i> Nueva Batería
                         </h2>
-                        <p class="text-xs text-slate-400 mb-6">Selecciona las pruebas para enviar al alumno.</p>
+                        <p class="text-xs text-slate-400 mb-6">Selecciona las pruebas para enviar.</p>
                         
                         <div class="space-y-4 mb-6">
                             <div>
                                 <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nombre Alumno</label>
-                                <input type="text" id="adm-nombre" placeholder="Ej. Juan Pérez" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium transition-all">
+                                <input type="text" id="adm-nombre" placeholder="Ej. Juan Pérez" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
                             </div>
                             <div>
                                 <label class="text-xs font-bold text-slate-500 uppercase ml-1">Grupo</label>
-                                <input type="text" id="adm-grupo" placeholder="Ej. 6A Programación" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium transition-all">
+                                <input type="text" id="adm-grupo" placeholder="Ej. 6A Programación" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
                             </div>
                         </div>
 
-                        <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-end">
-                            <span>Pruebas Disponibles</span>
-                            <span class="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500">Selección múltiple</span>
-                        </div>
-                        
+                        <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Pruebas Disponibles</div>
                         <div id="tests-checklist" class="space-y-2 mb-8 max-h-64 overflow-y-auto pr-1">
-                            <!-- Se llena con JS -->
+                            <!-- JS -->
                         </div>
 
                         <button onclick="generarLinkBateria()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold flex justify-center items-center gap-2 shadow-lg shadow-brand-600/30 transition-all active:scale-95">
                             <i class="ph-bold ph-link"></i> Generar Link Único
                         </button>
 
-                        <!-- Área de Resultado del Link -->
                         <div id="link-result-area" class="hidden mt-6 pt-6 border-t border-dashed border-slate-200 animate-fade-in">
                             <div class="bg-green-50 border border-green-200 rounded-xl p-4">
-                                <p class="text-xs text-green-800 font-bold mb-2 flex items-center gap-1">
-                                    <i class="ph-fill ph-check-circle"></i> Link listo para enviar:
-                                </p>
+                                <p class="text-xs text-green-800 font-bold mb-2"><i class="ph-fill ph-check-circle"></i> Link listo:</p>
                                 <div class="flex gap-2 mb-3">
-                                    <input type="text" id="final-link" readonly class="w-full text-[10px] font-mono bg-white border border-green-200 p-2 rounded text-slate-600 focus:outline-none">
-                                    <button onclick="copiarLink()" class="bg-white border border-green-200 text-green-600 px-3 rounded hover:bg-green-100 transition-colors"><i class="ph-bold ph-copy"></i></button>
+                                    <input type="text" id="final-link" readonly class="w-full text-[10px] font-mono bg-white border border-green-200 p-2 rounded text-slate-600">
+                                    <button onclick="copiarLink()" class="bg-white border border-green-200 text-green-600 px-3 rounded hover:bg-green-100"><i class="ph-bold ph-copy"></i></button>
                                 </div>
-                                <button onclick="enviarWhatsAppLink()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-colors">
+                                <button onclick="enviarWhatsAppLink()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-md">
                                     <i class="ph-bold ph-whatsapp-logo text-lg"></i> Enviar por WhatsApp
                                 </button>
                             </div>
@@ -108,38 +98,30 @@
                 </section>
             </div>
 
-            <!-- PANEL DERECHO: Base de Datos (8 columnas) -->
+            <!-- PANEL DERECHO -->
             <div class="lg:col-span-8">
                 <section class="bg-white rounded-2xl shadow-sm border border-gray-200 h-full flex flex-col min-h-[500px]">
                     <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
                         <div>
                             <h3 class="font-bold text-slate-700 text-lg">Expedientes Activos</h3>
-                            <p class="text-xs text-slate-400">Datos almacenados localmente en este dispositivo</p>
+                            <p class="text-xs text-slate-400">Base de datos local</p>
                         </div>
-                        <span id="db-count" class="bg-brand-100 text-brand-700 text-xs px-3 py-1 rounded-full font-bold border border-brand-200">0 Alumnos</span>
+                        <span id="db-count" class="bg-brand-100 text-brand-700 text-xs px-3 py-1 rounded-full font-bold border border-brand-200">0</span>
                     </div>
-                    
                     <div class="flex-1 overflow-auto p-0">
                         <table class="w-full text-sm text-left">
                             <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] sticky top-0 z-10 shadow-sm">
                                 <tr>
                                     <th class="px-6 py-4">Alumno / Grupo</th>
-                                    <th class="px-6 py-4">Pruebas & Resultados</th>
+                                    <th class="px-6 py-4">Resultados</th>
                                     <th class="px-6 py-4 text-right">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="db-body" class="divide-y divide-gray-50">
-                                <!-- JS -->
-                            </tbody>
+                            <tbody id="db-body" class="divide-y divide-gray-50"></tbody>
                         </table>
-                        
-                        <!-- Estado Vacío -->
                         <div id="empty-state" class="hidden flex flex-col items-center justify-center h-64 text-center p-8">
-                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-300">
-                                <i class="ph-duotone ph-folder-open text-3xl"></i>
-                            </div>
-                            <h4 class="text-slate-600 font-bold">No hay expedientes aún</h4>
-                            <p class="text-slate-400 text-xs mt-1 max-w-xs">Genera links, envíalos a los alumnos e importa sus códigos de respuesta aquí.</p>
+                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-300"><i class="ph-duotone ph-folder-open text-3xl"></i></div>
+                            <h4 class="text-slate-600 font-bold">Sin expedientes</h4>
                         </div>
                     </div>
                 </section>
@@ -151,17 +133,13 @@
     <!-- MODO ALUMNO (Interfaz Móvil)              -->
     <!-- ========================================= -->
     <div id="view-student" class="hidden min-h-screen bg-slate-50 flex flex-col">
-        
-        <!-- Navbar Alumno -->
         <div class="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-50 shadow-sm">
             <div class="max-w-2xl mx-auto flex justify-between items-center mb-2">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-brand-600/30 shadow-lg">
-                        <i class="ph-bold ph-student text-xl"></i>
-                    </div>
+                    <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-brand-600/30 shadow-lg"><i class="ph-bold ph-student text-xl"></i></div>
                     <div class="leading-tight">
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Evaluación</p>
-                        <p id="st-name" class="text-sm font-bold text-slate-800 truncate max-w-[150px]">Cargando...</p>
+                        <p id="st-name" class="text-sm font-bold text-slate-800 truncate max-w-[150px]">...</p>
                     </div>
                 </div>
                 <div class="text-right">
@@ -169,87 +147,55 @@
                     <p id="st-progress" class="text-brand-600 font-bold text-sm">0%</p>
                 </div>
             </div>
-            <!-- Barra de progreso -->
             <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div id="progress-bar" class="h-full bg-brand-600 transition-all duration-500 ease-out" style="width: 0%"></div>
             </div>
         </div>
 
-        <!-- Contenedor Dinámico -->
         <div class="flex-1 max-w-2xl mx-auto w-full p-5 pb-32">
-            
-            <!-- 1. Pantalla de Bienvenida -->
+            <!-- Bienvenida -->
             <div id="step-welcome" class="text-center py-12 fade-in">
-                <div class="w-24 h-24 bg-white border-4 border-brand-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                    <i class="ph-fill ph-hand-waving text-4xl text-brand-600"></i>
-                </div>
+                <div class="w-24 h-24 bg-white border-4 border-brand-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm"><i class="ph-fill ph-hand-waving text-4xl text-brand-600"></i></div>
                 <h2 class="text-2xl font-bold text-slate-800 mb-2">Hola, <span id="welcome-name" class="text-brand-600">Estudiante</span></h2>
-                <p class="text-slate-500 mb-8 max-w-xs mx-auto text-sm">Se te han asignado las siguientes pruebas psicopedagógicas. Por favor responde con honestidad.</p>
-                
-                <div id="test-list-preview" class="space-y-3 mb-10 text-left max-w-sm mx-auto">
-                    <!-- Lista de pruebas -->
-                </div>
-
-                <button onclick="iniciarSecuencia()" class="bg-brand-600 hover:bg-brand-700 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-600/20 transition-transform active:scale-95 w-full md:w-auto">
-                    Comenzar Evaluación <i class="ph-bold ph-arrow-right ml-2"></i>
-                </button>
+                <p class="text-slate-500 mb-8 max-w-xs mx-auto text-sm">Por favor responde las siguientes pruebas con honestidad.</p>
+                <div id="test-list-preview" class="space-y-3 mb-10 text-left max-w-sm mx-auto"></div>
+                <button onclick="iniciarSecuencia()" class="bg-brand-600 hover:bg-brand-700 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-600/20 transition-transform active:scale-95 w-full md:w-auto">Comenzar <i class="ph-bold ph-arrow-right ml-2"></i></button>
             </div>
 
-            <!-- 2. Contenedor de Preguntas -->
+            <!-- Preguntas -->
             <div id="step-questions" class="hidden space-y-6 fade-in">
-                
-                <!-- Tarjeta de Info de Prueba Actual -->
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-4">
-                    <div class="bg-brand-50 p-3 rounded-xl text-brand-700 shrink-0">
-                        <i id="current-test-icon" class="ph-fill ph-clipboard-text text-2xl"></i>
-                    </div>
+                <div id="current-test-card" class="bg-white p-5 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-4 transition-colors duration-500">
+                    <div class="bg-brand-50 p-3 rounded-xl text-brand-700 shrink-0"><i id="current-test-icon" class="ph-fill ph-clipboard-text text-2xl"></i></div>
                     <div>
-                        <h3 id="current-test-title" class="font-bold text-slate-800 text-lg">Nombre Prueba</h3>
+                        <h3 id="current-test-title" class="font-bold text-slate-800 text-lg">Prueba</h3>
                         <p id="current-test-desc" class="text-xs text-slate-500 mt-1 leading-relaxed">Instrucciones...</p>
                     </div>
                 </div>
-
-                <div id="questions-container" class="space-y-5">
-                    <!-- Preguntas inyectadas aquí -->
-                </div>
-
-                <button onclick="siguientePrueba()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-8 active:scale-95 transition-transform hover:bg-slate-900 flex items-center justify-center gap-2">
-                    Continuar <i class="ph-bold ph-caret-right"></i>
-                </button>
+                <div id="questions-container" class="space-y-5"></div>
+                <button onclick="siguientePrueba()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-8 active:scale-95 transition-transform hover:bg-slate-900 flex items-center justify-center gap-2">Continuar <i class="ph-bold ph-caret-right"></i></button>
             </div>
 
-            <!-- 3. Pantalla Final -->
+            <!-- Final -->
             <div id="step-finish" class="hidden text-center py-10 fade-in">
-                <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-                    <i class="ph-fill ph-check-circle text-5xl"></i>
-                </div>
+                <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce"><i class="ph-fill ph-check-circle text-5xl"></i></div>
                 <h2 class="text-3xl font-bold text-slate-800 mb-2">¡Todo listo!</h2>
-                <p class="text-slate-500 mb-8 max-w-xs mx-auto">Has completado todas las evaluaciones exitosamente.</p>
-
+                <p class="text-slate-500 mb-8 max-w-xs mx-auto">Has completado todas las evaluaciones.</p>
                 <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 max-w-sm mx-auto relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase mb-3 tracking-widest">CÓDIGO DE RESULTADOS</p>
-                    
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5 font-mono text-xs break-all text-slate-600 text-left relative group">
                         <div id="final-token-display" class="max-h-32 overflow-y-auto pr-2">...</div>
                     </div>
-                    
                     <div class="space-y-3">
-                        <button onclick="enviarTokenWhatsapp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 transition-all active:scale-95">
-                            <i class="ph-bold ph-whatsapp-logo text-xl"></i> Enviar a Evaluador
-                        </button>
-                        <button onclick="copiarToken()" class="w-full bg-white text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-50 border border-slate-200 transition-colors">
-                            Copiar Código Manualmente
-                        </button>
+                        <button onclick="enviarTokenWhatsapp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 transition-all active:scale-95"><i class="ph-bold ph-whatsapp-logo text-xl"></i> Enviar a Evaluador</button>
+                        <button onclick="copiarToken()" class="w-full bg-white text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-50 border border-slate-200 transition-colors">Copiar Código</button>
                     </div>
                 </div>
-                <p class="text-xs text-slate-400 mt-6">Puedes cerrar esta ventana.</p>
             </div>
-
         </div>
     </div>
 
-    <!-- MODAL DE IMPORTACIÓN -->
+    <!-- MODAL IMPORT -->
     <div id="import-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
         <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-0 overflow-hidden">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
@@ -257,65 +203,40 @@
                 <button onclick="toggleImportModal()" class="text-slate-400 hover:text-red-500 transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
             </div>
             <div class="p-6">
-                <p class="text-sm text-slate-500 mb-3">Pega aquí el código de texto que te envió el alumno por WhatsApp.</p>
-                <textarea id="import-token-input" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono text-xs focus:ring-2 focus:ring-brand-600 outline-none mb-6 resize-none" placeholder="eyJpZCI6..."></textarea>
-                <button onclick="procesarImportacion()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20">
-                    <i class="ph-bold ph-check-circle"></i> Procesar y Guardar
-                </button>
+                <p class="text-sm text-slate-500 mb-3">Pega aquí el código de texto del alumno.</p>
+                <textarea id="import-token-input" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono text-xs focus:ring-2 focus:ring-brand-600 outline-none mb-6 resize-none"></textarea>
+                <button onclick="procesarImportacion()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20"><i class="ph-bold ph-check-circle"></i> Procesar</button>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
     <script>
         // ============================================
         // 1. CATÁLOGO COMPLETO DE PRUEBAS
         // ============================================
-        
         const CATALOGO_PRUEBAS = {
             'IPA': {
-                id: 'IPA',
-                titulo: 'Inventario de Pensamientos (IPA)',
-                descripcion: 'Valora la frecuencia (0=Nunca, 3=Con mucha frecuencia).',
-                icono: 'ph-brain',
-                tipo: 'likert_0_3',
+                id: 'IPA', titulo: 'Inventario de Pensamientos (IPA)', descripcion: 'Valora la frecuencia (0=Nunca, 3=Mucho).', icono: 'ph-brain', tipo: 'likert_0_3',
                 items: [
-                    "No puedo soportar ciertas cosas que me pasan.", "Solamente me pasan cosas malas.", "Todo lo que hago me sale mal.",
-                    "Sé que piensan mal de mí.", "¿Y si tengo alguna enfermedad grave?.", "Soy inferior a la gente en casi todo.",
-                    "Si otros cambiaran su actitud yo me sentiría mejor.", "¡No hay derecho a que me traten así!.", "Si me siento triste es porque soy un enfermo mental.",
-                    "Mis problemas dependen de los que me rodean.", "Soy un desastre como persona.", "Yo tengo la culpa de todo lo que me pasa.",
-                    "Debería de estar bien y no tener estos problemas.", "Sé que tengo la razón y no me entienden.", "Aunque ahora sufra, algún día tendré mi recompensa.",
-                    "Es horrible que me pase esto.", "Mi vida es un continuo fracaso.", "Siempre tendré este problema.",
-                    "Sé que me están mintiendo y engañando.", "¿Y si me vuelvo loco y pierdo la cabeza?.", "Soy superior a la gente en casi todo.",
+                    "No puedo soportar ciertas cosas.", "Solamente me pasan cosas malas.", "Todo lo que hago me sale mal.", "Sé que piensan mal de mí.", "¿Y si tengo alguna enfermedad grave?.",
+                    "Soy inferior a la gente en casi todo.", "Si otros cambiaran su actitud yo me sentiría mejor.", "¡No hay derecho a que me traten así!.", "Si me siento triste es porque soy un enfermo mental.",
+                    "Mis problemas dependen de los que me rodean.", "Soy un desastre como persona.", "Yo tengo la culpa de todo lo que me pasa.", "Debería de estar bien y no tener estos problemas.",
+                    "Sé que tengo la razón y no me entienden.", "Aunque ahora sufra, algún día tendré mi recompensa.", "Es horrible que me pase esto.", "Mi vida es un continuo fracaso.",
+                    "Siempre tendré este problema.", "Sé que me están mintiendo y engañando.", "¿Y si me vuelvo loco y pierdo la cabeza?.", "Soy superior a la gente en casi todo.",
                     "Yo soy responsable del sufrimiento de los que me rodean.", "Si me quisieran de verdad no me tratarían así.", "Me siento culpable, y es porque he hecho algo malo.",
-                    "Si tuviera más apoyo no tendría estos problemas.", "Alguien que conozco es un imbécil.", "Otros tienen la culpa de lo que me pasa.",
-                    "No debería de cometer estos errores.", "No quiere reconocer que estoy en lo cierto.", "Ya vendrán mejores tiempos.",
-                    "Es insoportable, no puedo aguantar más.", "Soy incompetente e inútil.", "Nunca podré salir de esta situación.",
-                    "Quieren hacerme daño.", "¿Y si les pasa algo malo a las personas a quienes quiero?.", "La gente hace las cosas mejor que yo.",
-                    "Soy una víctima de mis circunstancias.", "No me tratan como deberían hacerlo y me merezco.", "Si tengo estos síntomas es porque soy un enfermo.",
-                    "Si tuviera mejor situación económica no tendría estos problemas.", "Soy un neurótico.", "Lo que me pasa es un castigo que merezco.",
-                    "Debería recibir más atención y cariño de otros.", "Tengo razón, y voy a hacer lo que me da la gana.", "Tarde o temprano me irán las cosas mejor."
+                    "Si tuviera más apoyo no tendría estos problemas.", "Alguien que conozco es un imbécil.", "Otros tienen la culpa de lo que me pasa.", "No debería de cometer estos errores.",
+                    "No quiere reconocer que estoy en lo cierto.", "Ya vendrán mejores tiempos.", "Es insoportable, no puedo aguantar más.", "Soy incompetente e inútil.", "Nunca podré salir de esta situación.",
+                    "Quieren hacerme daño.", "¿Y si les pasa algo malo a las personas a quienes quiero?.", "La gente hace las cosas mejor que yo.", "Soy una víctima de mis circunstancias.",
+                    "No me tratan como deberían hacerlo y me merezco.", "Si tengo estos síntomas es porque soy un enfermo.", "Si tuviera mejor situación económica no tendría estos problemas.",
+                    "Soy un neurótico.", "Lo que me pasa es un castigo que merezco.", "Debería recibir más atención y cariño de otros.", "Tengo razón, y voy a hacer lo que me da la gana.", "Tarde o temprano me irán las cosas mejor."
                 ]
             },
             'BAI': {
-                id: 'BAI',
-                titulo: 'Inventario de Ansiedad (BAI)',
-                descripcion: 'Instrucciones: Indique cuánto le ha molestado cada síntoma durante la última semana.',
-                icono: 'ph-heartbeat', 
-                tipo: 'likert_0_3',
-                items: [
-                    "Entumecimiento", "Calor", "Temblor de piernas", "Incapaz de relajarse", "Miedo a que suceda lo peor",
-                    "Mareo", "Palpitaciones", "Inestabilidad", "Terror", "Nerviosismo",
-                    "Sensación de ahogo", "Temblor de manos", "Estremecimiento", "Miedo a perder el control", "Dificultad para respirar",
-                    "Miedo a morir", "Asustado", "Indigestión", "Desmayo", "Rubor facial", "Sudoración"
-                ]
+                id: 'BAI', titulo: 'Inventario de Ansiedad (BAI)', descripcion: 'Indique cuánto le ha molestado cada síntoma.', icono: 'ph-heartbeat', tipo: 'likert_0_3',
+                items: ["Entumecimiento", "Calor", "Temblor de piernas", "Incapaz de relajarse", "Miedo a que suceda lo peor", "Mareo", "Palpitaciones", "Inestabilidad", "Terror", "Nerviosismo", "Sensación de ahogo", "Temblor de manos", "Estremecimiento", "Miedo a perder el control", "Dificultad para respirar", "Miedo a morir", "Asustado", "Indigestión", "Desmayo", "Rubor facial", "Sudoración"]
             },
             'VAK': {
-                id: 'VAK',
-                titulo: 'Estilos de Aprendizaje (VAK)',
-                descripcion: 'Selecciona la opción con la que más te identifiques.',
-                icono: 'ph-eye',
-                tipo: 'opcion_multiple',
+                id: 'VAK', titulo: 'Estilos de Aprendizaje (VAK)', descripcion: 'Selecciona la opción que te identifique.', icono: 'ph-eye', tipo: 'opcion_multiple',
                 items: [
                     { p: "¿Qué prefieres hacer en tu tiempo libre?", ops: ["Ver películas (Visual)", "Escuchar música (Auditivo)", "Hacer deporte (Kinestésico)"] },
                     { p: "¿Cómo aprendes mejor?", ops: ["Viendo diagramas o videos", "Escuchando explicaciones", "Haciendo prácticas o maquetas"] },
@@ -325,11 +246,7 @@
                 ]
             },
             'BHS': {
-                id: 'BHS',
-                titulo: 'Escala de Desesperanza (BHS)',
-                descripcion: 'Marque si es VERDADERA (V) o FALSA (F) según su percepción.',
-                icono: 'ph-circle-half',
-                tipo: 'verdadero_falso',
+                id: 'BHS', titulo: 'Escala de Desesperanza (BHS)', descripcion: 'Marque si es VERDADERA (V) o FALSA (F).', icono: 'ph-circle-half', tipo: 'verdadero_falso',
                 items: [
                     "Veo el futuro con esperanza y entusiasmo.", "Tal vez debería abandonar todo, porque no puedo hacer que las cosas mejoren.", "Cuando las cosas van mal, me alivia saber que las cosas no pueden permanecer así siempre.",
                     "No puedo imaginar cómo será mi vida dentro de 10 años.", "Tengo tiempo suficiente para lograr las cosas que quiero hacer.", "En el futuro, espero conseguir lo que me pueda interesar.",
@@ -339,132 +256,156 @@
                     "Nunca consigo lo que quiero, por lo que es absurdo querer cualquier cosa.", "Es muy improbable que pueda lograr alguna satisfacción real en el futuro.", "El futuro me parece vago e incierto.",
                     "Puedo esperar más épocas buenas que malas.", "No vale la pena tratar de conseguir algo que deseo, porque probablemente no lo lograré."
                 ]
+            },
+            'CDFR': {
+                id: 'CDFR', titulo: 'Factores de Riesgo (CDFR)', descripcion: 'Confidencial. Ayúdanos a conocerte mejor.', icono: 'ph-shield-warning', tipo: 'opcion_multiple_valorada',
+                items: [
+                    { p: "1. ¿Con quién vives?", ops: [{t:"Ambos padres", v:0}, {t:"Solo uno", v:1}, {t:"Familiares", v:1}, {t:"Solo/Amigos", v:3}] },
+                    { p: "4. ¿Alguien más estudió bachillerato?", ops: [{t:"Sí", v:-1}, {t:"No, soy el primero", v:2}] },
+                    { p: "5. ¿Aportas económicamente?", ops: [{t:"No", v:0}, {t:"Sí, ayuda", v:1}, {t:"Sí, dependen de mí", v:3}] },
+                    { p: "6. ¿Tienes lugar para estudiar?", ops: [{t:"Sí", v:-1}, {t:"A veces", v:1}, {t:"No, nunca", v:3}] },
+                    { p: "8. Situaciones difíciles recientes", ops: [{t:"Ninguna", v:0}, {t:"Sí, han pasado cosas", v:2}] },
+                    { p: "10. ¿Trabajas?", ops: [{t:"No trabajo", v:0}, {t:"<10 horas", v:1}, {t:"10-20 horas", v:2}, {t:">20 horas", v:3}] },
+                    { p: "13. Dificultad para materiales", ops: [{t:"Nunca", v:0}, {t:"A veces", v:1}, {t:"Frecuentemente", v:2}] },
+                    { p: "15. Tiempo traslado", ops: [{t:"<30 min", v:0}, {t:"30-60 min", v:1}, {t:">1 hora", v:2}] },
+                    { p: "16. ¿Dejar escuela por dinero?", ops: [{t:"No", v:0}, {t:"A veces", v:2}, {t:"Frecuente/Sí", v:3}] },
+                    { p: "17. ¿Reprobado antes?", ops: [{t:"No", v:0}, {t:"Sí", v:2}] },
+                    { p: "18. Promedio Secundaria", ops: [{t:"8.0 - 10", v:-1}, {t:"7.0 - 7.9", v:1}, {t:"< 7.0", v:3}] },
+                    { p: "22. Horas estudio extra", ops: [{t:"0-2 horas", v:2}, {t:"3-10 horas", v:0}, {t:">10 horas", v:-1}] },
+                    { p: "23. Internet/PC", ops: [{t:"Sí, ambos", v:-1}, {t:"Solo uno/A veces", v:1}, {t:"Ninguno", v:2}] },
+                    { p: "29. Motivación", ops: [{t:"Superación/Familia", v:-1}, {t:"Trabajo", v:0}, {t:"No sé/Obligado", v:2}] },
+                    { p: "30. Tristeza/Desesperanza", ops: [{t:"Nunca/Poco", v:0}, {t:"Varios días", v:1}, {t:"Casi todos los días", v:3}] },
+                    { p: "34. Amigos en escuela", ops: [{t:"Sí tengo", v:-1}, {t:"Pocos", v:1}, {t:"Ninguno", v:2}] },
+                    { p: "35. Bullying/Acoso", ops: [{t:"Nunca", v:0}, {t:"Alguna vez", v:1}, {t:"Frecuente", v:3}] },
+                    { p: "36. Sustancias", ops: [{t:"No", v:0}, {t:"Ocasional", v:2}, {t:"Frecuente", v:3}] },
+                    { p: "38. Autolesión/Muerte", ops: [{t:"Nunca", v:0}, {t:"Alguna vez", v:2}, {t:"Frecuente", v:3}] },
+                    { p: "41. Actividades extra", ops: [{t:"Sí", v:-1}, {t:"No", v:1}] },
+                    { p: "46. ¿Deseas cita?", ops: [{t:"No por ahora", v:0}, {t:"Sí, me gustaría", v:0}] }
+                ]
+            },
+            'CSSRS': {
+                id: 'CSSRS', titulo: 'Escala Columbia (C-SSRS)', descripcion: 'Responda con honestidad sobre el ÚLTIMO MES.', icono: 'ph-warning-octagon', tipo: 'columbia_flow',
+                items: [
+                    { p: "1. ¿Ha deseado estar muerto?", id: "q1" },
+                    { p: "2. ¿Ha tenido pensamientos de suicidio?", id: "q2", triggers: ["q3", "q4", "q5"] },
+                    { p: "3. ¿Ha pensado en cómo hacerlo?", id: "q3", hidden: true },
+                    { p: "4. ¿Ha tenido alguna intención de actuar?", id: "q4", hidden: true },
+                    { p: "5. ¿Tiene un plan específico?", id: "q5", hidden: true },
+                    { p: "6. CONDUCTA: ¿Ha hecho algo alguna vez?", id: "q6", triggers: ["q6b"] },
+                    { p: "6b. ¿En los últimos 3 meses?", id: "q6b", hidden: true }
+                ]
+            },
+            'BDI': {
+                id: 'BDI', titulo: 'Inventario de Depresión (BDI-II)', descripcion: 'Seleccione la opción que mejor describa cómo se ha sentido las últimas dos semanas.', icono: 'ph-cloud-rain', tipo: 'opcion_multiple_valorada',
+                items: [
+                    { p: "1. Tristeza", ops: [{t:"No me siento triste.", v:0}, {t:"Me siento triste gran parte del tiempo.", v:1}, {t:"Me siento triste todo el tiempo.", v:2}, {t:"Me siento tan triste o desgraciado que no puedo soportarlo.", v:3}] },
+                    { p: "2. Pesimismo", ops: [{t:"No estoy desalentado respecto a mi futuro.", v:0}, {t:"Me siento más desalentado respecto de mi futuro que lo habitual.", v:1}, {t:"No espero que las cosas funcionen para mi.", v:2}, {t:"Siento que no hay esperanza para mi futuro y que sólo puede empeorar.", v:3}] },
+                    { p: "3. Fracaso", ops: [{t:"No me siento como un fracasado.", v:0}, {t:"He fracasado más de lo que hubiera debido.", v:1}, {t:"Cuando miro hacia atrás, veo muchos fracasos.", v:2}, {t:"Siento que como persona soy un fracaso total.", v:3}] },
+                    { p: "4. Pérdida de Placer", ops: [{t:"Obtengo tanto placer como siempre por las cosas.", v:0}, {t:"No disfruto tanto de las cosas como solía hacerlo.", v:1}, {t:"Obtengo muy poco placer de las cosas que solía disfrutar.", v:2}, {t:"No puedo obtener ningún placer de las cosas.", v:3}] },
+                    { p: "5. Sentimientos de Culpa", ops: [{t:"No me siento particularmente culpable.", v:0}, {t:"Me siento culpable respecto de varias cosas que he hecho.", v:1}, {t:"Me siento bastante culpable la mayor parte del tiempo.", v:2}, {t:"Me siento culpable todo el tiempo.", v:3}] },
+                    { p: "6. Sentimientos de Castigo", ops: [{t:"No siento que este siendo castigado.", v:0}, {t:"Siento que tal vez pueda ser castigado.", v:1}, {t:"Espero ser castigado.", v:2}, {t:"Siento que estoy siendo castigado.", v:3}] },
+                    { p: "7. Disconformidad con uno mismo", ops: [{t:"Siento lo mismo que siempre respecto a mi mismo.", v:0}, {t:"He perdido confianza en mí mismo.", v:1}, {t:"Estoy decepcionado conmigo mismo.", v:2}, {t:"No me gusto a mí mismo.", v:3}] },
+                    { p: "8. Autocrítica", ops: [{t:"No me critico ni me culpo más de lo habitual.", v:0}, {t:"Soy más crítico conmigo mismo de lo que solía ser.", v:1}, {t:"Me critico a mí mismo por todos mis errores.", v:2}, {t:"Me culpo a mí mismo por todo lo malo que sucede.", v:3}] },
+                    { p: "9. Pensamientos Suicidas", ops: [{t:"No tengo ningún pensamiento de matarme.", v:0}, {t:"He tenido pensamientos de matarme, pero no lo haría.", v:1}, {t:"Me gustaría matarme.", v:2}, {t:"Me mataría si tuviera la oportunidad.", v:3}] },
+                    { p: "10. Llanto", ops: [{t:"No lloro más de lo que solía hacerlo.", v:0}, {t:"Lloro más de lo que solía hacerlo.", v:1}, {t:"Lloro por cualquier pequeñez.", v:2}, {t:"Siento ganas de llorar pero no puedo.", v:3}] },
+                    { p: "11. Agitación", ops: [{t:"No estoy más inquieto o tenso que lo habitual.", v:0}, {t:"Me siento más inquieto o tenso que lo habitual.", v:1}, {t:"Estoy tan inquieto o agitado que me es difícil quedarme quieto.", v:2}, {t:"Estoy tan inquieto o agitado que tengo que estar moviéndome.", v:3}] },
+                    { p: "12. Pérdida de Interés", ops: [{t:"No he perdido el interés en otras actividades o personas.", v:0}, {t:"Estoy menos interesado que antes en otras personas o cosas.", v:1}, {t:"He perdido casi todo el interés en otras personas o cosas.", v:2}, {t:"Me es difícil interesarme por cualquier cosa.", v:3}] },
+                    { p: "13. Indecisión", ops: [{t:"Tomo mis decisiones tan bien como siempre.", v:0}, {t:"Me resulta más difícil que de costumbre tomar decisiones.", v:1}, {t:"Encuentro mucha más dificultad que antes para tomar decisiones.", v:2}, {t:"Tengo problemas para tomar cualquier decisión.", v:3}] },
+                    { p: "14. Desvalorización", ops: [{t:"No siento que yo no sea valioso.", v:0}, {t:"No me considero tan valioso y útil como solía ser.", v:1}, {t:"Me siento menos valioso cuando me comparo con otros.", v:2}, {t:"Siento que no valgo nada.", v:3}] },
+                    { p: "15. Pérdida de Energía", ops: [{t:"Tengo tanta energía como siempre.", v:0}, {t:"Tengo menos energía que la que solía tener.", v:1}, {t:"No tengo suficiente energía para hacer demasiado.", v:2}, {t:"No tengo energía suficiente para hacer nada.", v:3}] },
+                    { p: "16. Cambios en el Sueño", ops: [{t:"No he experimentado ningún cambio en mis hábitos de sueño.", v:0}, {t:"Duermo un poco más/menos de lo habitual.", v:1}, {t:"Duermo mucho más/menos de lo habitual.", v:2}, {t:"Duermo la mayor parte del día / Me despierto muy temprano y no puedo volver a dormir.", v:3}] },
+                    { p: "17. Irritabilidad", ops: [{t:"No estoy más irritable que lo habitual.", v:0}, {t:"Estoy más irritable que lo habitual.", v:1}, {t:"Estoy mucho más irritable que lo habitual.", v:2}, {t:"Estoy irritable todo el tiempo.", v:3}] },
+                    { p: "18. Cambios en el Apetito", ops: [{t:"No he experimentado ningún cambio en mi apetito.", v:0}, {t:"Mi apetito es un poco menor/mayor que lo habitual.", v:1}, {t:"Mi apetito es mucho menor/mayor que lo habitual.", v:2}, {t:"No tengo apetito en absoluto / Quiero comer todo el tiempo.", v:3}] },
+                    { p: "19. Dificultad de Concentración", ops: [{t:"Puedo concentrarme tan bien como siempre.", v:0}, {t:"No puedo concentrarme tan bien como habitualmente.", v:1}, {t:"Me es difícil mantener la mente en algo por mucho tiempo.", v:2}, {t:"Encuentro que no puedo concentrarme en nada.", v:3}] },
+                    { p: "20. Cansancio o Fatiga", ops: [{t:"No estoy más cansado o fatigado que lo habitual.", v:0}, {t:"Me fatigo o canso más fácilmente que lo habitual.", v:1}, {t:"Estoy demasiado fatigado o cansado para hacer muchas cosas.", v:2}, {t:"Estoy demasiado fatigado o cansado para hacer la mayoría de las cosas.", v:3}] },
+                    { p: "21. Pérdida de Interés en el Sexo", ops: [{t:"No he notado ningún cambio reciente en mi interés por el sexo.", v:0}, {t:"Estoy menos interesado en el sexo de lo que solía estar.", v:1}, {t:"Estoy mucho menos interesado en el sexo ahora.", v:2}, {t:"He perdido completamente el interés en el sexo.", v:3}] }
+                ]
+            },
+            'EBMA': {
+                id: 'EBMA', titulo: 'Escala de Motivación (EBMA)', descripcion: 'Marca qué tan de acuerdo estás (1=Totalmente desacuerdo, 5=Totalmente acuerdo).', icono: 'ph-lightning', tipo: 'likert_1_5',
+                items: [
+                    "Disfruto mucho aprendiendo cosas nuevas", "Me da satisfacción personal superar retos académicos difíciles", "Me gusta lo que estudio, especialmente las materias de mi especialidad", "Siento curiosidad por conocer más sobre los temas que vemos", "Me emociona descubrir cosas que no sabía",
+                    "Sé que es importante para mi futuro profesional", "Me ayudará a conseguir el trabajo que quiero", "Quiero ser alguien preparado y con conocimientos", "Es el camino para lograr mis metas personales", "Me permitirá ayudar mejor a mi familia y comunidad",
+                    "Me sentiría mal conmigo mismo si no lo hago", "No quiero decepcionar a mi familia", "Es lo que se espera de alguien de mi edad", "Me sentiría culpable si desperdicio esta oportunidad", "Quiero que mis padres se sientan orgullosos de mí",
+                    "Mis padres me obligan a venir", "Es obligatorio hasta los 18 años", "Para evitar problemas o castigos en casa", "No tengo otra opción", "Me quitan privilegios si no vengo",
+                    "Honestamente, no sé para qué vengo", "Siento que pierdo el tiempo aquí", "No le veo sentido a seguir estudiando", "Creo que la escuela no me sirve para nada", "Ya no me importa si termino o no"
+                ]
             }
         };
 
         // ============================================
         // 2. CONTROLADOR GENERAL
         // ============================================
-        
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const configHash = params.get('config');
-
-            if (configHash) {
-                iniciarModoAlumno(configHash);
-            } else {
-                iniciarModoAdmin();
-            }
+            if (configHash) iniciarModoAlumno(configHash);
+            else iniciarModoAdmin();
         });
 
         // ============================================
         // 3. LOGICA ADMIN
         // ============================================
-        
         function iniciarModoAdmin() {
             document.getElementById('view-admin').classList.remove('hidden');
-            renderizarChecklistPruebas();
-            renderizarTablaExpedientes();
-        }
-
-        function renderizarChecklistPruebas() {
             const container = document.getElementById('tests-checklist');
             let html = '';
             for (const key in CATALOGO_PRUEBAS) {
                 const t = CATALOGO_PRUEBAS[key];
                 html += `
-                <label class="flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-brand-300 transition-all group bg-white shadow-sm">
-                    <div class="flex items-center justify-center w-6 h-6 bg-slate-100 rounded border border-slate-300 group-hover:border-brand-500 overflow-hidden relative">
-                         <input type="checkbox" value="${key}" class="peer appearance-none w-full h-full cursor-pointer admin-test-check absolute z-10 opacity-0">
-                         <i class="ph-bold ph-check text-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity z-0 text-sm"></i>
-                    </div>
+                <label class="flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all bg-white shadow-sm">
+                    <input type="checkbox" value="${key}" class="w-5 h-5 text-brand-600 rounded border-gray-300 admin-test-check">
                     <div class="ml-3 flex-1">
-                        <span class="block text-sm font-bold text-slate-700 group-hover:text-brand-700">${t.titulo}</span>
+                        <span class="block text-sm font-bold text-slate-700">${t.titulo}</span>
                         <span class="block text-[10px] text-slate-400">${t.items.length} preguntas</span>
                     </div>
-                    <div class="bg-slate-100 p-1.5 rounded-lg text-slate-400 group-hover:text-brand-600 group-hover:bg-brand-50 transition-colors">
-                        <i class="ph-bold ${t.icono} text-lg"></i>
-                    </div>
+                    <i class="ph-bold ${t.icono} text-xl text-slate-300"></i>
                 </label>`;
             }
             container.innerHTML = html;
+            renderizarTablaExpedientes();
         }
 
         function generarLinkBateria() {
-            const nombre = document.getElementById('adm-nombre').value.trim();
-            const grupo = document.getElementById('adm-grupo').value.trim();
-            const checkboxes = document.querySelectorAll('.admin-test-check:checked');
-            const seleccionadas = Array.from(checkboxes).map(cb => cb.value);
-
-            if (!nombre || !grupo || seleccionadas.length === 0) {
-                alert("⚠️ Faltan datos: Nombre, Grupo o seleccionar al menos una prueba.");
-                return;
-            }
-
-            const config = { n: nombre, g: grupo, ts: seleccionadas };
-            // Encoding robusto para caracteres latinos
-            const jsonStr = JSON.stringify(config);
-            const hash = btoa(encodeURIComponent(jsonStr)); 
+            const n = document.getElementById('adm-nombre').value.trim();
+            const g = document.getElementById('adm-grupo').value.trim();
+            const ts = Array.from(document.querySelectorAll('.admin-test-check:checked')).map(cb => cb.value);
+            if (!n || !g || ts.length === 0) return alert("Faltan datos");
             
-            const baseUrl = window.location.href.split('?')[0];
-            const finalLink = `${baseUrl}?config=${hash}`;
-
+            const hash = btoa(encodeURIComponent(JSON.stringify({ n, g, ts })));
             document.getElementById('link-result-area').classList.remove('hidden');
-            document.getElementById('final-link').value = finalLink;
+            document.getElementById('final-link').value = `${window.location.href.split('?')[0]}?config=${hash}`;
         }
 
         function copiarLink() {
-            const copyText = document.getElementById("final-link");
-            copyText.select();
-            document.execCommand("copy");
-            // Feedback visual
-            const btn = document.querySelector('button[onclick="copiarLink()"]');
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<i class="ph-bold ph-check"></i>';
-            setTimeout(() => btn.innerHTML = originalHTML, 2000);
+            const t = document.getElementById("final-link"); t.select(); document.execCommand("copy");
         }
-        
         function enviarWhatsAppLink() {
             const link = document.getElementById("final-link").value;
-            const nombre = document.getElementById('adm-nombre').value;
-            const msg = `Hola ${nombre}, ingresa a este enlace para realizar tus evaluaciones psicopedagógicas: ${link}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+            const nom = document.getElementById('adm-nombre').value;
+            window.open(`https://wa.me/?text=${encodeURIComponent(`Hola ${nom}, link de evaluación: ${link}`)}`, '_blank');
         }
 
         // ============================================
         // 4. LOGICA ALUMNO
         // ============================================
-        
         let sessionData = { nombre: '', grupo: '', testsIds: [], respuestas: {} };
         let currentTestIndex = 0;
 
         function iniciarModoAlumno(hash) {
             try {
-                // Decoding robusto
-                const config = JSON.parse(decodeURIComponent(atob(hash)));
-                sessionData.nombre = config.n;
-                sessionData.grupo = config.g;
-                sessionData.testsIds = config.ts;
-                
+                const c = JSON.parse(decodeURIComponent(atob(hash)));
+                sessionData = { nombre: c.n, grupo: c.g, testsIds: c.ts, respuestas: {} };
                 document.getElementById('view-student').classList.remove('hidden');
-                document.getElementById('st-name').innerText = config.n;
-                document.getElementById('welcome-name').innerText = config.n.split(' ')[0];
-
-                const listContainer = document.getElementById('test-list-preview');
-                config.ts.forEach(tid => {
+                document.getElementById('st-name').innerText = c.n;
+                document.getElementById('welcome-name').innerText = c.n.split(' ')[0];
+                
+                const list = document.getElementById('test-list-preview');
+                c.ts.forEach(tid => {
                     const t = CATALOGO_PRUEBAS[tid];
-                    if(t) {
-                        listContainer.innerHTML += `
-                        <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
-                            <div class="bg-brand-50 text-brand-600 p-2 rounded-lg"><i class="ph-bold ${t.icono}"></i></div>
-                            <span class="text-sm font-bold text-slate-700">${t.titulo}</span>
-                        </div>`;
-                    }
+                    list.innerHTML += `<div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm"><i class="ph-bold ${t.icono} text-brand-600"></i><span class="text-sm font-bold text-slate-700">${t.titulo}</span></div>`;
                 });
-            } catch (e) {
-                alert("❌ El enlace es inválido o está incompleto.");
-                window.location.href = window.location.href.split('?')[0];
-            }
+            } catch (e) { alert("Link inválido"); }
         }
 
         function iniciarSecuencia() {
@@ -477,6 +418,24 @@
             const testId = sessionData.testsIds[currentTestIndex];
             const test = CATALOGO_PRUEBAS[testId];
             
+            // Estilos especiales
+            const card = document.getElementById('current-test-card');
+            const iconParent = document.getElementById('current-test-icon').parentElement;
+            
+            if(testId === 'CSSRS') {
+                card.className = "bg-red-50 p-5 rounded-2xl shadow-sm border border-red-200 flex items-start gap-4";
+                iconParent.className = "bg-red-100 p-3 rounded-xl text-red-700 shrink-0";
+            } else if (testId === 'BDI') {
+                card.className = "bg-blue-50 p-5 rounded-2xl shadow-sm border border-blue-200 flex items-start gap-4";
+                iconParent.className = "bg-blue-100 p-3 rounded-xl text-blue-700 shrink-0";
+            } else if (testId === 'EBMA') {
+                card.className = "bg-teal-50 p-5 rounded-2xl shadow-sm border border-teal-200 flex items-start gap-4";
+                iconParent.className = "bg-teal-100 p-3 rounded-xl text-teal-700 shrink-0";
+            } else {
+                card.className = "bg-white p-5 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-4";
+                iconParent.className = "bg-brand-50 p-3 rounded-xl text-brand-700 shrink-0";
+            }
+
             document.getElementById('current-test-title').innerText = test.titulo;
             document.getElementById('current-test-desc').innerText = test.descripcion;
             document.getElementById('current-test-icon').className = `ph-fill ${test.icono} text-2xl`;
@@ -484,291 +443,210 @@
             const container = document.getElementById('questions-container');
             container.innerHTML = '';
             
-            const progress = Math.round((currentTestIndex / sessionData.testsIds.length) * 100);
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-            document.getElementById('st-progress').innerText = `${progress}%`;
+            const pct = Math.round((currentTestIndex / sessionData.testsIds.length) * 100);
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('st-progress').innerText = `${pct}%`;
 
             test.items.forEach((item, idx) => {
                 const num = idx + 1;
                 
-                if (test.tipo === 'likert_0_3') {
-                    // Estilo LIKERT
+                if (test.tipo === 'columbia_flow') {
+                    const hidden = item.hidden ? 'hidden' : '';
+                    const trig = item.triggers ? JSON.stringify(item.triggers) : '[]';
                     container.innerHTML += `
-                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2">
-                            <span class="text-brand-600 font-bold min-w-[20px]">${num}.</span> 
-                            ${item}
-                        </p>
-                        <div class="grid grid-cols-4 gap-2 bg-slate-50 p-2 rounded-xl">
-                            ${[0,1,2,3].map(v => `
-                                <label class="cursor-pointer relative group">
-                                    <input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only">
-                                    <div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-brand-600 peer-checked:border-brand-600 peer-checked:text-white transition-all shadow-sm">
-                                        ${v}
-                                    </div>
-                                    <span class="text-[9px] text-center w-full block mt-1 text-slate-400 peer-checked:text-brand-600 font-bold opacity-0 peer-checked:opacity-100 transition-opacity absolute top-full left-0">
-                                        ${v===0?'Nunca':v===3?'Siempre':''}
-                                    </span>
-                                </label>
-                            `).join('')}
+                    <div id="${item.id}_block" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm ${hidden}">
+                        <p class="text-lg font-bold text-slate-800 mb-4">${item.p}</p>
+                        <div class="flex gap-4">
+                            <label class="columbia-btn flex-1 cursor-pointer"><input type="radio" name="${item.id}" value="1" class="peer sr-only" onchange='columbiaLogic(this, ${trig})'><div class="h-14 rounded-xl border-2 border-slate-100 bg-red-50 text-red-700 font-bold flex items-center justify-center peer-checked:bg-red-600 peer-checked:text-white">SI</div></label>
+                            <label class="columbia-btn flex-1 cursor-pointer"><input type="radio" name="${item.id}" value="0" class="peer sr-only" onchange='columbiaLogic(this, ${trig})'><div class="h-14 rounded-xl border-2 border-slate-100 bg-green-50 text-green-700 font-bold flex items-center justify-center peer-checked:bg-green-600 peer-checked:text-white">NO</div></label>
                         </div>
                     </div>`;
-                } else if (test.tipo === 'verdadero_falso') {
-                    // Estilo BHS (V/F)
-                    container.innerHTML += `
-                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2">
-                            <span class="text-brand-600 font-bold min-w-[20px]">${num}.</span> 
-                            ${item}
-                        </p>
-                        <div class="flex gap-4 bg-slate-50 p-3 rounded-xl justify-center">
-                            <label class="cursor-pointer group flex-1">
-                                <input type="radio" name="q_${testId}_${idx}" value="V" class="peer sr-only">
-                                <div class="h-12 w-full rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-green-600 peer-checked:border-green-600 peer-checked:text-white transition-all shadow-sm">
-                                    <i class="ph-bold ph-check text-lg"></i> Verdadero
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group flex-1">
-                                <input type="radio" name="q_${testId}_${idx}" value="F" class="peer sr-only">
-                                <div class="h-12 w-full rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-red-500 peer-checked:border-red-500 peer-checked:text-white transition-all shadow-sm">
-                                    <i class="ph-bold ph-x text-lg"></i> Falso
-                                </div>
-                            </label>
-                        </div>
-                    </div>`;
-                } else if (test.tipo === 'opcion_multiple') {
-                    // Estilo OPCION MULTIPLE
-                    const questionText = item.p || item;
-                    const options = item.ops || [];
-                    
+                } else if (test.tipo === 'likert_0_3') {
                     container.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2">
-                            <span class="text-brand-600 font-bold min-w-[20px]">${num}.</span> ${questionText}
-                        </p>
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${item}</p>
+                        <div class="grid grid-cols-4 gap-2 bg-slate-50 p-2 rounded-xl">
+                            ${[0,1,2,3].map(v => `<label class="cursor-pointer relative group"><input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only"><div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-brand-600 peer-checked:text-white transition-all shadow-sm">${v}</div></label>`).join('')}
+                        </div>
+                    </div>`;
+                } else if (test.tipo === 'likert_1_5') { // EBMA
+                    container.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-teal-600 font-bold">${num}.</span> ${item}</p>
+                        <div class="grid grid-cols-5 gap-2 bg-slate-50 p-2 rounded-xl">
+                            ${[1,2,3,4,5].map(v => `<label class="cursor-pointer relative group"><input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only"><div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-teal-600 peer-checked:text-white transition-all shadow-sm">${v}</div></label>`).join('')}
+                        </div>
+                        <div class="flex justify-between px-2 mt-1 text-[9px] text-gray-400 font-medium"><span>T.Desacuerdo</span><span>T.Acuerdo</span></div>
+                    </div>`;
+                } else if (test.tipo === 'verdadero_falso') {
+                    container.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${item}</p>
+                        <div class="flex gap-4 bg-slate-50 p-3 rounded-xl">
+                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="V" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-green-600 peer-checked:text-white">Verdadero</div></label>
+                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="F" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-red-500 peer-checked:text-white">Falso</div></label>
+                        </div>
+                    </div>`;
+                } else { // Opcion multiple
+                    const qTxt = item.p || item;
+                    const ops = item.ops || [];
+                    container.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${qTxt}</p>
                         <div class="space-y-2">
-                            ${options.map((op, opIdx) => `
-                                <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50 hover:border-brand-200 transition-all bg-slate-50/50">
-                                    <div class="relative flex items-center justify-center w-5 h-5 rounded-full border border-slate-300 bg-white">
-                                        <input type="radio" name="q_${testId}_${idx}" value="${opIdx}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0">
-                                        <div class="w-3 h-3 rounded-full bg-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity"></div>
-                                    </div>
-                                    <span class="text-xs font-medium text-slate-600">${op}</span>
-                                </label>
-                            `).join('')}
+                            ${ops.map((op, opIdx) => {
+                                const txt = op.t || op;
+                                const val = (op.v !== undefined) ? op.v : opIdx;
+                                return `<label class="flex items-start gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50 transition-all bg-slate-50/50">
+                                    <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border border-slate-300 bg-white shrink-0"><input type="radio" name="q_${testId}_${idx}" value="${val}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0"><div class="w-3 h-3 rounded-full bg-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity"></div></div>
+                                    <span class="text-xs font-medium text-slate-600">${txt}</span>
+                                </label>`;
+                            }).join('')}
                         </div>
                     </div>`;
                 }
             });
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function siguientePrueba() {
-            const testId = sessionData.testsIds[currentTestIndex];
-            const test = CATALOGO_PRUEBAS[testId];
-            let respuestasPrueba = [];
-            let incompleto = false;
-
-            for(let i=0; i<test.items.length; i++) {
-                const checked = document.querySelector(`input[name="q_${testId}_${i}"]:checked`);
-                if(checked) {
-                    // Si es BHS guardamos "V" o "F", si no el entero
-                    if(test.tipo === 'verdadero_falso') {
-                        respuestasPrueba.push(checked.value);
-                    } else {
-                        respuestasPrueba.push(parseInt(checked.value));
-                    }
-                } else {
-                    incompleto = true;
-                }
-            }
-
-            if(incompleto) {
-                alert("⚠️ Por favor responde todas las preguntas antes de continuar.");
-                return;
-            }
-
-            sessionData.respuestas[testId] = respuestasPrueba;
-            currentTestIndex++;
-            if (currentTestIndex < sessionData.testsIds.length) {
-                cargarPruebaActual();
-            } else {
-                finalizarEvaluacionCompleta();
-            }
+        function columbiaLogic(input, triggers) {
+            if(triggers.length>0) triggers.forEach(id => {
+                const el = document.getElementById(id+"_block");
+                if(input.value==="1") { el.classList.remove("hidden"); el.classList.add("fade-in"); }
+                else { el.classList.add("hidden"); el.querySelectorAll('input').forEach(r=>r.checked=false); }
+            });
         }
 
-        function finalizarEvaluacionCompleta() {
-            document.getElementById('progress-bar').style.width = `100%`;
-            document.getElementById('st-progress').innerText = `100%`;
+        function siguientePrueba() {
+            const tid = sessionData.testsIds[currentTestIndex];
+            const test = CATALOGO_PRUEBAS[tid];
+            let res = [];
+            let incompleto = false;
 
-            const paqueteFinal = {
-                id: Date.now().toString(36),
-                alumno: sessionData.nombre,
-                grupo: sessionData.grupo,
-                fecha: new Date().toLocaleDateString(),
-                resultados: {}
-            };
+            if(tid === 'CSSRS') {
+                test.items.forEach(it => {
+                    const blk = document.getElementById(it.id+"_block");
+                    if(!blk.classList.contains('hidden')) {
+                        const chk = document.querySelector(`input[name="${it.id}"]:checked`);
+                        if(chk) res.push(parseInt(chk.value)); else incompleto = true;
+                    } else res.push(0);
+                });
+            } else {
+                for(let i=0; i<test.items.length; i++) {
+                    const chk = document.querySelector(`input[name="q_${tid}_${i}"]:checked`);
+                    if(chk) res.push(chk.value); else incompleto = true;
+                }
+            }
 
+            if(incompleto) return alert("Responde todas las preguntas visibles.");
+            
+            if(test.tipo !== 'verdadero_falso' && test.tipo !== 'opcion_multiple') {
+                 res = res.map(v => parseInt(v));
+            } else if (test.tipo === 'opcion_multiple_valorada') { 
+                 res = res.map(v => parseInt(v));
+            }
+
+            sessionData.respuestas[tid] = res;
+            currentTestIndex++;
+            if(currentTestIndex < sessionData.testsIds.length) cargarPruebaActual();
+            else finalizar();
+        }
+
+        function finalizar() {
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('st-progress').innerText = '100%';
+            
+            const result = { id: Date.now().toString(36), alumno: sessionData.nombre, grupo: sessionData.grupo, fecha: new Date().toLocaleDateString(), resultados: {} };
+            
             sessionData.testsIds.forEach(tid => {
-                const raws = sessionData.respuestas[tid];
+                const r = sessionData.respuestas[tid];
                 let score = 0;
                 
-                // LÓGICA DE PUNTUACIÓN POR PRUEBA
-                if(CATALOGO_PRUEBAS[tid].tipo === 'likert_0_3') {
-                     // IPA y BAI: Suma simple
-                     score = raws.reduce((a,b)=>a+b,0);
-                } else if(tid === 'BHS') {
-                    // BHS: Lógica específica (Plantilla de corrección)
-                    const keyTrueIndices = [2, 4, 7, 9, 11, 12, 14, 16, 17, 18, 20]; // Ítems que suman 1 si son V
-                    score = raws.reduce((acc, val, index) => {
-                        const qNum = index + 1;
-                        if (keyTrueIndices.includes(qNum)) {
-                            // Si está en la lista keyTrue, suma si es "V"
-                            return acc + (val === 'V' ? 1 : 0);
-                        } else {
-                            // Si NO está en la lista, suma si es "F"
-                            return acc + (val === 'F' ? 1 : 0);
-                        }
-                    }, 0);
-                } else {
-                    // VAK: Guardamos info
-                    score = raws.join(','); 
-                }
+                if(tid === 'IPA' || tid === 'BAI') score = r.reduce((a,b)=>a+b,0);
+                else if(tid === 'BHS') {
+                    const key = [2,4,7,9,11,12,14,16,17,18,20];
+                    score = r.reduce((acc,v,i) => acc + (key.includes(i+1)?(v==='V'?1:0):(v==='F'?1:0)), 0);
+                } else if(tid === 'CDFR') {
+                    let sum = r.reduce((a,b)=>a+b,0); if(sum<0) sum=0;
+                    let niv = sum>24?"CRÍTICO":sum>16?"Alto":sum>8?"Moderado":"Bajo";
+                    score = `${sum} (${niv})`;
+                } else if(tid === 'CSSRS') {
+                    score = r[5]===1 ? "CRÍTICO (Conducta)" : r[4]===1 ? "ALTO (Plan)" : r[1]===1 ? "Ideación" : "Bajo";
+                } else if (tid === 'BDI') {
+                    let sum = r.reduce((a,b)=>a+b,0);
+                    let niv = sum<=13?"Mínima":sum<=19?"Leve":sum<=28?"Moderada":"GRAVE";
+                    if(r[8] > 0) niv += " ⚠️ Riesgo";
+                    score = `${sum} (${niv})`;
+                } else if (tid === 'EBMA') {
+                    // Calculo IAR y Perfil
+                    const getAvg = (s,e) => { let x=0; for(let i=s;i<=e;i++) x+=r[i]; return x/5; };
+                    let A=getAvg(0,4), B=getAvg(5,9), C=getAvg(10,14), D=getAvg(15,19), E=getAvg(20,24);
+                    let iar = (2*A + 1*B - 1*C - 2*D).toFixed(1);
+                    
+                    let p = "Mixto";
+                    if(A>=4 && B>=3.5 && D<2.5) p="Intrínseco";
+                    else if(A<2.5 && D>=4) p="Externo";
+                    else if(E>=3.5) p="Desmotivado";
+                    score = `IAR:${iar} (${p})`;
+                } else score = r.join(',');
                 
-                paqueteFinal.resultados[tid] = { score: score, raw: raws };
+                result.resultados[tid] = { score, raw: r };
             });
 
-            const jsonStr = JSON.stringify(paqueteFinal);
-            const token = btoa(encodeURIComponent(jsonStr));
-            
+            const token = btoa(encodeURIComponent(JSON.stringify(result)));
             document.getElementById('step-questions').classList.add('hidden');
             document.getElementById('step-finish').classList.remove('hidden');
             document.getElementById('final-token-display').innerText = token;
         }
 
-        function enviarTokenWhatsapp() {
-            const token = document.getElementById('final-token-display').innerText;
-            const msg = `He terminado mis evaluaciones. Mi código de resultado es: ${token}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-        
-        function copiarToken() {
-            const t = document.getElementById('final-token-display');
-            const range = document.createRange();
-            range.selectNode(t);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            document.execCommand("copy");
-            alert("Código copiado.");
-        }
-
         // ============================================
-        // 5. IMPORTACIÓN Y BASE DE DATOS
+        // 5. IMPORTACION
         // ============================================
-
-        function toggleImportModal() {
-            document.getElementById('import-modal').classList.toggle('hidden');
-        }
-
+        function toggleImportModal() { document.getElementById('import-modal').classList.toggle('hidden'); }
         function getDB() { return JSON.parse(localStorage.getItem('cbta_suite_db') || '[]'); }
-        function saveDB(data) { localStorage.setItem('cbta_suite_db', JSON.stringify(data)); }
+        function saveDB(d) { localStorage.setItem('cbta_suite_db', JSON.stringify(d)); }
 
         function procesarImportacion() {
-            const input = document.getElementById('import-token-input').value.trim();
-            if(!input) return;
-
             try {
-                // Decoding robusto
-                const data = JSON.parse(decodeURIComponent(atob(input)));
+                const d = JSON.parse(decodeURIComponent(atob(document.getElementById('import-token-input').value.trim())));
                 let db = getDB();
-
-                let idx = db.findIndex(e => e.nombre === data.alumno && e.grupo === data.grupo);
+                let idx = db.findIndex(e => e.nombre === d.alumno && e.grupo === d.grupo);
                 
-                if (idx >= 0) {
-                    db[idx].resultados = { ...db[idx].resultados, ...data.resultados };
-                    db[idx].ultimaFecha = data.fecha;
-                    alert(`✅ Expediente actualizado: ${data.alumno}`);
-                } else {
-                    db.push({
-                        nombre: data.alumno,
-                        grupo: data.grupo,
-                        resultados: data.resultados,
-                        ultimaFecha: data.fecha
-                    });
-                    alert(`✅ Nuevo expediente creado: ${data.alumno}`);
-                }
-
-                saveDB(db);
-                renderizarTablaExpedientes();
-                toggleImportModal();
-                document.getElementById('import-token-input').value = "";
-
-            } catch (e) {
-                alert("❌ Código inválido. Asegúrate de copiar todo el texto.");
-                console.error(e);
-            }
+                if(idx >= 0) { db[idx].resultados = { ...db[idx].resultados, ...d.resultados }; db[idx].ultimaFecha = d.fecha; }
+                else db.push({ nombre: d.alumno, grupo: d.grupo, resultados: d.resultados, ultimaFecha: d.fecha });
+                
+                saveDB(db); renderizarTablaExpedientes(); toggleImportModal(); document.getElementById('import-token-input').value = "";
+                alert("✅ Datos guardados.");
+            } catch (e) { alert("Código inválido"); }
         }
 
         function renderizarTablaExpedientes() {
             const db = getDB();
             const tbody = document.getElementById('db-body');
-            document.getElementById('db-count').innerText = `${db.length} Alumnos`;
-            
+            document.getElementById('db-count').innerText = db.length;
             tbody.innerHTML = '';
             
-            if(db.length === 0) {
-                document.getElementById('empty-state').classList.remove('hidden');
-                return;
-            } else {
-                document.getElementById('empty-state').classList.add('hidden');
-            }
+            if(db.length===0) return document.getElementById('empty-state').classList.remove('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
 
             db.forEach((exp, i) => {
                 let tags = '';
                 for(const [tid, res] of Object.entries(exp.resultados)) {
-                    // Colores según prueba
                     let color = 'bg-slate-100 text-slate-600';
-                    if(tid === 'IPA') color = 'bg-pink-100 text-pink-700 border-pink-200';
-                    if(tid === 'BAI') color = 'bg-green-100 text-green-700 border-green-200';
-                    if(tid === 'VAK') color = 'bg-purple-100 text-purple-700 border-purple-200';
-                    if(tid === 'BHS') color = 'bg-gray-100 text-gray-800 border-gray-300'; // Estilo para BHS
-
-                    let valDisplay = res.score;
-                    if(typeof res.score === 'string' && res.score.includes(',')) valDisplay = 'VAK Info'; // Simplificación visual
-
-                    tags += `<span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold ${color} mr-1 mb-1 border border-transparent hover:border-current cursor-default">
-                        ${tid}: ${valDisplay} pts
-                    </span>`;
+                    let txt = `${tid}: ${res.score}`;
+                    if(tid==='CSSRS' && String(res.score).includes("CRÍTICO")) color = 'bg-red-600 text-white animate-pulse';
+                    else if(tid==='BDI' && String(res.score).includes("GRAVE")) color = 'bg-blue-600 text-white';
+                    else if(tid==='CDFR' && String(res.score).includes("Alto")) color = 'bg-orange-100 text-orange-800';
+                    else if(tid==='EBMA' && String(res.score).includes("Desmotivado")) color = 'bg-purple-100 text-purple-800';
+                    
+                    tags += `<span class="inline-block px-2 py-1 rounded text-[10px] font-bold ${color} mr-1 mb-1">${txt}</span>`;
                 }
-
-                tbody.innerHTML += `
-                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
-                    <td class="px-6 py-4">
-                        <p class="font-bold text-slate-800 text-sm">${exp.nombre}</p>
-                        <p class="text-xs text-slate-400">${exp.grupo}</p>
-                    </td>
-                    <td class="px-6 py-4">${tags}</td>
-                    <td class="px-6 py-4 text-right">
-                         <button onclick="eliminarExpediente(${i})" class="text-slate-300 hover:text-red-500 p-2 transition-colors" title="Eliminar"><i class="ph-bold ph-trash text-lg"></i></button>
-                    </td>
-                </tr>`;
+                tbody.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50"><td class="px-6 py-4"><p class="font-bold text-slate-800 text-sm">${exp.nombre}</p><p class="text-xs text-slate-400">${exp.grupo}</p></td><td class="px-6 py-4">${tags}</td><td class="px-6 py-4 text-right"><button onclick="if(confirm('Borrar?')) { let d=getDB(); d.splice(${i},1); saveDB(d); renderizarTablaExpedientes(); }" class="text-slate-300 hover:text-red-500"><i class="ph-bold ph-trash text-lg"></i></button></td></tr>`;
             });
         }
         
-        function eliminarExpediente(index) {
-            if(confirm('¿Estás seguro de borrar este expediente? Esta acción no se puede deshacer.')) {
-                let db = getDB();
-                db.splice(index, 1);
-                saveDB(db);
-                renderizarTablaExpedientes();
-            }
-        }
-
-        // Cargar tabla al inicio si es admin
-        if(!window.location.search.includes('config')) {
-             renderizarTablaExpedientes();
-        }
+        function enviarTokenWhatsapp() { window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('final-token-display').innerText)}`, '_blank'); }
+        function copiarToken() { const t=document.getElementById('final-token-display'); var r = document.createRange(); r.selectNode(t); window.getSelection().removeAllRanges(); window.getSelection().addRange(r); document.execCommand('copy'); alert('Copiado'); }
     </script>
 </body>
 </html>
