@@ -13,7 +13,7 @@
     
     .input-group { margin-bottom: 15px; }
     label { font-weight: 600; display: block; margin-bottom: 5px; color: #333; }
-    input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    input[type="text"], input[type="number"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
     
     .section-title { 
         background: #e0f2f1; color: #00695c; padding: 10px; font-weight: bold; 
@@ -21,7 +21,14 @@
     }
     
     .table-container { overflow-x: auto; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; min-width: 900px; table-layout: fixed; }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 10px; 
+        font-size: 0.85rem; 
+        min-width: 900px; 
+        table-layout: fixed; 
+    }
     
     th, td { padding: 10px 5px; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
     th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; line-height: 1.3; }
@@ -32,16 +39,11 @@
     
     input[type="radio"] { width: 20px; height: 20px; margin: 0 auto; display: block; cursor: pointer; accent-color: #00897b; }
 
-    /* Panel de Resultados */
     .results-panel { background: #e0f2f1; padding: 25px; border-radius: 10px; margin-top: 30px; display: none; border: 1px solid #004d40; }
     
     .score-card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #00897b; }
     .score-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; }
-    
     .interpretation-box { background: #fffde7; padding: 15px; border-radius: 8px; border: 1px solid #fbc02d; margin-top: 15px; }
-    .alert-list { color: #c62828; font-weight: bold; margin-top: 10px; list-style-type: none; padding: 0; }
-    .alert-list li::before { content: "⚠️ "; }
-
     .rec-box { background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #1976d2; }
 
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
@@ -59,11 +61,32 @@
 <div class="container">
     <div id="test-form">
         <h2>Datos del Estudiante</h2>
-        <div class="input-group"><label>Nombre:</label><input type="text" id="nombre"></div>
+        
+        <!-- BLOQUE DE IDENTIFICACIÓN COMPLETO -->
+        <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre"></div>
+        
         <div style="display:flex; gap:10px;">
-            <div style="flex:1"><label>Grupo:</label><input type="text" id="grupo"></div>
-            <div style="flex:1"><label>Semestre:</label><input type="text" id="semestre"></div>
+            <div style="flex:1"><label>Edad:</label><input type="number" id="edad"></div>
+            <div style="flex:1">
+                <label>Sexo:</label>
+                <select id="sexo">
+                    <option value="">-- Seleccione --</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                </select>
+            </div>
         </div>
+
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <div style="flex:1"><label>Semestre:</label><input type="number" id="semestre" placeholder="Ej: 2"></div>
+            <div style="flex:1"><label>Grupo:</label><input type="text" id="grupo" placeholder="Ej: A"></div>
+        </div>
+
+        <div class="input-group" style="margin-top:10px;">
+            <label>Especialidad:</label>
+            <input type="text" id="especialidad" placeholder="Ej: Agropecuario, Administración...">
+        </div>
+
         <div class="input-group"><label>Fecha:</label><input type="date" id="fecha"></div>
 
         <div style="background:#e0f2f1; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #004d40;">
@@ -76,21 +99,19 @@
 
         <div class="buttons">
             <button type="button" class="whatsapp" onclick="calcularEBMA()">📊 Calcular Diagnóstico Motivacional</button>
-            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
         </div>
     </div>
 
-    <!-- RESULTADOS COMPLETOS -->
+    <!-- RESULTADOS -->
     <div id="results-area" class="results-panel">
         <h3 style="color:#004d40; text-align:center; margin-top:0;">Diagnóstico EBMA</h3>
         
-        <!-- PUNTUACIONES -->
         <div class="score-card">
-            <h4 style="margin:0 0 10px 0; color:#00695c;">Puntuaciones por Dimensión (1-5)</h4>
+            <h4 style="margin:0 0 10px 0; color:#00695c;">Puntuaciones por Dimensión</h4>
             <div id="score-details"></div>
         </div>
 
-        <!-- IAR -->
         <div class="score-card" style="text-align:center; background:#f1f8e9; border-left-color:#33691e;">
             <div style="font-size:0.9rem; color:#558b2f; font-weight:bold;">ÍNDICE DE AUTODETERMINACIÓN (IAR)</div>
             <div id="iar-score" style="font-size:2em; font-weight:bold; color:#33691e;"></div>
@@ -98,24 +119,20 @@
             <div id="iar-desc" style="font-size:0.85rem; margin-top:5px; font-style:italic;"></div>
         </div>
 
-        <!-- PERFIL Y ALERTAS -->
         <div class="interpretation-box">
-            <h4 style="margin:0 0 5px 0; color:#f57f17;">Perfil Motivacional Identificado</h4>
+            <h4 style="margin:0 0 5px 0; color:#f57f17;">Perfil Motivacional</h4>
             <div id="profile-title" style="font-weight:bold; font-size:1.1em; color:#e65100;"></div>
             <div id="profile-desc" style="font-size:0.9rem; margin-top:5px;"></div>
-            
             <div id="alerts-container" style="display:none; margin-top:15px; border-top:1px dashed #f9a825; padding-top:10px;">
-                <span style="font-weight:bold; color:#c62828;">SEÑALES DE ALERTA DETECTADAS:</span>
-                <ul id="alert-list" class="alert-list"></ul>
+                <span style="font-weight:bold; color:#c62828;">SEÑALES DE ALERTA:</span>
+                <ul id="alert-list" style="color:#c62828; margin:5px 0; padding-left:20px;"></ul>
             </div>
         </div>
 
-        <!-- RECOMENDACIONES -->
         <div class="rec-box">
-            <h4 style="margin:0 0 10px 0; color:#0d47a1;">Plan de Intervención Sugerido</h4>
+            <h4 style="margin:0 0 10px 0; color:#0d47a1;">Plan de Intervención</h4>
             <div id="interv-main" style="font-weight:bold; color:#1565C0;"></div>
             <ul id="interv-list" style="margin:10px 0; padding-left:20px; font-size:0.9rem;"></ul>
-            
             <div style="margin-top:15px; border-top:1px solid #90caf9; padding-top:10px;">
                 <strong>Seguimiento:</strong> <span id="follow-up"></span>
             </div>
@@ -123,9 +140,10 @@
 
         <div class="buttons">
             <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
-            <button type="button" class="btn-pdf" onclick="generarPDFEBMA()">📄 Generar Informe PDF</button>
+            <button type="button" class="btn-pdf" onclick="generarPDFEBMA()">📄 Generar Reporte PDF</button>
             <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar Resumen</button>
-            <button type="button" class="btn-back" onclick="location.reload()">🔄 Nueva Evaluación</button>
+            <button type="button" class="reset" onclick="location.reload()">🔄 Nueva Evaluación</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Ir al Menú</button>
         </div>
     </div>
 </div>
@@ -177,55 +195,62 @@
         if(count < 25) { alert(`Faltan preguntas (${count}/25)`); return; }
         for(let k in sums) avgs[k] = sums[k] / 5;
 
-        // IAR Calculation
         let iar = (2 * avgs.A) + (1 * avgs.B) - (1 * avgs.C) - (2 * avgs.D);
         iar = parseFloat(iar.toFixed(2));
 
-        // Lógica de Interpretación Completa
         let iarData = getIARInterpretation(iar);
         let profileData = getProfile(avgs);
         let alerts = getAlerts(avgs, iar);
         let interv = getInterventions(profileData.id);
 
-        resultados = { nombre, avgs, iar, iarData, profileData, alerts, interv };
+        resultados = { 
+            nombre, 
+            edad: document.getElementById('edad').value,
+            sexo: document.getElementById('sexo').value,
+            semestre: document.getElementById('semestre').value,
+            grupo: document.getElementById('grupo').value,
+            especialidad: document.getElementById('especialidad').value,
+            avgs, iar, iarData, profileData, alerts, interv 
+        };
+        
         mostrarResultados();
     }
 
     function getIARInterpretation(iar) {
-        if(iar > 10) return { title: "ALTAMENTE AUTODETERMINADO", desc: "Motivación intrínseca. Estudia por satisfacción y metas propias. Pronóstico favorable." };
-        if(iar >= 5) return { title: "MODERADAMENTE AUTODETERMINADO", desc: "Balance positivo. Combina interés personal con metas futuras." };
-        if(iar >= 0) return { title: "MOTIVACIÓN MIXTA", desc: "Equilibrio entre motivación autónoma y controlada. Requiere fortalecimiento." };
-        if(iar >= -5) return { title: "MODERADAMENTE CONTROLADO", desc: "Predomina la presión externa. Riesgo moderado de abandono." };
-        return { title: "ALTAMENTE CONTROLADO", desc: "Motivación externa o ausente. Alto riesgo de abandono. Intervención inmediata." };
+        if(iar > 10) return { title: "ALTAMENTE AUTODETERMINADO", desc: "Motivación intrínseca. Pronóstico favorable." };
+        if(iar >= 5) return { title: "MODERADAMENTE AUTODETERMINADO", desc: "Balance positivo. Metas futuras." };
+        if(iar >= 0) return { title: "MOTIVACIÓN MIXTA", desc: "Equilibrio autónoma/controlada." };
+        if(iar >= -5) return { title: "MODERADAMENTE CONTROLADO", desc: "Presión externa. Riesgo moderado." };
+        return { title: "ALTAMENTE CONTROLADO", desc: "Motivación externa/ausente. Alto riesgo." };
     }
 
     function getProfile(a) {
-        if(a.A >= 4 && a.B >= 3.5 && a.D < 2.5 && a.E < 2) return { id: 1, title: "PERFIL 1: INTRÍNSECAMENTE MOTIVADO", desc: "Disfruta aprender, ve valor en la educación." };
-        if(a.A < 3 && a.B >= 4 && a.D < 3 && a.E < 2) return { id: 2, title: "PERFIL 2: MOTIVADO POR METAS", desc: "Enfocado en utilidad práctica y futuro profesional." };
-        if(a.A < 3 && a.B < 3 && a.C >= 4 && a.D < 3) return { id: 3, title: "PERFIL 3: PRESIÓN SOCIAL / CULPA", desc: "Estudia para no decepcionar a otros." };
-        if(a.A < 2.5 && a.B < 3 && a.D >= 4 && a.E < 3) return { id: 4, title: "PERFIL 4: EXTERNAMENTE CONTROLADO", desc: "Estudia por obligación o evitar castigos." };
-        if(a.E >= 3.5) return { id: 5, title: "PERFIL 5: DESMOTIVADO", desc: "Sin conexión con la escuela. Riesgo crítico." };
-        return { id: 0, title: "PERFIL MIXTO", desc: "Patrón no específico. Requiere análisis individual." };
+        if(a.A >= 4 && a.B >= 3.5 && a.D < 2.5 && a.E < 2) return { id: 1, title: "PERFIL 1: INTRÍNSECAMENTE MOTIVADO", desc: "Disfruta aprender, ve valor en educación." };
+        if(a.A < 3 && a.B >= 4 && a.D < 3 && a.E < 2) return { id: 2, title: "PERFIL 2: MOTIVADO POR METAS", desc: "Enfocado en utilidad práctica." };
+        if(a.A < 3 && a.B < 3 && a.C >= 4 && a.D < 3) return { id: 3, title: "PERFIL 3: PRESIÓN SOCIAL", desc: "Estudia por culpa o expectativas." };
+        if(a.A < 2.5 && a.B < 3 && a.D >= 4 && a.E < 3) return { id: 4, title: "PERFIL 4: EXTERNAMENTE CONTROLADO", desc: "Estudia por obligación." };
+        if(a.E >= 3.5) return { id: 5, title: "PERFIL 5: DESMOTIVADO", desc: "Sin conexión. Riesgo crítico." };
+        return { id: 0, title: "PERFIL MIXTO", desc: "Patrón no específico." };
     }
 
     function getAlerts(a, iar) {
         let list = [];
-        if(a.E >= 4.0) list.push("Desmotivación Alta (≥ 4.0)");
-        if(a.A < 2.0) list.push("Motivación Intrínseca Muy Baja (< 2.0)");
-        if(a.D >= 4.5) list.push("Regulación Externa Excesiva (≥ 4.5)");
-        if(iar < 0) list.push("IAR Negativo (Predominio de Control)");
-        if(a.B < 2.5) list.push("Ausencia de Metas Identificadas (< 2.5)");
+        if(a.E >= 4.0) list.push("Desmotivación Alta");
+        if(a.A < 2.0) list.push("Motivación Intrínseca Muy Baja");
+        if(a.D >= 4.5) list.push("Regulación Externa Excesiva");
+        if(iar < 0) list.push("IAR Negativo");
+        if(a.B < 2.5) list.push("Ausencia de Metas");
         return list;
     }
 
     function getInterventions(pid) {
         let main = [], freq = "";
-        if(pid === 1) { main = ["Potenciar autonomía", "Apoyo académico si se requiere"]; freq = "Mensual"; }
-        else if(pid === 2) { main = ["Mentoría con Egresados", "Conexión Metas-Estudios"]; freq = "Mensual"; }
-        else if(pid === 3) { main = ["Entrevista Motivacional", "Desarrollar autonomía", "Trabajo con familia"]; freq = "Quincenal"; }
-        else if(pid === 4) { main = ["Entrevista Motivacional", "Programa 'Reconecta'", "Explorar valores"]; freq = "Semanal"; }
-        else if(pid === 5) { main = ["Entrevista Motivacional", "Activación Conductual", "Apoyo Intensivo"]; freq = "Semanal"; }
-        else { main = ["Entrevista exploratoria", "Definir metas"]; freq = "Quincenal"; }
+        if(pid === 1) { main = ["Potenciar autonomía", "Reconocimiento logros"]; freq = "Mensual"; }
+        else if(pid === 2) { main = ["Mentoría Egresados", "Conexión Metas-Estudio"]; freq = "Mensual"; }
+        else if(pid === 3) { main = ["Entrevista Motivacional", "Trabajo Familia"]; freq = "Quincenal"; }
+        else if(pid === 4) { main = ["Programa 'Reconecta'", "Explorar Valores"]; freq = "Semanal"; }
+        else if(pid === 5) { main = ["Activación Conductual", "Apoyo Académico Intensivo"]; freq = "Semanal"; }
+        else { main = ["Exploración Vocacional"]; freq = "Quincenal"; }
         return { main, freq };
     }
 
@@ -245,7 +270,6 @@
         document.getElementById('iar-score').innerText = resultados.iar;
         document.getElementById('iar-interp').innerText = resultados.iarData.title;
         document.getElementById('iar-desc').innerText = resultados.iarData.desc;
-        
         document.getElementById('profile-title').innerText = resultados.profileData.title;
         document.getElementById('profile-desc').innerText = resultados.profileData.desc;
 
@@ -253,11 +277,9 @@
             document.getElementById('alerts-container').style.display = 'block';
             document.getElementById('alert-list').innerHTML = resultados.alerts.map(a => `<li>${a}</li>`).join('');
         }
-
         document.getElementById('interv-main').innerText = "Acciones Recomendadas:";
         document.getElementById('interv-list').innerHTML = resultados.interv.main.map(i => `<li>${i}</li>`).join('');
         document.getElementById('follow-up').innerText = resultados.interv.freq;
-        
         window.scrollTo(0,0);
     }
 
@@ -267,12 +289,13 @@
         let up = { 
             ...cur, 
             nombre: resultados.nombre,
-            grupo: document.getElementById('grupo').value,
+            edad: resultados.edad,
+            sexo: resultados.sexo,
             ebmaIAR: resultados.iar,
             ebmaPerfil: resultados.profileData.title
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(up));
-        alert("✅ EBMA guardado en expediente.");
+        alert("✅ Datos guardados en el expediente.");
     }
 
     function generarPDFEBMA() {
@@ -281,7 +304,6 @@
         const doc = new jsPDF();
         let y = 20;
 
-        // Encabezado
         doc.setFillColor(0, 77, 64); doc.rect(0, 0, 210, 40, 'F');
         doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
         doc.text("CBTa No. 130", 105, 20, null, null, "center");
@@ -289,64 +311,58 @@
         
         doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
         doc.text(`Estudiante: ${resultados.nombre}`, 20, 50);
+        doc.text(`Edad: ${resultados.edad} | Semestre: ${resultados.semestre} ${resultados.grupo}`, 20, 56);
+        doc.text(`Especialidad: ${resultados.especialidad}`, 20, 62);
         doc.text(`Fecha: ${document.getElementById('fecha').value}`, 140, 50);
-        doc.line(20, 55, 190, 55);
+        doc.line(20, 65, 190, 65);
 
-        // Resultados Numéricos
-        y = 70;
-        doc.setFont("helvetica", "bold"); doc.text("RESULTADOS POR DIMENSIÓN (Promedio 1-5)", 20, y); y+=10;
+        y = 75;
+        doc.setFont("helvetica", "bold"); doc.text("RESULTADOS (1-5)", 20, y); y+=10;
         const addS = (l, v) => {
             doc.setFont("helvetica", "normal"); doc.text(l, 25, y);
             doc.setFont("helvetica", "bold"); doc.text(v.toFixed(1), 160, y);
             y+=8;
         };
-        addS("A. Motivación Intrínseca (Gusto/Interés)", resultados.avgs.A);
-        addS("B. Regulación Identificada (Metas/Futuro)", resultados.avgs.B);
-        addS("C. Regulación Introyectada (Culpa/Deber)", resultados.avgs.C);
-        addS("D. Regulación Externa (Obligación/Castigo)", resultados.avgs.D);
+        addS("A. Intrínseca (Gusto)", resultados.avgs.A);
+        addS("B. Identificada (Metas)", resultados.avgs.B);
+        addS("C. Introyectada (Culpa)", resultados.avgs.C);
+        addS("D. Externa (Obligación)", resultados.avgs.D);
         doc.setTextColor(198, 40, 40);
-        addS("E. Desmotivación (Sin sentido)", resultados.avgs.E);
+        addS("E. Desmotivación", resultados.avgs.E);
         doc.setTextColor(0);
 
-        // IAR
         y+=5;
         doc.setFillColor(224, 242, 241); doc.rect(20, y, 170, 25, 'F');
         doc.setTextColor(0, 77, 64);
-        doc.setFont("helvetica", "bold");
-        doc.text(`ÍNDICE IAR: ${resultados.iar}`, 25, y+10);
+        doc.text(`IAR: ${resultados.iar}`, 25, y+10);
         doc.setFont("helvetica", "normal");
-        doc.text(resultados.iarData.title, 90, y+10);
+        doc.text(resultados.iarData.title, 80, y+10);
         doc.setFontSize(9);
         doc.text(resultados.iarData.desc, 25, y+18);
         
         y+=35;
-        doc.setFontSize(11); doc.setTextColor(0);
-        
-        // Perfil
+        doc.setTextColor(0); doc.setFontSize(11);
         doc.setFont("helvetica", "bold"); doc.text("PERFIL MOTIVACIONAL:", 20, y); y+=7;
         doc.setTextColor(230, 81, 0);
         doc.text(resultados.profileData.title, 25, y); y+=7;
         doc.setTextColor(0); doc.setFont("helvetica", "normal");
         doc.text(resultados.profileData.desc, 25, y); y+=10;
 
-        // Alertas
         if(resultados.alerts.length > 0) {
             doc.setTextColor(198, 40, 40); doc.setFont("helvetica", "bold");
-            doc.text("SEÑALES DE ALERTA:", 20, y); y+=7;
+            doc.text("ALERTAS:", 20, y); y+=7;
             doc.setFont("helvetica", "normal");
             resultados.alerts.forEach(a => { doc.text(`• ${a}`, 25, y); y+=6; });
             y+=5;
         }
 
-        // Recomendaciones
         doc.setTextColor(0); doc.setFont("helvetica", "bold");
-        doc.text("INTERVENCIONES RECOMENDADAS:", 20, y); y+=7;
+        doc.text("INTERVENCIONES:", 20, y); y+=7;
         doc.setFont("helvetica", "normal");
         resultados.interv.main.forEach(i => { doc.text(`- ${i}`, 25, y); y+=6; });
-        doc.text(`Frecuencia de Seguimiento: ${resultados.interv.freq}`, 25, y+5);
+        doc.text(`Seguimiento: ${resultados.interv.freq}`, 25, y+6);
 
-        y+=30;
-        doc.line(70, y, 140, y);
+        y+=25; doc.line(70, y, 140, y);
         doc.text("Firma del Evaluador", 105, y+5, null, null, "center");
 
         doc.save(`EBMA_${resultados.nombre}.pdf`);
@@ -355,7 +371,6 @@
     function enviarWhatsApp() {
         if(!resultados) return;
         let m = `🎓 *EBMA*%0A👤 ${resultados.nombre}%0A📊 IAR: ${resultados.iar}%0A🏷️ Perfil: ${resultados.profileData.title}`;
-        if(resultados.alerts.length > 0) m += `%0A⚠️ ${resultados.alerts.length} Alertas detectadas`;
         window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank');
     }
 </script>
