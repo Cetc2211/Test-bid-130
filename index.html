@@ -1,165 +1,120 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Centro de Evaluación - CBTa 130</title>
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="icon" type="image/png" href="icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    .card { background: white; max-width: 700px; width: 100%; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    h1 { color: #1a237e; margin: 0 0 5px 0; font-size: 1.6rem; text-align: center; }
-    p.subtitle { color: #666; margin-bottom: 25px; text-align: center; font-size: 0.9rem; }
-    .category-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 2px solid #eee; font-weight: bold; display: flex; align-items: center; gap: 10px; }
-    .grid-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 15px; }
-    .btn-access { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; color: white; transition: transform 0.2s; text-align: center; height: 70px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .btn-access:active { transform: scale(0.95); }
-    
-    .cat-tam { color: #00695c; border-color: #b2dfdb; }
-    .cat-ans { color: #e65100; border-color: #ffe0b2; }
-    .cat-dep { color: #1565C0; border-color: #bbdefb; }
-    .cat-risk { color: #c62828; border-color: #ffcdd2; }
-    .cat-ped { color: #3949ab; border-color: #9fa8da; } 
-    .cat-admin { color: #455a64; border-color: #cfd8dc; }
-
-    .bg-phq { background: linear-gradient(135deg, #00695c 0%, #00897b 100%); }
-    .bg-gad { background: linear-gradient(135deg, #e65100 0%, #ef6c00 100%); }
-    .bg-hads { background: linear-gradient(135deg, #880e4f 0%, #ad1457 100%); }
-    .bg-bai { background: linear-gradient(135deg, #2E7d32 0%, #43a047 100%); }
-    .bg-idare { background: linear-gradient(135deg, #37474f 0%, #455a64 100%); }
-    .bg-ipa { background: linear-gradient(135deg, #c2185b 0%, #880e4f 100%); } /* Nuevo IPA */
-    .bg-bdi { background: linear-gradient(135deg, #1565C0 0%, #1976D2 100%); }
-    .bg-bhs { background: linear-gradient(135deg, #212121 0%, #424242 100%); }
-    .bg-ssi { background: linear-gradient(135deg, #4527a0 0%, #7b1fa2 100%); }
-    .bg-css { background: linear-gradient(135deg, #c62828 0%, #d32f2f 100%); }
-    .bg-plut { background: linear-gradient(135deg, #5d4037 0%, #795548 100%); }
-    .bg-doc { background: linear-gradient(135deg, #607d8b 0%, #78909c 100%); }
-    .bg-entr { background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); }
-    .bg-goca { background: linear-gradient(135deg, #ff8f00 0%, #ffb300 100%); }
-    .bg-lira { background: linear-gradient(135deg, #3949ab 0%, #5c6bc0 100%); }
-    .bg-cdfr { background: linear-gradient(135deg, #455a64 0%, #607d8b 100%); }
-    .bg-ebma { background: linear-gradient(135deg, #00897b 0%, #004d40 100%); }
-
-    .sender-box { background-color: #f8f9fa; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; margin-top: 30px; }
-    .btn-whatsapp { width: 100%; background-color: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 15px; }
-    .admin-link { display:block; margin-top:40px; text-align:center; color:#ccc; text-decoration:none; font-size:0.8rem; }
-    .check-item { display: flex; align-items: center; margin-bottom: 5px; font-size: 0.9rem; }
-    .check-item input { margin-right: 8px; transform: scale(1.2); }
-</style>
-</head>
-<body>
-
-<div class="card">
-    <h1>CBTa No.130</h1>
-    <p class="subtitle">Panel de Control Clínico (v15.0)</p>
-
-    <div class="category-title cat-tam">🔍 Tamizaje</div>
-    <div class="grid-buttons">
-        <a href="phq9.html" class="btn-access bg-phq">PHQ-9</a>
-        <a href="gad7.html" class="btn-access bg-gad">GAD-7</a>
-        <a href="hads.html" class="btn-access bg-hads">HADS</a>
-    </div>
-
-    <div class="category-title cat-ans">🧠 Ansiedad / Cognición</div>
-    <div class="grid-buttons">
-        <a href="ansiedadbeck.html" class="btn-access bg-bai">BAI</a>
-        <a href="idare.html" class="btn-access bg-idare">IDARE</a>
-        <a href="ipa.html" class="btn-access bg-ipa">IPA<small>Cognitivo</small></a>
-    </div>
-
-    <div class="category-title cat-dep">💙 Depresión / BHS</div>
-    <div class="grid-buttons">
-        <a href="depbeck.html" class="btn-access bg-bdi">BDI-II</a>
-        <a href="bhs.html" class="btn-access bg-bhs">BHS</a>
-    </div>
-
-    <div class="category-title cat-risk">🚨 Riesgo Suicida</div>
-    <div class="grid-buttons">
-        <a href="columbia.html" class="btn-access bg-css">Columbia</a>
-        <a href="ssibeck.html" class="btn-access bg-ssi">SSI</a>
-        <a href="plutchik.html" class="btn-access bg-plut">Plutchik</a>
-    </div>
-
-    <!-- ÁREA PSICOPEDAGÓGICA -->
-    <div class="category-title cat-ped">🎓 Psicopedagogía</div>
-    <div class="grid-buttons">
-        <a href="goca.html" class="btn-access bg-goca">GOCA<small>Conductual</small></a>
-        <a href="lira.html" class="btn-access bg-lira">LIRA<small>Riesgo Acad</small></a>
-        <a href="cdfr.html" class="btn-access bg-cdfr">CDFR<small>Contexto</small></a>
-        <a href="ebma.html" class="btn-access bg-ebma">EBMA<small>Motivación</small></a>
-    </div>
-
-    <div class="category-title cat-admin">📂 Expediente y Heteroaplicación</div>
-    <div class="grid-buttons">
-        <a href="consentimiento.html" class="btn-access bg-doc">Consentimiento<small>Informado</small></a>
-        <a href="entrevista.html" class="btn-access bg-entr">Entrevista<small>Clínica</small></a>
-    </div>
-
-    <!-- ENVÍO -->
-    <div class="sender-box">
-        <h3 style="margin-top:0; font-size:1rem; text-align:center;">📤 Enviar Batería</h3>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <div>
-                <label class="check-item"><input type="checkbox" id="chkPHQ">PHQ-9</label>
-                <label class="check-item"><input type="checkbox" id="chkGAD">GAD-7</label>
-                <label class="check-item"><input type="checkbox" id="chkHADS">HADS</label>
-                <label class="check-item"><input type="checkbox" id="chkBAI">BAI</label>
-                <label class="check-item"><input type="checkbox" id="chkIDARE">IDARE</label>
-                <label class="check-item"><input type="checkbox" id="chkIPA">IPA</label>
-            </div>
-            <div>
-                <label class="check-item"><input type="checkbox" id="chkBDI">BDI-II</label>
-                <label class="check-item"><input type="checkbox" id="chkBHS">BHS</label>
-                <label class="check-item"><input type="checkbox" id="chkCSS">Columbia</label>
-                <label class="check-item"><input type="checkbox" id="chkSSI">SSI</label>
-                <label class="check-item"><input type="checkbox" id="chkPlut">Plutchik</label>
-                <label class="check-item"><input type="checkbox" id="chkEBMA">EBMA</label>
-            </div>
-        </div>
-        
-        <div style="border-top:1px dashed #ccc; margin:10px 0; padding-top:10px;">
-            <label class="check-item"><input type="checkbox" id="chkGOCA"> GOCA (Docente)</label>
-            <label class="check-item"><input type="checkbox" id="chkLIRA"> LIRA (Docente)</label>
-            <label class="check-item"><input type="checkbox" id="chkCDFR"> CDFR (Alumno)</label>
-        </div>
-
-        <button class="btn-whatsapp" onclick="generarMensaje()">📲 Generar WhatsApp</button>
-    </div>
-
-    <a href="admin.html" class="admin-link">🔒 Acceso Administrativo (Resultados)</a>
-</div>
-
-<script>
-    function generarMensaje() {
-        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-        const tests = [
-            {id:'chkPHQ', n:'PHQ-9', u:'phq9.html'}, {id:'chkGAD', n:'GAD-7', u:'gad7.html'},
-            {id:'chkHADS', n:'HADS', u:'hads.html'}, {id:'chkBAI', n:'BAI', u:'ansiedadbeck.html'},
-            {id:'chkIDARE', n:'IDARE', u:'idare.html'}, {id:'chkBDI', n:'BDI-II', u:'depbeck.html'},
-            {id:'chkBHS', n:'BHS', u:'bhs.html'}, {id:'chkCSS', n:'Columbia', u:'columbia.html'},
-            {id:'chkSSI', n:'SSI', u:'ssibeck.html'}, {id:'chkPlut', n:'Plutchik', u:'plutchik.html'},
-            {id:'chkGOCA', n:'GOCA (Docente)', u:'goca.html'}, {id:'chkLIRA', n:'LIRA (Docente)', u:'lira.html'},
-            {id:'chkCDFR', n:'CDFR (Contexto)', u:'cdfr.html'}, {id:'chkEBMA', n:'EBMA (Motivación)', u:'ebma.html'},
-            {id:'chkIPA', n:'IPA (Pensamientos)', u:'ipa.html'}
-        ];
-
-        let msg = "Por favor contesta las siguientes evaluaciones:%0A%0A";
-        let c = 0;
-        tests.forEach(t => {
-            if(document.getElementById(t.id).checked) {
-                c++;
-                msg += `*${c}. ${t.n}:*%0A${base + t.u}%0A%0A`;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabinete Psicopedagógico - CBTa 130</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#fdf2f8', 600: '#db2777', 800: '#9d174d', 900: '#831843' }
+                    }
+                }
             }
-        });
-        msg += "Envía los resultados al finalizar. ¡Gracias!";
-        
-        if(c===0) alert("Selecciona al menos uno");
-        else window.open(`https://wa.me/${NUMERO_DESTINO}?text=${msg}`, '_blank');
-    }
-</script>
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-slate-800 font-sans min-h-screen">
+
+    <!-- Navbar Simple -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-brand-800 rounded-lg flex items-center justify-center text-white">
+                    <i class="ph-bold ph-first-aid text-xl"></i>
+                </div>
+                <span class="font-bold text-slate-800 tracking-tight">Gabinete <span class="text-brand-600">Virtual</span></span>
+            </div>
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+        </div>
+    </nav>
+
+    <main class="max-w-md mx-auto px-4 py-6 space-y-6">
+
+        <!-- Header Bienvenida -->
+        <div class="bg-gradient-to-br from-brand-900 to-brand-800 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+                <i class="ph-fill ph-brain text-8xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold relative z-10">Bienvenido</h1>
+            <p class="text-brand-100 text-sm relative z-10 mt-1">Selecciona una herramienta para comenzar.</p>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- ZONA DEL EVALUADOR (Acceso a la Suite)         -->
+        <!-- ============================================== -->
+        <div>
+            <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider">Gestión & Admin</p>
+            
+            <a href="suite.html" class="block w-full group relative overflow-hidden rounded-2xl bg-slate-900 p-6 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl ring-1 ring-slate-900/5">
+                <!-- Decoración de fondo -->
+                <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-slate-800/50 transition-all group-hover:scale-150"></div>
+                <div class="absolute -right-4 -bottom-8 h-24 w-24 rounded-full bg-brand-500 opacity-20 blur-2xl"></div>
+                
+                <div class="relative flex items-center justify-between z-10">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white backdrop-blur-sm border border-white/10">
+                            <i class="ph-fill ph-stack text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white leading-tight">Gestor de Evaluaciones</h3>
+                            <p class="text-xs text-slate-400 mt-1 font-medium">Crear baterías, links y reportes.</p>
+                        </div>
+                    </div>
+                    <div class="text-white opacity-60 transition-transform group-hover:translate-x-1 group-hover:opacity-100">
+                        <i class="ph-bold ph-caret-right text-xl"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- PRUEBAS INDIVIDUALES (Acceso Rápido)           -->
+        <!-- ============================================== -->
+        <div>
+            <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider mt-6">Acceso Rápido (Individual)</p>
+            
+            <div class="space-y-3">
+                <!-- Test IPA -->
+                <button onclick="alert('Usa el Gestor de Evaluaciones para enviar esta prueba')" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between hover:border-brand-300 transition-colors group text-left">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center">
+                            <i class="ph-bold ph-brain text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-700 text-sm group-hover:text-brand-700">Test IPA</h3>
+                            <p class="text-xs text-slate-400">Pensamientos Automáticos</p>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-lock-key text-slate-300"></i>
+                </button>
+
+                <!-- Test Beck -->
+                <button onclick="alert('Usa el Gestor de Evaluaciones para enviar esta prueba')" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between hover:border-blue-300 transition-colors group text-left">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <i class="ph-bold ph-heartbeat text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-700 text-sm group-hover:text-blue-700">Inventario Beck</h3>
+                            <p class="text-xs text-slate-400">Escala de Ansiedad</p>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-lock-key text-slate-300"></i>
+                </button>
+            </div>
+            
+            <p class="text-[10px] text-center text-slate-400 mt-6 opacity-60">
+                Sistema Integral v2.1 • CBTa 130
+            </p>
+        </div>
+
+    </main>
+
 </body>
 </html>
 
