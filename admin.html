@@ -7,25 +7,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
     body { font-family: -apple-system, sans-serif; background-color: #f5f5f5; padding: 20px; }
-    .card { background: white; max-width: 800px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .card { background: white; max-width: 900px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     h2 { color: #1b5e20; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
     .form-group { margin-bottom: 15px; }
-    label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-    input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; box-sizing: border-box; }
-    .row { display: flex; gap: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; font-size: 0.8rem; }
+    input, select { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+    .row { display: flex; gap: 10px; }
     .col { flex: 1; }
     .btn-generate { background-color: #1b5e20; color: white; border: none; width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; }
     .back-link { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; font-size: 0.9em; }
     
-    .section-box { background:#fafafa; padding:15px; border-radius:10px; margin-bottom:15px; border-left: 5px solid #ccc; }
-    .header-sec { margin-top:0; font-size:1rem; display:flex; justify-content:space-between; }
+    .section-box { background:#fafafa; padding:10px; border-radius:8px; margin-bottom:10px; border-left: 5px solid #ccc; }
+    .header-sec { margin-top:0; font-size:0.9rem; display:flex; justify-content:space-between; margin-bottom: 5px; }
     
+    /* Colores */
     .s-phq { border-left-color: #00695c; } .s-phq h3 { color: #00695c; }
     .s-gad { border-left-color: #e65100; } .s-gad h3 { color: #e65100; }
     .s-bai { border-left-color: #2e7d32; } .s-bai h3 { color: #2e7d32; }
     .s-idare { border-left-color: #37474f; } .s-idare h3 { color: #37474f; }
     .s-bdi { border-left-color: #1565C0; } .s-bdi h3 { color: #1565C0; }
     .s-hads { border-left-color: #880e4f; } .s-hads h3 { color: #880e4f; }
+    .s-ipa { border-left-color: #c2185b; } .s-ipa h3 { color: #c2185b; } /* IPA */
+    
     .s-ssi { border-left-color: #7b1fa2; } .s-ssi h3 { color: #7b1fa2; }
     .s-bhs { border-left-color: #212121; } .s-bhs h3 { color: #212121; }
     .s-cssrs { border-left-color: #c62828; } .s-cssrs h3 { color: #c62828; }
@@ -33,13 +36,18 @@
     .s-goca { border-left-color: #ff8f00; } .s-goca h3 { color: #ff8f00; }
     .s-lira { border-left-color: #3949ab; } .s-lira h3 { color: #3949ab; }
     .s-cdfr { border-left-color: #455a64; } .s-cdfr h3 { color: #455a64; }
-    .s-ebma { border-left-color: #00897b; } .s-ebma h3 { color: #00897b; } /* EBMA */
+    .s-ebma { border-left-color: #00897b; } .s-ebma h3 { color: #00897b; }
+    
+    /* Grid para IPA (5x3) */
+    .ipa-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+    .ipa-input input { font-size: 0.8rem; padding: 4px; text-align: center; }
+    .ipa-input label { font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🏥 Generador Integral (V8)</h2>
+    <h2>🏥 Generador Integral (V9 - IPA)</h2>
     
     <div id="memoryPanel" style="background:#fff3e0; border:1px solid #ffe0b2; padding:10px; border-radius:5px; margin-bottom:20px; display:none;">
         <span style="color:#e65100; font-weight:bold;">📂 Datos recuperados de memoria</span>
@@ -57,8 +65,7 @@
     <div class="row">
         <div class="col section-box s-phq">
             <h3 class="header-sec">PHQ-9</h3>
-            <input type="number" id="scorePHQ" placeholder="Total">
-            <input type="number" id="flagPHQ" placeholder="Ítem 9" style="margin-top:5px">
+            <input type="number" id="scorePHQ" placeholder="Total"><input type="number" id="flagPHQ" placeholder="Ítem 9" style="margin-top:5px">
         </div>
         <div class="col section-box s-gad">
             <h3 class="header-sec">GAD-7</h3>
@@ -66,20 +73,18 @@
         </div>
         <div class="col section-box s-hads">
             <h3 class="header-sec">HADS</h3>
-            <input type="number" id="hadsA" placeholder="Ans">
-            <input type="number" id="hadsD" placeholder="Dep" style="margin-top:5px">
+            <input type="number" id="hadsA" placeholder="Ans"><input type="number" id="hadsD" placeholder="Dep" style="margin-top:5px">
         </div>
-    </div>
-
-    <div class="row">
         <div class="col section-box s-bai">
             <h3 class="header-sec">BAI</h3>
             <input type="number" id="scoreBAI" placeholder="Total">
         </div>
+    </div>
+
+    <div class="row">
         <div class="col section-box s-idare">
             <h3 class="header-sec">IDARE</h3>
-            <input type="number" id="idareE" placeholder="Est">
-            <input type="number" id="idareR" placeholder="Ras" style="margin-top:5px">
+            <div class="row"><input type="number" id="idareE" placeholder="Est"><input type="number" id="idareR" placeholder="Ras"></div>
         </div>
         <div class="col section-box s-bdi">
             <h3 class="header-sec">BDI-II</h3>
@@ -87,32 +92,41 @@
         </div>
     </div>
 
-    <!-- PSICOPEDAGOGÍA -->
-    <div class="row">
-        <div class="col section-box s-ebma">
-            <h3 class="header-sec">EBMA (Motivación)</h3>
-            <input type="number" id="ebmaIAR" placeholder="IAR">
-            <input type="text" id="ebmaPerfil" placeholder="Perfil" style="margin-top:5px">
+    <!-- IPA SECTION -->
+    <div class="section-box s-ipa">
+        <h3 class="header-sec">IPA - Pensamientos Automáticos <span>(0-9)</span></h3>
+        <div class="row">
+            <div class="col" style="flex:0 0 100px;"><label>Global:</label><input type="number" id="ipaTotal" placeholder="0-135"></div>
+            <div class="col ipa-grid">
+                <div class="ipa-input"><label>1.Filt</label><input type="number" id="ipaF1"></div>
+                <div class="ipa-input"><label>2.Pol</label><input type="number" id="ipaF2"></div>
+                <div class="ipa-input"><label>3.Sobre</label><input type="number" id="ipaF3"></div>
+                <div class="ipa-input"><label>4.Int</label><input type="number" id="ipaF4"></div>
+                <div class="ipa-input"><label>5.Cat</label><input type="number" id="ipaF5"></div>
+                <div class="ipa-input"><label>6.Pers</label><input type="number" id="ipaF6"></div>
+                <div class="ipa-input"><label>7.Cont</label><input type="number" id="ipaF7"></div>
+                <div class="ipa-input"><label>8.Just</label><input type="number" id="ipaF8"></div>
+                <div class="ipa-input"><label>9.Emoc</label><input type="number" id="ipaF9"></div>
+                <div class="ipa-input"><label>10.Cam</label><input type="number" id="ipaF10"></div>
+                <div class="ipa-input"><label>11.Etiq</label><input type="number" id="ipaF11"></div>
+                <div class="ipa-input"><label>12.Culp</label><input type="number" id="ipaF12"></div>
+                <div class="ipa-input"><label>13.Deb</label><input type="number" id="ipaF13"></div>
+                <div class="ipa-input"><label>14.Raz</label><input type="number" id="ipaF14"></div>
+                <div class="ipa-input"><label>15.Rec</label><input type="number" id="ipaF15"></div>
+            </div>
         </div>
+    </div>
+
+    <!-- PSICOPEDAGOGÍA & RIESGO -->
+    <div class="row">
         <div class="col section-box s-goca">
             <h3 class="header-sec">GOCA</h3>
             <input type="number" id="scoreGOCA" placeholder="Riesgo">
         </div>
-        <div class="col section-box s-lira">
-            <h3 class="header-sec">LIRA</h3>
-            <input type="number" id="scoreLIRA" placeholder="Total">
+        <div class="col section-box s-ebma">
+            <h3 class="header-sec">EBMA</h3>
+            <input type="number" id="ebmaIAR" placeholder="IAR">
         </div>
-    </div>
-    
-    <div class="section-box s-cdfr">
-        <h3 class="header-sec">CDFR</h3>
-        <div class="row">
-            <div class="col"><input type="number" id="scoreCDFR" placeholder="Riesgo"></div>
-            <div class="col"><select id="cdfrCita"><option value="">Sin Cita</option><option value="Sí">Pide Cita</option></select></div>
-        </div>
-    </div>
-
-    <div class="row">
         <div class="col section-box s-ssi">
             <h3 class="header-sec">SSI</h3>
             <input type="number" id="scoreSSI" placeholder="Total">
@@ -122,16 +136,14 @@
             <input type="number" id="scoreBHS" placeholder="Total">
         </div>
     </div>
-
-    <div class="section-box s-cssrs">
-        <h3 class="header-sec">Columbia</h3>
-        <div class="row">
-            <div class="col"><select id="cssrsId"><option value="0">No</option><option value="1">Sí</option></select></div>
-            <div class="col"><select id="cssrsPlan"><option value="0">No</option><option value="1">Sí</option></select></div>
-            <div class="col"><select id="cssrsCond"><option value="0">No</option><option value="1">Sí</option></select></div>
-        </div>
-    </div>
     
+    <div class="row">
+        <div class="col section-box s-lira"><h3 class="header-sec">LIRA</h3><input type="number" id="scoreLIRA"></div>
+        <div class="col section-box s-cdfr"><h3 class="header-sec">CDFR</h3><input type="number" id="scoreCDFR"></div>
+        <div class="col section-box s-cssrs"><h3 class="header-sec">Columbia</h3><select id="cssrsId"><option value="0">-</option><option value="1">Sí</option></select></div>
+        <div class="col section-box s-plut"><h3 class="header-sec">Plutchik</h3><input type="number" id="scorePlut"></div>
+    </div>
+
     <button class="btn-generate" onclick="generarReporte()">📄 Descargar Expediente Integrado</button>
     <a href="index.html" class="back-link">← Volver al Menú Principal</a>
 </div>
@@ -148,7 +160,7 @@
             if(d.nombre) document.getElementById('nombre').value = d.nombre;
             if(d.edad) document.getElementById('edad').value = d.edad;
             
-            const set = (id, v) => { if(v) document.getElementById(id).value = v; };
+            const set = (id, v) => { if(v!==undefined) document.getElementById(id).value = v; };
             set('scorePHQ', d.phq); set('flagPHQ', d.phqFlag);
             set('scoreGAD', d.gad); set('scoreBAI', d.bai);
             set('hadsA', d.hadsA); set('hadsD', d.hadsD);
@@ -156,9 +168,12 @@
             set('scoreBDI', d.bdi); set('scoreBHS', d.bhs);
             set('scoreSSI', d.ssi); 
             set('scoreGOCA', d.goca); set('scoreLIRA', d.lira);
-            set('scoreCDFR', d.cdfr); set('cdfrCita', d.cdfrCita);
-            set('ebmaIAR', d.ebmaIAR); set('ebmaPerfil', d.ebmaPerfil);
-            set('cssrsId', d.cId); set('cssrsPlan', d.cPlan); set('cssrsCond', d.cCond);
+            set('scoreCDFR', d.cdfr); set('ebmaIAR', d.ebmaIAR);
+            set('scorePlut', d.plut); set('cssrsId', d.cId);
+            
+            // IPA
+            set('ipaTotal', d.ipaTotal);
+            for(let i=1; i<=15; i++) set(`ipaF${i}`, d[`ipaF${i}`]);
         }
     });
 
@@ -167,26 +182,22 @@
     }
 
     function generarReporte() {
+        const val = (id) => document.getElementById(id).value;
         const d = {
-            nombre: document.getElementById('nombre').value,
-            edad: document.getElementById('edad').value,
-            fecha: document.getElementById('fecha').value,
-            phq: document.getElementById('scorePHQ').value, flagPHQ: document.getElementById('flagPHQ').value,
-            gad: document.getElementById('scoreGAD').value,
-            hadsA: document.getElementById('hadsA').value, hadsD: document.getElementById('hadsD').value,
-            bai: document.getElementById('scoreBAI').value,
-            idareE: document.getElementById('idareE').value, idareR: document.getElementById('idareR').value,
-            bdi: document.getElementById('scoreBDI').value,
-            bhs: document.getElementById('scoreBHS').value,
-            ssi: document.getElementById('scoreSSI').value,
-            goca: document.getElementById('scoreGOCA').value,
-            lira: document.getElementById('scoreLIRA').value, 
-            cdfr: document.getElementById('scoreCDFR').value, cdfrCita: document.getElementById('cdfrCita').value,
-            ebma: document.getElementById('ebmaIAR').value, ebmaP: document.getElementById('ebmaPerfil').value,
-            cId: document.getElementById('cssrsId').value, 
-            cPlan: document.getElementById('cssrsPlan').value, 
-            cCond: document.getElementById('cssrsCond').value
+            nombre: val('nombre'), edad: val('edad'), fecha: val('fecha'),
+            phq: val('scorePHQ'), gad: val('scoreGAD'),
+            hadsA: val('hadsA'), hadsD: val('hadsD'),
+            bai: val('scoreBAI'), bdi: val('scoreBDI'),
+            idareE: val('idareE'), idareR: val('idareR'),
+            ssi: val('scoreSSI'), bhs: val('scoreBHS'),
+            goca: val('scoreGOCA'), lira: val('scoreLIRA'), cdfr: val('scoreCDFR'),
+            ebma: val('ebmaIAR'), plut: val('scorePlut'), cId: val('cssrsId'),
+            ipa: val('ipaTotal')
         };
+        
+        // Factores IPA
+        d.ipaF = [];
+        for(let i=1; i<=15; i++) d.ipaF.push(val(`ipaF${i}`));
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -194,7 +205,6 @@
         doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
         doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
         doc.text("CBTa No. 130 - Informe Integral", 105, 25, null, null, "center");
-        
         doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
         doc.text(`Paciente: ${d.nombre} | Edad: ${d.edad} | Fecha: ${d.fecha}`, 20, 50);
         doc.line(20, 55, 190, 55);
@@ -210,31 +220,34 @@
             doc.line(20, y+2, 190, y+2); y+=8;
         };
 
-        // CLINICA
-        if(d.phq) row("PHQ-9", d.phq, d.phq>=10?"ALERTA":"Bajo", d.phq>=10);
-        if(d.gad) row("GAD-7", d.gad, d.gad>=10?"ALERTA":"Bajo", d.gad>=10);
-        if(d.bai) row("BAI", d.bai, d.bai>15?"Significativo":"Bajo");
-        if(d.bdi) row("BDI-II", d.bdi, d.bdi>18?"Significativo":"Bajo");
-        if(d.idareE) row("IDARE (Estado)", d.idareE, "");
-        if(d.hadsA) row("HADS", `A:${d.hadsA} D:${d.hadsD}`, "");
+        if(d.phq) row("PHQ-9", d.phq, d.phq>=10?"ALERTA":"Bajo");
+        if(d.gad) row("GAD-7", d.gad, d.gad>=10?"ALERTA":"Bajo");
+        if(d.bai) row("BAI", d.bai, d.bai>15?"Alto":"Bajo");
+        if(d.bdi) row("BDI-II", d.bdi, d.bdi>18?"Alto":"Bajo");
+        if(d.ipa) {
+            let n = d.ipa>90?"ALTO":d.ipa>45?"MEDIO":"BAJO";
+            row("IPA Global", d.ipa, n, d.ipa>90);
+            
+            // Detalle IPA
+            doc.setFontSize(8);
+            let factorsHigh = [];
+            const names = ["Filt","Pol","Sob","Int","Cat","Per","Con","Jus","Emo","Cam","Eti","Cul","Deb","Raz","Rec"];
+            d.ipaF.forEach((v, i) => {
+                if(v && parseInt(v) >= 7) factorsHigh.push(`${names[i]}:${v}`);
+            });
+            if(factorsHigh.length > 0) {
+                doc.setTextColor(198, 40, 40);
+                doc.text("Distorsiones Altas: " + factorsHigh.join(", "), 25, y-3);
+                doc.setTextColor(0);
+            }
+            doc.setFontSize(10);
+        }
 
-        y+=5;
-        // RIESGO
-        if(d.ssi) row("SSI", d.ssi, d.ssi>5?"RIESGO":"Bajo", d.ssi>5);
-        if(d.bhs) row("BHS", d.bhs, d.bhs>8?"Riesgo":"Bajo", d.bhs>8);
-        if(d.cId==="1" || d.cCond==="1") row("Columbia", "Positivo", "Riesgo Detectado", true);
+        if(d.ssi) row("SSI", d.ssi, d.ssi>5?"RIESGO":"Bajo", true);
+        if(d.goca) row("GOCA", d.goca, d.goca>80?"Alerta":"Bajo");
+        if(d.ebma) row("EBMA (IAR)", d.ebma, "");
 
-        y+=5;
-        // PSICOPEDAGOGÍA
-        if(d.goca) row("GOCA", d.goca, d.goca>80?"ALERTA":"Bajo", d.goca>80);
-        if(d.lira) row("LIRA", d.lira, d.lira>=5?"REFERIR":"Bajo", d.lira>=5);
-        if(d.cdfr) row("CDFR", d.cdfr, d.cdfrCita==="Sí"?"Pide Cita":"-", d.cdfr>=17);
-        if(d.ebma) row("EBMA (Motiv)", `IAR: ${d.ebma}`, d.ebmaP);
-
-        y+=15;
-        doc.rect(20, y, 170, 40);
-        doc.text("Conclusiones y Recomendaciones:", 22, y+5);
-
+        y+=15; doc.rect(20, y, 170, 40); doc.text("Conclusiones:", 22, y+5);
         doc.save(`Expediente_${d.nombre}.pdf`);
     }
 </script>
