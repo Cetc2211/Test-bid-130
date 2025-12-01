@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suite de Evaluación - CBTa 130</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconos Phosphor -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#fce4ec', 100: '#f8bbd0', 600: '#d81b60', 800: '#ad1457', 900: '#880e4f' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Ocultar scrollbar pero permitir scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-100 text-slate-800 min-h-screen font-sans">
+
+    <!-- ========================================= -->
+    <!-- MODO EVALUADOR (Admin Dashboard)          -->
+    <!-- ========================================= -->
+    <div id="view-admin" class="hidden max-w-6xl mx-auto p-4 space-y-6">
+        
+        <!-- Header -->
+        <header class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-gradient-to-br from-brand-800 to-brand-600 text-white p-3 rounded-xl shadow-lg shadow-brand-600/20">
+                    <i class="ph-bold ph-stack text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl text-slate-800">Suite de Evaluación</h1>
+                    <p class="text-sm text-slate-500">Gestión Centralizada de Expedientes</p>
+                </div>
+            </div>
+            <button onclick="toggleImportModal()" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-md transition-all active:scale-95">
+                <i class="ph-bold ph-download-simple"></i> IMPORTAR RESULTADOS
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- PANEL IZQUIERDO: Generador de Baterías -->
+            <div class="lg:col-span-1 space-y-6">
+                <section class="bg-white rounded-2xl shadow-lg border-t-4 border-brand-600 overflow-hidden">
+                    <div class="p-6">
+                        <h2 class="text-lg font-bold text-slate-800 mb-1 flex items-center gap-2">
+                            <i class="ph-duotone ph-paper-plane-tilt text-brand-600"></i> Nueva Evaluación
+                        </h2>
+                        <p class="text-xs text-slate-400 mb-4">Configura la batería de pruebas para el alumno.</p>
+                        
+                        <div class="space-y-3 mb-6">
+                            <input type="text" id="adm-nombre" placeholder="Nombre Completo" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
+                            <input type="text" id="adm-grupo" placeholder="Grupo (Ej. 6A)" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
+                        </div>
+
+                        <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Seleccionar Pruebas:</div>
+                        <div id="tests-checklist" class="space-y-2 mb-6 max-h-48 overflow-y-auto no-scrollbar">
+                            <!-- Se llena dinámicamente con JS -->
+                        </div>
+
+                        <button onclick="generarLinkBateria()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2 shadow-lg shadow-brand-600/30 transition-all">
+                            <i class="ph-bold ph-link"></i> Generar Link Único
+                        </button>
+
+                        <!-- Área de Resultado del Link -->
+                        <div id="link-result-area" class="hidden mt-4 pt-4 border-t border-dashed border-gray-200 animate-fade-in">
+                            <p class="text-xs text-green-700 font-bold mb-2">✅ Link generado exitosamente:</p>
+                            <div class="flex gap-2">
+                                <input type="text" id="final-link" readonly class="w-full text-[10px] font-mono bg-green-50 border border-green-200 p-2 rounded text-slate-600">
+                                <button onclick="copiarLink()" class="bg-green-600 text-white px-3 rounded hover:bg-green-700 shadow"><i class="ph-bold ph-copy"></i></button>
+                            </div>
+                            <button onclick="enviarWhatsAppLink()" class="w-full mt-2 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1">
+                                <i class="ph-bold ph-whatsapp-logo"></i> Enviar por WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL DERECHO: Base de Datos de Expedientes -->
+            <div class="lg:col-span-2">
+                <section class="bg-white rounded-2xl shadow-sm border border-gray-200 h-full flex flex-col">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-700">Expedientes Activos</h3>
+                        <span id="db-count" class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-full font-bold">0</span>
+                    </div>
+                    <div class="flex-1 overflow-auto p-0">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50 text-gray-500 font-bold uppercase text-[10px] sticky top-0">
+                                <tr>
+                                    <th class="px-6 py-3">Alumno</th>
+                                    <th class="px-6 py-3">Grupo</th>
+                                    <th class="px-6 py-3">Resultados</th>
+                                    <th class="px-6 py-3 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="db-body" class="divide-y divide-gray-50">
+                                <!-- JS -->
+                            </tbody>
+                        </table>
+                        <div id="empty-state" class="hidden p-12 text-center text-slate-400">
+                            <i class="ph-duotone ph-folder-open text-4xl mb-2"></i>
+                            <p>No hay expedientes cargados.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- MODO ALUMNO (The Student Experience)      -->
+    <!-- ========================================= -->
+    <div id="view-student" class="hidden min-h-screen bg-slate-50 flex flex-col">
+        
+        <!-- Navbar Alumno -->
+        <div class="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-50">
+            <div class="max-w-2xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white">
+                        <i class="ph-bold ph-student"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold uppercase">Evaluación</p>
+                        <p id="st-name" class="text-sm font-bold text-slate-800 leading-none">Cargando...</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">Progreso</p>
+                    <p id="st-progress" class="text-brand-600 font-bold text-sm leading-none">0%</p>
+                </div>
+            </div>
+            <!-- Barra de progreso -->
+            <div class="h-1 w-full bg-gray-100 mt-3 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-brand-600 transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Contenedor Dinámico de Pruebas -->
+        <div class="flex-1 max-w-2xl mx-auto w-full p-4 pb-24">
+            
+            <!-- Pantalla de Bienvenida -->
+            <div id="step-welcome" class="text-center py-10 fade-in">
+                <div class="w-20 h-20 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="ph-fill ph-hand-waving text-4xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Hola, <span id="welcome-name"></span></h2>
+                <p class="text-slate-500 mb-8 max-w-md mx-auto">Se te han asignado las siguientes pruebas. Por favor responde con honestidad.</p>
+                
+                <div id="test-list-preview" class="space-y-3 mb-8 text-left max-w-sm mx-auto"></div>
+
+                <button onclick="iniciarSecuencia()" class="bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-brand-600/20 transition-transform active:scale-95 w-full md:w-auto">
+                    Comenzar Evaluación <i class="ph-bold ph-arrow-right ml-2"></i>
+                </button>
+            </div>
+
+            <!-- Contenedor de Preguntas (Genérico) -->
+            <div id="step-questions" class="hidden space-y-6 fade-in">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-brand-100 flex items-center gap-3 mb-6">
+                    <div class="bg-brand-50 p-2 rounded-lg text-brand-700">
+                        <i id="current-test-icon" class="ph-fill ph-clipboard-text text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 id="current-test-title" class="font-bold text-slate-800">Nombre Prueba</h3>
+                        <p id="current-test-desc" class="text-xs text-slate-500">Instrucciones...</p>
+                    </div>
+                </div>
+
+                <div id="questions-container" class="space-y-4">
+                    <!-- Preguntas inyectadas aquí -->
+                </div>
+
+                <button onclick="siguientePrueba()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-8 active:scale-95 transition-transform">
+                    Continuar <i class="ph-bold ph-caret-right ml-2"></i>
+                </button>
+            </div>
+
+            <!-- Pantalla Final (Código) -->
+            <div id="step-finish" class="hidden text-center py-10 fade-in">
+                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="ph-fill ph-check-circle text-4xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">¡Has terminado!</h2>
+                <p class="text-slate-500 mb-6">Gracias por completar todas las pruebas.</p>
+
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 max-w-sm mx-auto">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-2">Tu Código de Resultados</p>
+                    <div class="bg-slate-100 p-3 rounded-lg border border-slate-200 mb-4 font-mono text-xs break-all text-slate-600 max-h-32 overflow-y-auto" id="final-token-display">
+                        ...
+                    </div>
+                    <button onclick="enviarTokenWhatsapp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 mb-3">
+                        <i class="ph-bold ph-whatsapp-logo text-xl"></i> Enviar a Evaluador
+                    </button>
+                    <button onclick="copiarToken()" class="w-full bg-slate-50 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-100 border border-slate-200">
+                        Copiar Código
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL DE IMPORTACIÓN -->
+    <div id="import-modal" class="hidden fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800">Importar Resultados</h3>
+                <button onclick="toggleImportModal()" class="text-slate-400 hover:text-slate-600"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            <textarea id="import-token-input" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono text-xs focus:ring-2 focus:ring-brand-600 outline-none mb-4" placeholder="Pega aquí el código que envió el alumno..."></textarea>
+            <button onclick="procesarImportacion()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition-colors">
+                <i class="ph-bold ph-check-circle"></i> Procesar y Guardar
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- LÓGICA DEL SISTEMA (JAVASCRIPT)           -->
+    <!-- ========================================= -->
+    <script>
+        // ============================================
+        // 1. CATÁLOGO DE PRUEBAS (EDITABLE)
+        // ============================================
+        // Aquí es donde agregas tus pruebas. Cada objeto es una prueba.
+        
+        const CATALOGO_PRUEBAS = {
+            'IPA': {
+                id: 'IPA',
+                titulo: 'Inventario de Pensamientos (IPA)',
+                descripcion: 'Valora la frecuencia de estos pensamientos (0=Nunca, 3=Mucho)',
+                icono: 'ph-brain',
+                tipo: 'likert_0_3', // Define cómo se renderiza
+                items: [
+                    "No puedo soportar ciertas cosas.", "Solamente me pasan cosas malas.", "Todo lo que hago me sale mal.",
+                    "Sé que piensan mal de mí.", "¿Y si tengo alguna enfermedad grave?", "Soy inferior a la gente.",
+                    "Si otros cambiaran me sentiría mejor.", "¡No hay derecho a que me traten así!", "Si me siento triste soy un enfermo.",
+                    "Mis problemas dependen de otros.", "Soy un desastre como persona.", "Yo tengo la culpa de todo.",
+                    "Debería estar bien siempre.", "Tengo la razón y no me entienden.", "Algún día tendré mi recompensa."
+                    // Agrega las 45 preguntas aquí
+                ]
+            },
+            'VAK': {
+                id: 'VAK',
+                titulo: 'Estilos de Aprendizaje (VAK)',
+                descripcion: 'Selecciona la opción que mejor te identifique.',
+                icono: 'ph-eye',
+                tipo: 'opcion_multiple', // Otro tipo de renderizado
+                items: [
+                    { p: "¿Qué prefieres hacer en tu tiempo libre?", ops: ["Ver películas (Visual)", "Escuchar música (Auditivo)", "Hacer deporte (Kinestésico)"] },
+                    { p: "¿Cómo aprendes mejor?", ops: ["Viendo diagramas", "Escuchando explicaciones", "Haciendo prácticas"] },
+                    { p: "¿Qué te distrae más?", ops: ["El desorden visual", "Los ruidos", "La incomodidad física"] }
+                ]
+            },
+            'ANSIEDAD': {
+                id: 'ANSIEDAD',
+                titulo: 'Escala de Ansiedad (Beck)',
+                descripcion: 'Indica cuánto te ha molestado cada síntoma hoy.',
+                icono: 'ph-heartbeat',
+                tipo: 'likert_0_3',
+                items: [
+                    "Hormigueo o entumecimiento.", "Sensación de calor.", "Temblor de piernas.", "Incapaz de relajarse.",
+                    "Miedo a que suceda lo peor.", "Mareo o aturdimiento.", "Palpitaciones o taquicardia."
+                ]
+            }
+        };
+
+        // ============================================
+        // 2. CONTROLADOR GENERAL
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const configHash = params.get('config');
+
+            if (configHash) {
+                // MODO ALUMNO
+                iniciarModoAlumno(configHash);
+            } else {
+                // MODO ADMIN
+                iniciarModoAdmin();
+            }
+        });
+
+        // ============================================
+        // 3. LOGICA ADMIN (EVALUADOR)
+        // ============================================
+        
+        function iniciarModoAdmin() {
+            document.getElementById('view-admin').classList.remove('hidden');
+            renderizarChecklistPruebas();
+            renderizarTablaExpedientes();
+        }
+
+        function renderizarChecklistPruebas() {
+            const container = document.getElementById('tests-checklist');
+            let html = '';
+            for (const key in CATALOGO_PRUEBAS) {
+                const t = CATALOGO_PRUEBAS[key];
+                html += `
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors group">
+                    <input type="checkbox" value="${key}" class="w-5 h-5 text-brand-600 rounded border-gray-300 focus:ring-brand-500 admin-test-check">
+                    <div class="ml-3">
+                        <span class="block text-sm font-bold text-slate-700 group-hover:text-brand-700">${t.titulo}</span>
+                        <span class="block text-xs text-slate-400">${t.items.length} preguntas</span>
+                    </div>
+                    <i class="ph ${t.icono} ml-auto text-xl text-slate-300 group-hover:text-brand-600"></i>
+                </label>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function generarLinkBateria() {
+            const nombre = document.getElementById('adm-nombre').value.trim();
+            const grupo = document.getElementById('adm-grupo').value.trim();
+            
+            // Obtener pruebas seleccionadas
+            const checkboxes = document.querySelectorAll('.admin-test-check:checked');
+            const seleccionadas = Array.from(checkboxes).map(cb => cb.value);
+
+            if (!nombre || !grupo || seleccionadas.length === 0) {
+                alert("Por favor completa nombre, grupo y selecciona al menos una prueba.");
+                return;
+            }
+
+            // Crear configuración
+            const config = {
+                n: nombre,
+                g: grupo,
+                ts: seleccionadas // Array de IDs ['IPA', 'VAK']
+            };
+
+            // Codificar
+            const hash = btoa(JSON.stringify(config));
+            const baseUrl = window.location.href.split('?')[0];
+            const finalLink = `${baseUrl}?config=${hash}`;
+
+            // Mostrar
+            document.getElementById('link-result-area').classList.remove('hidden');
+            document.getElementById('final-link').value = finalLink;
+        }
+
+        function copiarLink() {
+            const copyText = document.getElementById("final-link");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Link copiado");
+        }
+        
+        function enviarWhatsAppLink() {
+            const link = document.getElementById("final-link").value;
+            const nombre = document.getElementById('adm-nombre').value;
+            const msg = `Hola ${nombre}, ingresa a este enlace para realizar tus evaluaciones asignadas: ${link}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // ============================================
+        // 4. LOGICA ALUMNO (SECUENCIA)
+        // ============================================
+        
+        let sessionData = {
+            nombre: '',
+            grupo: '',
+            testsIds: [],
+            respuestas: {} // { 'IPA': [1,2,0...], 'VAK': [0,1,2...] }
+        };
+        let currentTestIndex = 0;
+
+        function iniciarModoAlumno(hash) {
+            try {
+                const config = JSON.parse(atob(hash));
+                sessionData.nombre = config.n;
+                sessionData.grupo = config.g;
+                sessionData.testsIds = config.ts;
+                
+                document.getElementById('view-student').classList.remove('hidden');
+                document.getElementById('st-name').innerText = config.n;
+                document.getElementById('welcome-name').innerText = config.n.split(' ')[0];
+
+                // Renderizar lista previa
+                const listContainer = document.getElementById('test-list-preview');
+                config.ts.forEach(tid => {
+                    const t = CATALOGO_PRUEBAS[tid];
+                    if(t) {
+                        listContainer.innerHTML += `
+                        <div class="flex items-center gap-3 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                            <i class="ph ${t.icono} text-brand-600 text-lg"></i>
+                            <span class="text-sm font-medium text-slate-700">${t.titulo}</span>
+                        </div>`;
+                    }
+                });
+
+            } catch (e) {
+                alert("Link inválido.");
+                window.location.href = window.location.href.split('?')[0];
+            }
+        }
+
+        function iniciarSecuencia() {
+            document.getElementById('step-welcome').classList.add('hidden');
+            document.getElementById('step-questions').classList.remove('hidden');
+            cargarPruebaActual();
+        }
+
+        function cargarPruebaActual() {
+            const testId = sessionData.testsIds[currentTestIndex];
+            const test = CATALOGO_PRUEBAS[testId];
+            
+            // Actualizar UI Header
+            document.getElementById('current-test-title').innerText = test.titulo;
+            document.getElementById('current-test-desc').innerText = test.descripcion;
+            document.getElementById('current-test-icon').className = `ph-fill ${test.icono} text-xl`;
+
+            // Renderizar Preguntas según Tipo
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            
+            // Barra de progreso global
+            const progress = Math.round((currentTestIndex / sessionData.testsIds.length) * 100);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('st-progress').innerText = `${progress}%`;
+
+            test.items.forEach((item, idx) => {
+                const num = idx + 1;
+                
+                if (test.tipo === 'likert_0_3') {
+                    // Render Likert 0-3 (Como IPA)
+                    container.innerHTML += `
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                        <p class="text-sm font-medium text-slate-800 mb-3"><span class="text-brand-600 font-bold">${num}.</span> ${item}</p>
+                        <div class="flex justify-between items-center bg-gray-50 rounded-lg p-1">
+                            ${[0,1,2,3].map(v => `
+                                <label class="flex-1 text-center cursor-pointer p-2 rounded hover:bg-white transition-all group">
+                                    <input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only">
+                                    <div class="w-8 h-8 mx-auto rounded-full border-2 border-gray-300 text-gray-400 font-bold text-sm flex items-center justify-center peer-checked:bg-brand-600 peer-checked:border-brand-600 peer-checked:text-white transition-all">
+                                        ${v}
+                                    </div>
+                                    <span class="text-[10px] text-gray-400 mt-1 block peer-checked:text-brand-600 font-medium">${v===0?'Nunca':v===3?'Siempre':''}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>`;
+                } else if (test.tipo === 'opcion_multiple') {
+                    // Render Opción Múltiple (Como VAK)
+                    const questionText = item.p || item;
+                    const options = item.ops || [];
+                    
+                    container.innerHTML += `
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                        <p class="text-sm font-medium text-slate-800 mb-3"><span class="text-brand-600 font-bold">${num}.</span> ${questionText}</p>
+                        <div class="space-y-2">
+                            ${options.map((op, opIdx) => `
+                                <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-brand-50 hover:border-brand-200 transition-all">
+                                    <input type="radio" name="q_${testId}_${idx}" value="${opIdx}" class="text-brand-600 focus:ring-brand-500">
+                                    <span class="text-sm text-slate-600">${op}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>`;
+                }
+            });
+
+            window.scrollTo(0,0);
+        }
+
+        function siguientePrueba() {
+            const testId = sessionData.testsIds[currentTestIndex];
+            const test = CATALOGO_PRUEBAS[testId];
+            
+            // Recolectar Respuestas
+            let respuestasPrueba = [];
+            let incompleto = false;
+
+            for(let i=0; i<test.items.length; i++) {
+                const checked = document.querySelector(`input[name="q_${testId}_${i}"]:checked`);
+                if(checked) {
+                    respuestasPrueba.push(parseInt(checked.value));
+                } else {
+                    incompleto = true;
+                }
+            }
+
+            if(incompleto) {
+                alert("Por favor responde todas las preguntas antes de continuar.");
+                return;
+            }
+
+            // Guardar en sesión
+            sessionData.respuestas[testId] = respuestasPrueba;
+
+            // Avanzar o Finalizar
+            currentTestIndex++;
+            if (currentTestIndex < sessionData.testsIds.length) {
+                cargarPruebaActual();
+            } else {
+                finalizarEvaluacionCompleta();
+            }
+        }
+
+        function finalizarEvaluacionCompleta() {
+            // Actualizar barra al 100%
+            document.getElementById('progress-bar').style.width = `100%`;
+            document.getElementById('st-progress').innerText = `100%`;
+
+            // Generar Token Maestro
+            const paqueteFinal = {
+                id: Date.now().toString(36),
+                alumno: sessionData.nombre,
+                grupo: sessionData.grupo,
+                fecha: new Date().toLocaleDateString(),
+                resultados: {} // Calcularemos los scores aquí para facilitar la vida al admin
+            };
+
+            // Calcular Scores
+            sessionData.testsIds.forEach(tid => {
+                const raws = sessionData.respuestas[tid];
+                const sum = raws.reduce((a,b)=>a+b,0);
+                paqueteFinal.resultados[tid] = {
+                    score: sum,
+                    raw: raws // Guardamos crudos por si acaso
+                };
+            });
+
+            const token = btoa(JSON.stringify(paqueteFinal));
+            
+            document.getElementById('step-questions').classList.add('hidden');
+            document.getElementById('step-finish').classList.remove('hidden');
+            document.getElementById('final-token-display').innerText = token;
+        }
+
+        function enviarTokenWhatsapp() {
+            const token = document.getElementById('final-token-display').innerText;
+            const msg = `He terminado mis evaluaciones. Mi código es: ${token}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        
+        function copiarToken() {
+            const t = document.getElementById('final-token-display');
+            const range = document.createRange();
+            range.selectNode(t);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand("copy");
+            alert("Código copiado.");
+        }
+
+        // ============================================
+        // 5. IMPORTACIÓN Y BASE DE DATOS
+        // ============================================
+
+        function toggleImportModal() {
+            const m = document.getElementById('import-modal');
+            m.classList.toggle('hidden');
+        }
+
+        function getDB() { return JSON.parse(localStorage.getItem('cbta_suite_db') || '[]'); }
+        function saveDB(data) { localStorage.setItem('cbta_suite_db', JSON.stringify(data)); }
+
+        function procesarImportacion() {
+            const input = document.getElementById('import-token-input').value.trim();
+            if(!input) return;
+
+            try {
+                const data = JSON.parse(atob(input));
+                let db = getDB();
+
+                // Buscar si existe alumno
+                let idx = db.findIndex(e => e.nombre === data.alumno && e.grupo === data.grupo);
+                
+                if (idx >= 0) {
+                    // Merge (Fusionar pruebas nuevas con viejas)
+                    db[idx].resultados = { ...db[idx].resultados, ...data.resultados };
+                    alert(`✅ Expediente actualizado: ${data.alumno}`);
+                } else {
+                    // Nuevo
+                    db.push({
+                        nombre: data.alumno,
+                        grupo: data.grupo,
+                        resultados: data.resultados,
+                        ultimaFecha: data.fecha
+                    });
+                    alert(`✅ Nuevo expediente: ${data.alumno}`);
+                }
+
+                saveDB(db);
+                renderizarTablaExpedientes();
+                toggleImportModal();
+                document.getElementById('import-token-input').value = "";
+
+            } catch (e) {
+                alert("Código inválido.");
+            }
+        }
+
+        function renderizarTablaExpedientes() {
+            const db = getDB();
+            const tbody = document.getElementById('db-body');
+            document.getElementById('db-count').innerText = db.length;
+            
+            tbody.innerHTML = '';
+            
+            if(db.length === 0) {
+                document.getElementById('empty-state').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('empty-state').classList.add('hidden');
+            }
+
+            db.forEach((exp, i) => {
+                let tags = '';
+                for(const [tid, res] of Object.entries(exp.resultados)) {
+                    // Estilos de badges según score (lógica simple visual)
+                    let color = 'bg-blue-100 text-blue-700';
+                    if(tid === 'IPA' && res.score > 90) color = 'bg-red-100 text-red-700';
+                    
+                    tags += `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold ${color} mr-1 mb-1">
+                        ${tid}: ${res.score} pts
+                    </span>`;
+                }
+
+                tbody.innerHTML += `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4 font-medium text-slate-800">${exp.nombre}</td>
+                    <td class="px-6 py-4 text-slate-500">${exp.grupo}</td>
+                    <td class="px-6 py-4">${tags}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="eliminarExpediente(${i})" class="text-red-400 hover:text-red-600 p-2"><i class="ph-bold ph-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+        }
+        
+        function eliminarExpediente(index) {
+            if(confirm('¿Borrar este expediente?')) {
+                let db = getDB();
+                db.splice(index, 1);
+                saveDB(db);
+                renderizarTablaExpedientes();
+            }
+        }
+
+    </script>
+</body>
+</html>
+
