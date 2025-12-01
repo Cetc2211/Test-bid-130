@@ -44,7 +44,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
-                        <p class="text-sm text-slate-500">Suite Integral v2.0</p>
+                        <p class="text-sm text-slate-500">Suite Integral v2.2</p>
                     </div>
                 </div>
             </div>
@@ -297,18 +297,17 @@
                     "Debería recibir más atención y cariño de otros.", "Tengo razón, y voy a hacer lo que me da la gana.", "Tarde o temprano me irán las cosas mejor."
                 ]
             },
-            'BECK': {
-                id: 'BECK',
-                titulo: 'Inventario de Ansiedad (Beck)',
-                descripcion: 'Indique cuánto le ha molestado cada síntoma hoy (0=Nada, 3=Mucho).',
-                icono: 'ph-heartbeat',
+            'BAI': {
+                id: 'BAI',
+                titulo: 'Inventario de Ansiedad (BAI)',
+                descripcion: 'Instrucciones: Indique cuánto le ha molestado cada síntoma durante la última semana.',
+                icono: 'ph-heartbeat', 
                 tipo: 'likert_0_3',
                 items: [
-                    "Torpeza o entumecimiento.", "Acaloramiento.", "Temblor de piernas.", "Incapacidad de relajarse.",
-                    "Miedo a que suceda lo peor.", "Mareo o aturdimiento.", "Palpitaciones o taquicardia.", "Sensación de inestabilidad.",
-                    "Terror o miedo.", "Nerviosismo.", "Sensación de ahogo.", "Temblores de manos.", "Temblor generalizado.",
-                    "Miedo a perder el control.", "Dificultad para respirar.", "Miedo a morir.", "Sobresaltos.", 
-                    "Molestias digestivas.", "Desvanecimientos.", "Rubor facial.", "Sudoración (no debida al calor)."
+                    "Entumecimiento", "Calor", "Temblor de piernas", "Incapaz de relajarse", "Miedo a que suceda lo peor",
+                    "Mareo", "Palpitaciones", "Inestabilidad", "Terror", "Nerviosismo",
+                    "Sensación de ahogo", "Temblor de manos", "Estremecimiento", "Miedo a perder el control", "Dificultad para respirar",
+                    "Miedo a morir", "Asustado", "Indigestión", "Desmayo", "Rubor facial", "Sudoración"
                 ]
             },
             'VAK': {
@@ -323,6 +322,22 @@
                     { p: "¿Qué te distrae más?", ops: ["El desorden visual", "Los ruidos", "La incomodidad física"] },
                     { p: "¿Cómo te orientas en una ciudad nueva?", ops: ["Uso un mapa o GPS", "Pregunto a alguien", "Camino hasta encontrar referencias"] },
                     { p: "Al comprar un coche te fijas en:", ops: ["El color y diseño", "El sonido del motor y equipo de audio", "La comodidad de los asientos"] }
+                ]
+            },
+            'BHS': {
+                id: 'BHS',
+                titulo: 'Escala de Desesperanza (BHS)',
+                descripcion: 'Marque si es VERDADERA (V) o FALSA (F) según su percepción.',
+                icono: 'ph-circle-half',
+                tipo: 'verdadero_falso',
+                items: [
+                    "Veo el futuro con esperanza y entusiasmo.", "Tal vez debería abandonar todo, porque no puedo hacer que las cosas mejoren.", "Cuando las cosas van mal, me alivia saber que las cosas no pueden permanecer así siempre.",
+                    "No puedo imaginar cómo será mi vida dentro de 10 años.", "Tengo tiempo suficiente para lograr las cosas que quiero hacer.", "En el futuro, espero conseguir lo que me pueda interesar.",
+                    "Mi futuro me parece oscuro.", "Espero más cosas buenas de la vida que lo que la gente común espera.", "Simplemente no tengo buena suerte, y no hay razón para creer que la tendré en el futuro.",
+                    "Mis experiencias pasadas me han preparado bien para mi futuro.", "Todo lo que puedo ver hacia adelante es más desagradable que agradable.", "No espero conseguir lo que realmente quiero.",
+                    "Cuando miro hacia el futuro, espero que seré más feliz de lo que soy ahora.", "Las cosas simplemente no marcharán como yo quiero.", "Tengo gran fé en el futuro.",
+                    "Nunca consigo lo que quiero, por lo que es absurdo querer cualquier cosa.", "Es muy improbable que pueda lograr alguna satisfacción real en el futuro.", "El futuro me parece vago e incierto.",
+                    "Puedo esperar más épocas buenas que malas.", "No vale la pena tratar de conseguir algo que deseo, porque probablemente no lo lograré."
                 ]
             }
         };
@@ -498,6 +513,29 @@
                             `).join('')}
                         </div>
                     </div>`;
+                } else if (test.tipo === 'verdadero_falso') {
+                    // Estilo BHS (V/F)
+                    container.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2">
+                            <span class="text-brand-600 font-bold min-w-[20px]">${num}.</span> 
+                            ${item}
+                        </p>
+                        <div class="flex gap-4 bg-slate-50 p-3 rounded-xl justify-center">
+                            <label class="cursor-pointer group flex-1">
+                                <input type="radio" name="q_${testId}_${idx}" value="V" class="peer sr-only">
+                                <div class="h-12 w-full rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-green-600 peer-checked:border-green-600 peer-checked:text-white transition-all shadow-sm">
+                                    <i class="ph-bold ph-check text-lg"></i> Verdadero
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group flex-1">
+                                <input type="radio" name="q_${testId}_${idx}" value="F" class="peer sr-only">
+                                <div class="h-12 w-full rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-red-500 peer-checked:border-red-500 peer-checked:text-white transition-all shadow-sm">
+                                    <i class="ph-bold ph-x text-lg"></i> Falso
+                                </div>
+                            </label>
+                        </div>
+                    </div>`;
                 } else if (test.tipo === 'opcion_multiple') {
                     // Estilo OPCION MULTIPLE
                     const questionText = item.p || item;
@@ -534,8 +572,16 @@
 
             for(let i=0; i<test.items.length; i++) {
                 const checked = document.querySelector(`input[name="q_${testId}_${i}"]:checked`);
-                if(checked) respuestasPrueba.push(parseInt(checked.value));
-                else incompleto = true;
+                if(checked) {
+                    // Si es BHS guardamos "V" o "F", si no el entero
+                    if(test.tipo === 'verdadero_falso') {
+                        respuestasPrueba.push(checked.value);
+                    } else {
+                        respuestasPrueba.push(parseInt(checked.value));
+                    }
+                } else {
+                    incompleto = true;
+                }
             }
 
             if(incompleto) {
@@ -564,22 +610,35 @@
                 resultados: {}
             };
 
-            // Cálculo básico de scores
             sessionData.testsIds.forEach(tid => {
                 const raws = sessionData.respuestas[tid];
                 let score = 0;
-                // Sumatoria simple para Likert, para VAK podríamos guardar raw o frecuencia
+                
+                // LÓGICA DE PUNTUACIÓN POR PRUEBA
                 if(CATALOGO_PRUEBAS[tid].tipo === 'likert_0_3') {
+                     // IPA y BAI: Suma simple
                      score = raws.reduce((a,b)=>a+b,0);
+                } else if(tid === 'BHS') {
+                    // BHS: Lógica específica (Plantilla de corrección)
+                    const keyTrueIndices = [2, 4, 7, 9, 11, 12, 14, 16, 17, 18, 20]; // Ítems que suman 1 si son V
+                    score = raws.reduce((acc, val, index) => {
+                        const qNum = index + 1;
+                        if (keyTrueIndices.includes(qNum)) {
+                            // Si está en la lista keyTrue, suma si es "V"
+                            return acc + (val === 'V' ? 1 : 0);
+                        } else {
+                            // Si NO está en la lista, suma si es "F"
+                            return acc + (val === 'F' ? 1 : 0);
+                        }
+                    }, 0);
                 } else {
-                    // Para VAK guardamos el array completo para análisis posterior
+                    // VAK: Guardamos info
                     score = raws.join(','); 
                 }
                 
                 paqueteFinal.resultados[tid] = { score: score, raw: raws };
             });
 
-            // Encoding robusto
             const jsonStr = JSON.stringify(paqueteFinal);
             const token = btoa(encodeURIComponent(jsonStr));
             
@@ -671,8 +730,9 @@
                     // Colores según prueba
                     let color = 'bg-slate-100 text-slate-600';
                     if(tid === 'IPA') color = 'bg-pink-100 text-pink-700 border-pink-200';
-                    if(tid === 'BECK') color = 'bg-blue-100 text-blue-700 border-blue-200';
+                    if(tid === 'BAI') color = 'bg-green-100 text-green-700 border-green-200';
                     if(tid === 'VAK') color = 'bg-purple-100 text-purple-700 border-purple-200';
+                    if(tid === 'BHS') color = 'bg-gray-100 text-gray-800 border-gray-300'; // Estilo para BHS
 
                     let valDisplay = res.score;
                     if(typeof res.score === 'string' && res.score.includes(',')) valDisplay = 'VAK Info'; // Simplificación visual
@@ -712,4 +772,5 @@
     </script>
 </body>
 </html>
+
 
