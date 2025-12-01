@@ -3,19 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suite de Evaluación - CBTa 130</title>
-    
-    <!-- Tailwind CSS -->
+    <title>Suite de Evaluación Psicopedagógica</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Iconos Phosphor -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: { 50: '#fce4ec', 100: '#f8bbd0', 600: '#d81b60', 800: '#ad1457', 900: '#880e4f' }
+                        brand: { 50: '#fdf2f8', 100: '#fce7f3', 500: '#ec4899', 600: '#db2777', 800: '#9d174d', 900: '#831843' }
                     }
                 }
             }
@@ -24,98 +20,126 @@
     <style>
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* Ocultar scrollbar pero permitir scroll */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-gray-100 text-slate-800 min-h-screen font-sans">
+<body class="bg-gray-50 text-slate-800 min-h-screen font-sans selection:bg-brand-100">
 
     <!-- ========================================= -->
     <!-- MODO EVALUADOR (Admin Dashboard)          -->
     <!-- ========================================= -->
-    <div id="view-admin" class="hidden max-w-6xl mx-auto p-4 space-y-6">
+    <div id="view-admin" class="hidden max-w-7xl mx-auto p-4 md:p-6 space-y-6 pb-20">
         
-        <!-- Header -->
+        <!-- Header con Botón de Regreso -->
         <header class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4">
-                <div class="bg-gradient-to-br from-brand-800 to-brand-600 text-white p-3 rounded-xl shadow-lg shadow-brand-600/20">
-                    <i class="ph-bold ph-stack text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-xl text-slate-800">Suite de Evaluación</h1>
-                    <p class="text-sm text-slate-500">Gestión Centralizada de Expedientes</p>
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-3 rounded-xl transition-colors" title="Volver al Menú Principal">
+                    <i class="ph-bold ph-arrow-left text-xl"></i>
+                </a>
+                
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-brand-800 to-brand-600 text-white p-3 rounded-xl shadow-lg shadow-brand-600/20">
+                        <i class="ph-bold ph-stack text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
+                        <p class="text-sm text-slate-500">Suite Integral v2.0</p>
+                    </div>
                 </div>
             </div>
-            <button onclick="toggleImportModal()" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-md transition-all active:scale-95">
-                <i class="ph-bold ph-download-simple"></i> IMPORTAR RESULTADOS
+            
+            <button onclick="toggleImportModal()" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-95">
+                <i class="ph-bold ph-download-simple"></i> IMPORTAR CÓDIGO
             </button>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- PANEL IZQUIERDO: Generador de Baterías -->
-            <div class="lg:col-span-1 space-y-6">
-                <section class="bg-white rounded-2xl shadow-lg border-t-4 border-brand-600 overflow-hidden">
+            <!-- PANEL IZQUIERDO: Generador (4 columnas) -->
+            <div class="lg:col-span-4 space-y-6">
+                <section class="bg-white rounded-2xl shadow-lg border-t-4 border-brand-600 overflow-hidden sticky top-6">
                     <div class="p-6">
                         <h2 class="text-lg font-bold text-slate-800 mb-1 flex items-center gap-2">
-                            <i class="ph-duotone ph-paper-plane-tilt text-brand-600"></i> Nueva Evaluación
+                            <i class="ph-duotone ph-paper-plane-tilt text-brand-600"></i> Nueva Batería
                         </h2>
-                        <p class="text-xs text-slate-400 mb-4">Configura la batería de pruebas para el alumno.</p>
+                        <p class="text-xs text-slate-400 mb-6">Selecciona las pruebas para enviar al alumno.</p>
                         
-                        <div class="space-y-3 mb-6">
-                            <input type="text" id="adm-nombre" placeholder="Nombre Completo" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
-                            <input type="text" id="adm-grupo" placeholder="Grupo (Ej. 6A)" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
+                        <div class="space-y-4 mb-6">
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nombre Alumno</label>
+                                <input type="text" id="adm-nombre" placeholder="Ej. Juan Pérez" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Grupo</label>
+                                <input type="text" id="adm-grupo" placeholder="Ej. 6A Programación" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium transition-all">
+                            </div>
                         </div>
 
-                        <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Seleccionar Pruebas:</div>
-                        <div id="tests-checklist" class="space-y-2 mb-6 max-h-48 overflow-y-auto no-scrollbar">
-                            <!-- Se llena dinámicamente con JS -->
+                        <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-end">
+                            <span>Pruebas Disponibles</span>
+                            <span class="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500">Selección múltiple</span>
+                        </div>
+                        
+                        <div id="tests-checklist" class="space-y-2 mb-8 max-h-64 overflow-y-auto pr-1">
+                            <!-- Se llena con JS -->
                         </div>
 
-                        <button onclick="generarLinkBateria()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2 shadow-lg shadow-brand-600/30 transition-all">
+                        <button onclick="generarLinkBateria()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold flex justify-center items-center gap-2 shadow-lg shadow-brand-600/30 transition-all active:scale-95">
                             <i class="ph-bold ph-link"></i> Generar Link Único
                         </button>
 
                         <!-- Área de Resultado del Link -->
-                        <div id="link-result-area" class="hidden mt-4 pt-4 border-t border-dashed border-gray-200 animate-fade-in">
-                            <p class="text-xs text-green-700 font-bold mb-2">✅ Link generado exitosamente:</p>
-                            <div class="flex gap-2">
-                                <input type="text" id="final-link" readonly class="w-full text-[10px] font-mono bg-green-50 border border-green-200 p-2 rounded text-slate-600">
-                                <button onclick="copiarLink()" class="bg-green-600 text-white px-3 rounded hover:bg-green-700 shadow"><i class="ph-bold ph-copy"></i></button>
+                        <div id="link-result-area" class="hidden mt-6 pt-6 border-t border-dashed border-slate-200 animate-fade-in">
+                            <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                                <p class="text-xs text-green-800 font-bold mb-2 flex items-center gap-1">
+                                    <i class="ph-fill ph-check-circle"></i> Link listo para enviar:
+                                </p>
+                                <div class="flex gap-2 mb-3">
+                                    <input type="text" id="final-link" readonly class="w-full text-[10px] font-mono bg-white border border-green-200 p-2 rounded text-slate-600 focus:outline-none">
+                                    <button onclick="copiarLink()" class="bg-white border border-green-200 text-green-600 px-3 rounded hover:bg-green-100 transition-colors"><i class="ph-bold ph-copy"></i></button>
+                                </div>
+                                <button onclick="enviarWhatsAppLink()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-colors">
+                                    <i class="ph-bold ph-whatsapp-logo text-lg"></i> Enviar por WhatsApp
+                                </button>
                             </div>
-                            <button onclick="enviarWhatsAppLink()" class="w-full mt-2 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1">
-                                <i class="ph-bold ph-whatsapp-logo"></i> Enviar por WhatsApp
-                            </button>
                         </div>
                     </div>
                 </section>
             </div>
 
-            <!-- PANEL DERECHO: Base de Datos de Expedientes -->
-            <div class="lg:col-span-2">
-                <section class="bg-white rounded-2xl shadow-sm border border-gray-200 h-full flex flex-col">
-                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                        <h3 class="font-bold text-slate-700">Expedientes Activos</h3>
-                        <span id="db-count" class="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-full font-bold">0</span>
+            <!-- PANEL DERECHO: Base de Datos (8 columnas) -->
+            <div class="lg:col-span-8">
+                <section class="bg-white rounded-2xl shadow-sm border border-gray-200 h-full flex flex-col min-h-[500px]">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
+                        <div>
+                            <h3 class="font-bold text-slate-700 text-lg">Expedientes Activos</h3>
+                            <p class="text-xs text-slate-400">Datos almacenados localmente en este dispositivo</p>
+                        </div>
+                        <span id="db-count" class="bg-brand-100 text-brand-700 text-xs px-3 py-1 rounded-full font-bold border border-brand-200">0 Alumnos</span>
                     </div>
+                    
                     <div class="flex-1 overflow-auto p-0">
                         <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 text-gray-500 font-bold uppercase text-[10px] sticky top-0">
+                            <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] sticky top-0 z-10 shadow-sm">
                                 <tr>
-                                    <th class="px-6 py-3">Alumno</th>
-                                    <th class="px-6 py-3">Grupo</th>
-                                    <th class="px-6 py-3">Resultados</th>
-                                    <th class="px-6 py-3 text-right">Acciones</th>
+                                    <th class="px-6 py-4">Alumno / Grupo</th>
+                                    <th class="px-6 py-4">Pruebas & Resultados</th>
+                                    <th class="px-6 py-4 text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="db-body" class="divide-y divide-gray-50">
                                 <!-- JS -->
                             </tbody>
                         </table>
-                        <div id="empty-state" class="hidden p-12 text-center text-slate-400">
-                            <i class="ph-duotone ph-folder-open text-4xl mb-2"></i>
-                            <p>No hay expedientes cargados.</p>
+                        
+                        <!-- Estado Vacío -->
+                        <div id="empty-state" class="hidden flex flex-col items-center justify-center h-64 text-center p-8">
+                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-300">
+                                <i class="ph-duotone ph-folder-open text-3xl"></i>
+                            </div>
+                            <h4 class="text-slate-600 font-bold">No hay expedientes aún</h4>
+                            <p class="text-slate-400 text-xs mt-1 max-w-xs">Genera links, envíalos a los alumnos e importa sus códigos de respuesta aquí.</p>
                         </div>
                     </div>
                 </section>
@@ -124,157 +148,181 @@
     </div>
 
     <!-- ========================================= -->
-    <!-- MODO ALUMNO (The Student Experience)      -->
+    <!-- MODO ALUMNO (Interfaz Móvil)              -->
     <!-- ========================================= -->
     <div id="view-student" class="hidden min-h-screen bg-slate-50 flex flex-col">
         
         <!-- Navbar Alumno -->
-        <div class="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-50">
-            <div class="max-w-2xl mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white">
-                        <i class="ph-bold ph-student"></i>
+        <div class="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-2xl mx-auto flex justify-between items-center mb-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-brand-600/30 shadow-lg">
+                        <i class="ph-bold ph-student text-xl"></i>
                     </div>
-                    <div>
-                        <p class="text-xs text-slate-400 font-bold uppercase">Evaluación</p>
-                        <p id="st-name" class="text-sm font-bold text-slate-800 leading-none">Cargando...</p>
+                    <div class="leading-tight">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Evaluación</p>
+                        <p id="st-name" class="text-sm font-bold text-slate-800 truncate max-w-[150px]">Cargando...</p>
                     </div>
                 </div>
                 <div class="text-right">
                     <p class="text-[10px] text-slate-400 font-bold uppercase">Progreso</p>
-                    <p id="st-progress" class="text-brand-600 font-bold text-sm leading-none">0%</p>
+                    <p id="st-progress" class="text-brand-600 font-bold text-sm">0%</p>
                 </div>
             </div>
             <!-- Barra de progreso -->
-            <div class="h-1 w-full bg-gray-100 mt-3 rounded-full overflow-hidden">
-                <div id="progress-bar" class="h-full bg-brand-600 transition-all duration-500" style="width: 0%"></div>
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-brand-600 transition-all duration-500 ease-out" style="width: 0%"></div>
             </div>
         </div>
 
-        <!-- Contenedor Dinámico de Pruebas -->
-        <div class="flex-1 max-w-2xl mx-auto w-full p-4 pb-24">
+        <!-- Contenedor Dinámico -->
+        <div class="flex-1 max-w-2xl mx-auto w-full p-5 pb-32">
             
-            <!-- Pantalla de Bienvenida -->
-            <div id="step-welcome" class="text-center py-10 fade-in">
-                <div class="w-20 h-20 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="ph-fill ph-hand-waving text-4xl"></i>
+            <!-- 1. Pantalla de Bienvenida -->
+            <div id="step-welcome" class="text-center py-12 fade-in">
+                <div class="w-24 h-24 bg-white border-4 border-brand-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <i class="ph-fill ph-hand-waving text-4xl text-brand-600"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-slate-800 mb-2">Hola, <span id="welcome-name"></span></h2>
-                <p class="text-slate-500 mb-8 max-w-md mx-auto">Se te han asignado las siguientes pruebas. Por favor responde con honestidad.</p>
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Hola, <span id="welcome-name" class="text-brand-600">Estudiante</span></h2>
+                <p class="text-slate-500 mb-8 max-w-xs mx-auto text-sm">Se te han asignado las siguientes pruebas psicopedagógicas. Por favor responde con honestidad.</p>
                 
-                <div id="test-list-preview" class="space-y-3 mb-8 text-left max-w-sm mx-auto"></div>
+                <div id="test-list-preview" class="space-y-3 mb-10 text-left max-w-sm mx-auto">
+                    <!-- Lista de pruebas -->
+                </div>
 
-                <button onclick="iniciarSecuencia()" class="bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-brand-600/20 transition-transform active:scale-95 w-full md:w-auto">
+                <button onclick="iniciarSecuencia()" class="bg-brand-600 hover:bg-brand-700 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-600/20 transition-transform active:scale-95 w-full md:w-auto">
                     Comenzar Evaluación <i class="ph-bold ph-arrow-right ml-2"></i>
                 </button>
             </div>
 
-            <!-- Contenedor de Preguntas (Genérico) -->
+            <!-- 2. Contenedor de Preguntas -->
             <div id="step-questions" class="hidden space-y-6 fade-in">
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-brand-100 flex items-center gap-3 mb-6">
-                    <div class="bg-brand-50 p-2 rounded-lg text-brand-700">
-                        <i id="current-test-icon" class="ph-fill ph-clipboard-text text-xl"></i>
+                
+                <!-- Tarjeta de Info de Prueba Actual -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-4">
+                    <div class="bg-brand-50 p-3 rounded-xl text-brand-700 shrink-0">
+                        <i id="current-test-icon" class="ph-fill ph-clipboard-text text-2xl"></i>
                     </div>
                     <div>
-                        <h3 id="current-test-title" class="font-bold text-slate-800">Nombre Prueba</h3>
-                        <p id="current-test-desc" class="text-xs text-slate-500">Instrucciones...</p>
+                        <h3 id="current-test-title" class="font-bold text-slate-800 text-lg">Nombre Prueba</h3>
+                        <p id="current-test-desc" class="text-xs text-slate-500 mt-1 leading-relaxed">Instrucciones...</p>
                     </div>
                 </div>
 
-                <div id="questions-container" class="space-y-4">
+                <div id="questions-container" class="space-y-5">
                     <!-- Preguntas inyectadas aquí -->
                 </div>
 
-                <button onclick="siguientePrueba()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-8 active:scale-95 transition-transform">
-                    Continuar <i class="ph-bold ph-caret-right ml-2"></i>
+                <button onclick="siguientePrueba()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-8 active:scale-95 transition-transform hover:bg-slate-900 flex items-center justify-center gap-2">
+                    Continuar <i class="ph-bold ph-caret-right"></i>
                 </button>
             </div>
 
-            <!-- Pantalla Final (Código) -->
+            <!-- 3. Pantalla Final -->
             <div id="step-finish" class="hidden text-center py-10 fade-in">
-                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="ph-fill ph-check-circle text-4xl"></i>
+                <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                    <i class="ph-fill ph-check-circle text-5xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-slate-800">¡Has terminado!</h2>
-                <p class="text-slate-500 mb-6">Gracias por completar todas las pruebas.</p>
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">¡Todo listo!</h2>
+                <p class="text-slate-500 mb-8 max-w-xs mx-auto">Has completado todas las evaluaciones exitosamente.</p>
 
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 max-w-sm mx-auto">
-                    <p class="text-xs font-bold text-slate-400 uppercase mb-2">Tu Código de Resultados</p>
-                    <div class="bg-slate-100 p-3 rounded-lg border border-slate-200 mb-4 font-mono text-xs break-all text-slate-600 max-h-32 overflow-y-auto" id="final-token-display">
-                        ...
+                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 max-w-sm mx-auto relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-3 tracking-widest">CÓDIGO DE RESULTADOS</p>
+                    
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5 font-mono text-xs break-all text-slate-600 text-left relative group">
+                        <div id="final-token-display" class="max-h-32 overflow-y-auto pr-2">...</div>
                     </div>
-                    <button onclick="enviarTokenWhatsapp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 mb-3">
-                        <i class="ph-bold ph-whatsapp-logo text-xl"></i> Enviar a Evaluador
-                    </button>
-                    <button onclick="copiarToken()" class="w-full bg-slate-50 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-100 border border-slate-200">
-                        Copiar Código
-                    </button>
+                    
+                    <div class="space-y-3">
+                        <button onclick="enviarTokenWhatsapp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 transition-all active:scale-95">
+                            <i class="ph-bold ph-whatsapp-logo text-xl"></i> Enviar a Evaluador
+                        </button>
+                        <button onclick="copiarToken()" class="w-full bg-white text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-50 border border-slate-200 transition-colors">
+                            Copiar Código Manualmente
+                        </button>
+                    </div>
                 </div>
+                <p class="text-xs text-slate-400 mt-6">Puedes cerrar esta ventana.</p>
             </div>
 
         </div>
     </div>
 
     <!-- MODAL DE IMPORTACIÓN -->
-    <div id="import-modal" class="hidden fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
-            <div class="flex justify-between items-center mb-4">
+    <div id="import-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-0 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
                 <h3 class="text-lg font-bold text-slate-800">Importar Resultados</h3>
-                <button onclick="toggleImportModal()" class="text-slate-400 hover:text-slate-600"><i class="ph-bold ph-x text-xl"></i></button>
+                <button onclick="toggleImportModal()" class="text-slate-400 hover:text-red-500 transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
             </div>
-            <textarea id="import-token-input" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono text-xs focus:ring-2 focus:ring-brand-600 outline-none mb-4" placeholder="Pega aquí el código que envió el alumno..."></textarea>
-            <button onclick="procesarImportacion()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition-colors">
-                <i class="ph-bold ph-check-circle"></i> Procesar y Guardar
-            </button>
+            <div class="p-6">
+                <p class="text-sm text-slate-500 mb-3">Pega aquí el código de texto que te envió el alumno por WhatsApp.</p>
+                <textarea id="import-token-input" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono text-xs focus:ring-2 focus:ring-brand-600 outline-none mb-6 resize-none" placeholder="eyJpZCI6..."></textarea>
+                <button onclick="procesarImportacion()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20">
+                    <i class="ph-bold ph-check-circle"></i> Procesar y Guardar
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- ========================================= -->
-    <!-- LÓGICA DEL SISTEMA (JAVASCRIPT)           -->
-    <!-- ========================================= -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         // ============================================
-        // 1. CATÁLOGO DE PRUEBAS (EDITABLE)
+        // 1. CATÁLOGO COMPLETO DE PRUEBAS
         // ============================================
-        // Aquí es donde agregas tus pruebas. Cada objeto es una prueba.
         
         const CATALOGO_PRUEBAS = {
             'IPA': {
                 id: 'IPA',
                 titulo: 'Inventario de Pensamientos (IPA)',
-                descripcion: 'Valora la frecuencia de estos pensamientos (0=Nunca, 3=Mucho)',
+                descripcion: 'Valora la frecuencia (0=Nunca, 3=Con mucha frecuencia).',
                 icono: 'ph-brain',
-                tipo: 'likert_0_3', // Define cómo se renderiza
+                tipo: 'likert_0_3',
                 items: [
-                    "No puedo soportar ciertas cosas.", "Solamente me pasan cosas malas.", "Todo lo que hago me sale mal.",
-                    "Sé que piensan mal de mí.", "¿Y si tengo alguna enfermedad grave?", "Soy inferior a la gente.",
-                    "Si otros cambiaran me sentiría mejor.", "¡No hay derecho a que me traten así!", "Si me siento triste soy un enfermo.",
-                    "Mis problemas dependen de otros.", "Soy un desastre como persona.", "Yo tengo la culpa de todo.",
-                    "Debería estar bien siempre.", "Tengo la razón y no me entienden.", "Algún día tendré mi recompensa."
-                    // Agrega las 45 preguntas aquí
+                    "No puedo soportar ciertas cosas que me pasan.", "Solamente me pasan cosas malas.", "Todo lo que hago me sale mal.",
+                    "Sé que piensan mal de mí.", "¿Y si tengo alguna enfermedad grave?.", "Soy inferior a la gente en casi todo.",
+                    "Si otros cambiaran su actitud yo me sentiría mejor.", "¡No hay derecho a que me traten así!.", "Si me siento triste es porque soy un enfermo mental.",
+                    "Mis problemas dependen de los que me rodean.", "Soy un desastre como persona.", "Yo tengo la culpa de todo lo que me pasa.",
+                    "Debería de estar bien y no tener estos problemas.", "Sé que tengo la razón y no me entienden.", "Aunque ahora sufra, algún día tendré mi recompensa.",
+                    "Es horrible que me pase esto.", "Mi vida es un continuo fracaso.", "Siempre tendré este problema.",
+                    "Sé que me están mintiendo y engañando.", "¿Y si me vuelvo loco y pierdo la cabeza?.", "Soy superior a la gente en casi todo.",
+                    "Yo soy responsable del sufrimiento de los que me rodean.", "Si me quisieran de verdad no me tratarían así.", "Me siento culpable, y es porque he hecho algo malo.",
+                    "Si tuviera más apoyo no tendría estos problemas.", "Alguien que conozco es un imbécil.", "Otros tienen la culpa de lo que me pasa.",
+                    "No debería de cometer estos errores.", "No quiere reconocer que estoy en lo cierto.", "Ya vendrán mejores tiempos.",
+                    "Es insoportable, no puedo aguantar más.", "Soy incompetente e inútil.", "Nunca podré salir de esta situación.",
+                    "Quieren hacerme daño.", "¿Y si les pasa algo malo a las personas a quienes quiero?.", "La gente hace las cosas mejor que yo.",
+                    "Soy una víctima de mis circunstancias.", "No me tratan como deberían hacerlo y me merezco.", "Si tengo estos síntomas es porque soy un enfermo.",
+                    "Si tuviera mejor situación económica no tendría estos problemas.", "Soy un neurótico.", "Lo que me pasa es un castigo que merezco.",
+                    "Debería recibir más atención y cariño de otros.", "Tengo razón, y voy a hacer lo que me da la gana.", "Tarde o temprano me irán las cosas mejor."
+                ]
+            },
+            'BECK': {
+                id: 'BECK',
+                titulo: 'Inventario de Ansiedad (Beck)',
+                descripcion: 'Indique cuánto le ha molestado cada síntoma hoy (0=Nada, 3=Mucho).',
+                icono: 'ph-heartbeat',
+                tipo: 'likert_0_3',
+                items: [
+                    "Torpeza o entumecimiento.", "Acaloramiento.", "Temblor de piernas.", "Incapacidad de relajarse.",
+                    "Miedo a que suceda lo peor.", "Mareo o aturdimiento.", "Palpitaciones o taquicardia.", "Sensación de inestabilidad.",
+                    "Terror o miedo.", "Nerviosismo.", "Sensación de ahogo.", "Temblores de manos.", "Temblor generalizado.",
+                    "Miedo a perder el control.", "Dificultad para respirar.", "Miedo a morir.", "Sobresaltos.", 
+                    "Molestias digestivas.", "Desvanecimientos.", "Rubor facial.", "Sudoración (no debida al calor)."
                 ]
             },
             'VAK': {
                 id: 'VAK',
                 titulo: 'Estilos de Aprendizaje (VAK)',
-                descripcion: 'Selecciona la opción que mejor te identifique.',
+                descripcion: 'Selecciona la opción con la que más te identifiques.',
                 icono: 'ph-eye',
-                tipo: 'opcion_multiple', // Otro tipo de renderizado
+                tipo: 'opcion_multiple',
                 items: [
                     { p: "¿Qué prefieres hacer en tu tiempo libre?", ops: ["Ver películas (Visual)", "Escuchar música (Auditivo)", "Hacer deporte (Kinestésico)"] },
-                    { p: "¿Cómo aprendes mejor?", ops: ["Viendo diagramas", "Escuchando explicaciones", "Haciendo prácticas"] },
-                    { p: "¿Qué te distrae más?", ops: ["El desorden visual", "Los ruidos", "La incomodidad física"] }
-                ]
-            },
-            'ANSIEDAD': {
-                id: 'ANSIEDAD',
-                titulo: 'Escala de Ansiedad (Beck)',
-                descripcion: 'Indica cuánto te ha molestado cada síntoma hoy.',
-                icono: 'ph-heartbeat',
-                tipo: 'likert_0_3',
-                items: [
-                    "Hormigueo o entumecimiento.", "Sensación de calor.", "Temblor de piernas.", "Incapaz de relajarse.",
-                    "Miedo a que suceda lo peor.", "Mareo o aturdimiento.", "Palpitaciones o taquicardia."
+                    { p: "¿Cómo aprendes mejor?", ops: ["Viendo diagramas o videos", "Escuchando explicaciones", "Haciendo prácticas o maquetas"] },
+                    { p: "¿Qué te distrae más?", ops: ["El desorden visual", "Los ruidos", "La incomodidad física"] },
+                    { p: "¿Cómo te orientas en una ciudad nueva?", ops: ["Uso un mapa o GPS", "Pregunto a alguien", "Camino hasta encontrar referencias"] },
+                    { p: "Al comprar un coche te fijas en:", ops: ["El color y diseño", "El sonido del motor y equipo de audio", "La comodidad de los asientos"] }
                 ]
             }
         };
@@ -288,16 +336,14 @@
             const configHash = params.get('config');
 
             if (configHash) {
-                // MODO ALUMNO
                 iniciarModoAlumno(configHash);
             } else {
-                // MODO ADMIN
                 iniciarModoAdmin();
             }
         });
 
         // ============================================
-        // 3. LOGICA ADMIN (EVALUADOR)
+        // 3. LOGICA ADMIN
         // ============================================
         
         function iniciarModoAdmin() {
@@ -312,13 +358,18 @@
             for (const key in CATALOGO_PRUEBAS) {
                 const t = CATALOGO_PRUEBAS[key];
                 html += `
-                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors group">
-                    <input type="checkbox" value="${key}" class="w-5 h-5 text-brand-600 rounded border-gray-300 focus:ring-brand-500 admin-test-check">
-                    <div class="ml-3">
-                        <span class="block text-sm font-bold text-slate-700 group-hover:text-brand-700">${t.titulo}</span>
-                        <span class="block text-xs text-slate-400">${t.items.length} preguntas</span>
+                <label class="flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-brand-300 transition-all group bg-white shadow-sm">
+                    <div class="flex items-center justify-center w-6 h-6 bg-slate-100 rounded border border-slate-300 group-hover:border-brand-500 overflow-hidden relative">
+                         <input type="checkbox" value="${key}" class="peer appearance-none w-full h-full cursor-pointer admin-test-check absolute z-10 opacity-0">
+                         <i class="ph-bold ph-check text-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity z-0 text-sm"></i>
                     </div>
-                    <i class="ph ${t.icono} ml-auto text-xl text-slate-300 group-hover:text-brand-600"></i>
+                    <div class="ml-3 flex-1">
+                        <span class="block text-sm font-bold text-slate-700 group-hover:text-brand-700">${t.titulo}</span>
+                        <span class="block text-[10px] text-slate-400">${t.items.length} preguntas</span>
+                    </div>
+                    <div class="bg-slate-100 p-1.5 rounded-lg text-slate-400 group-hover:text-brand-600 group-hover:bg-brand-50 transition-colors">
+                        <i class="ph-bold ${t.icono} text-lg"></i>
+                    </div>
                 </label>`;
             }
             container.innerHTML = html;
@@ -327,29 +378,22 @@
         function generarLinkBateria() {
             const nombre = document.getElementById('adm-nombre').value.trim();
             const grupo = document.getElementById('adm-grupo').value.trim();
-            
-            // Obtener pruebas seleccionadas
             const checkboxes = document.querySelectorAll('.admin-test-check:checked');
             const seleccionadas = Array.from(checkboxes).map(cb => cb.value);
 
             if (!nombre || !grupo || seleccionadas.length === 0) {
-                alert("Por favor completa nombre, grupo y selecciona al menos una prueba.");
+                alert("⚠️ Faltan datos: Nombre, Grupo o seleccionar al menos una prueba.");
                 return;
             }
 
-            // Crear configuración
-            const config = {
-                n: nombre,
-                g: grupo,
-                ts: seleccionadas // Array de IDs ['IPA', 'VAK']
-            };
-
-            // Codificar
-            const hash = btoa(JSON.stringify(config));
+            const config = { n: nombre, g: grupo, ts: seleccionadas };
+            // Encoding robusto para caracteres latinos
+            const jsonStr = JSON.stringify(config);
+            const hash = btoa(encodeURIComponent(jsonStr)); 
+            
             const baseUrl = window.location.href.split('?')[0];
             const finalLink = `${baseUrl}?config=${hash}`;
 
-            // Mostrar
             document.getElementById('link-result-area').classList.remove('hidden');
             document.getElementById('final-link').value = finalLink;
         }
@@ -358,31 +402,31 @@
             const copyText = document.getElementById("final-link");
             copyText.select();
             document.execCommand("copy");
-            alert("Link copiado");
+            // Feedback visual
+            const btn = document.querySelector('button[onclick="copiarLink()"]');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="ph-bold ph-check"></i>';
+            setTimeout(() => btn.innerHTML = originalHTML, 2000);
         }
         
         function enviarWhatsAppLink() {
             const link = document.getElementById("final-link").value;
             const nombre = document.getElementById('adm-nombre').value;
-            const msg = `Hola ${nombre}, ingresa a este enlace para realizar tus evaluaciones asignadas: ${link}`;
+            const msg = `Hola ${nombre}, ingresa a este enlace para realizar tus evaluaciones psicopedagógicas: ${link}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         // ============================================
-        // 4. LOGICA ALUMNO (SECUENCIA)
+        // 4. LOGICA ALUMNO
         // ============================================
         
-        let sessionData = {
-            nombre: '',
-            grupo: '',
-            testsIds: [],
-            respuestas: {} // { 'IPA': [1,2,0...], 'VAK': [0,1,2...] }
-        };
+        let sessionData = { nombre: '', grupo: '', testsIds: [], respuestas: {} };
         let currentTestIndex = 0;
 
         function iniciarModoAlumno(hash) {
             try {
-                const config = JSON.parse(atob(hash));
+                // Decoding robusto
+                const config = JSON.parse(decodeURIComponent(atob(hash)));
                 sessionData.nombre = config.n;
                 sessionData.grupo = config.g;
                 sessionData.testsIds = config.ts;
@@ -391,21 +435,19 @@
                 document.getElementById('st-name').innerText = config.n;
                 document.getElementById('welcome-name').innerText = config.n.split(' ')[0];
 
-                // Renderizar lista previa
                 const listContainer = document.getElementById('test-list-preview');
                 config.ts.forEach(tid => {
                     const t = CATALOGO_PRUEBAS[tid];
                     if(t) {
                         listContainer.innerHTML += `
-                        <div class="flex items-center gap-3 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                            <i class="ph ${t.icono} text-brand-600 text-lg"></i>
-                            <span class="text-sm font-medium text-slate-700">${t.titulo}</span>
+                        <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+                            <div class="bg-brand-50 text-brand-600 p-2 rounded-lg"><i class="ph-bold ${t.icono}"></i></div>
+                            <span class="text-sm font-bold text-slate-700">${t.titulo}</span>
                         </div>`;
                     }
                 });
-
             } catch (e) {
-                alert("Link inválido.");
+                alert("❌ El enlace es inválido o está incompleto.");
                 window.location.href = window.location.href.split('?')[0];
             }
         }
@@ -420,16 +462,13 @@
             const testId = sessionData.testsIds[currentTestIndex];
             const test = CATALOGO_PRUEBAS[testId];
             
-            // Actualizar UI Header
             document.getElementById('current-test-title').innerText = test.titulo;
             document.getElementById('current-test-desc').innerText = test.descripcion;
-            document.getElementById('current-test-icon').className = `ph-fill ${test.icono} text-xl`;
+            document.getElementById('current-test-icon').className = `ph-fill ${test.icono} text-2xl`;
 
-            // Renderizar Preguntas según Tipo
             const container = document.getElementById('questions-container');
             container.innerHTML = '';
             
-            // Barra de progreso global
             const progress = Math.round((currentTestIndex / sessionData.testsIds.length) * 100);
             document.getElementById('progress-bar').style.width = `${progress}%`;
             document.getElementById('st-progress').innerText = `${progress}%`;
@@ -438,35 +477,45 @@
                 const num = idx + 1;
                 
                 if (test.tipo === 'likert_0_3') {
-                    // Render Likert 0-3 (Como IPA)
+                    // Estilo LIKERT
                     container.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <p class="text-sm font-medium text-slate-800 mb-3"><span class="text-brand-600 font-bold">${num}.</span> ${item}</p>
-                        <div class="flex justify-between items-center bg-gray-50 rounded-lg p-1">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2">
+                            <span class="text-brand-600 font-bold min-w-[20px]">${num}.</span> 
+                            ${item}
+                        </p>
+                        <div class="grid grid-cols-4 gap-2 bg-slate-50 p-2 rounded-xl">
                             ${[0,1,2,3].map(v => `
-                                <label class="flex-1 text-center cursor-pointer p-2 rounded hover:bg-white transition-all group">
+                                <label class="cursor-pointer relative group">
                                     <input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only">
-                                    <div class="w-8 h-8 mx-auto rounded-full border-2 border-gray-300 text-gray-400 font-bold text-sm flex items-center justify-center peer-checked:bg-brand-600 peer-checked:border-brand-600 peer-checked:text-white transition-all">
+                                    <div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-brand-600 peer-checked:border-brand-600 peer-checked:text-white transition-all shadow-sm">
                                         ${v}
                                     </div>
-                                    <span class="text-[10px] text-gray-400 mt-1 block peer-checked:text-brand-600 font-medium">${v===0?'Nunca':v===3?'Siempre':''}</span>
+                                    <span class="text-[9px] text-center w-full block mt-1 text-slate-400 peer-checked:text-brand-600 font-bold opacity-0 peer-checked:opacity-100 transition-opacity absolute top-full left-0">
+                                        ${v===0?'Nunca':v===3?'Siempre':''}
+                                    </span>
                                 </label>
                             `).join('')}
                         </div>
                     </div>`;
                 } else if (test.tipo === 'opcion_multiple') {
-                    // Render Opción Múltiple (Como VAK)
+                    // Estilo OPCION MULTIPLE
                     const questionText = item.p || item;
                     const options = item.ops || [];
                     
                     container.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <p class="text-sm font-medium text-slate-800 mb-3"><span class="text-brand-600 font-bold">${num}.</span> ${questionText}</p>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2">
+                            <span class="text-brand-600 font-bold min-w-[20px]">${num}.</span> ${questionText}
+                        </p>
                         <div class="space-y-2">
                             ${options.map((op, opIdx) => `
-                                <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-brand-50 hover:border-brand-200 transition-all">
-                                    <input type="radio" name="q_${testId}_${idx}" value="${opIdx}" class="text-brand-600 focus:ring-brand-500">
-                                    <span class="text-sm text-slate-600">${op}</span>
+                                <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50 hover:border-brand-200 transition-all bg-slate-50/50">
+                                    <div class="relative flex items-center justify-center w-5 h-5 rounded-full border border-slate-300 bg-white">
+                                        <input type="radio" name="q_${testId}_${idx}" value="${opIdx}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0">
+                                        <div class="w-3 h-3 rounded-full bg-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                    </div>
+                                    <span class="text-xs font-medium text-slate-600">${op}</span>
                                 </label>
                             `).join('')}
                         </div>
@@ -474,35 +523,27 @@
                 }
             });
 
-            window.scrollTo(0,0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function siguientePrueba() {
             const testId = sessionData.testsIds[currentTestIndex];
             const test = CATALOGO_PRUEBAS[testId];
-            
-            // Recolectar Respuestas
             let respuestasPrueba = [];
             let incompleto = false;
 
             for(let i=0; i<test.items.length; i++) {
                 const checked = document.querySelector(`input[name="q_${testId}_${i}"]:checked`);
-                if(checked) {
-                    respuestasPrueba.push(parseInt(checked.value));
-                } else {
-                    incompleto = true;
-                }
+                if(checked) respuestasPrueba.push(parseInt(checked.value));
+                else incompleto = true;
             }
 
             if(incompleto) {
-                alert("Por favor responde todas las preguntas antes de continuar.");
+                alert("⚠️ Por favor responde todas las preguntas antes de continuar.");
                 return;
             }
 
-            // Guardar en sesión
             sessionData.respuestas[testId] = respuestasPrueba;
-
-            // Avanzar o Finalizar
             currentTestIndex++;
             if (currentTestIndex < sessionData.testsIds.length) {
                 cargarPruebaActual();
@@ -512,30 +553,35 @@
         }
 
         function finalizarEvaluacionCompleta() {
-            // Actualizar barra al 100%
             document.getElementById('progress-bar').style.width = `100%`;
             document.getElementById('st-progress').innerText = `100%`;
 
-            // Generar Token Maestro
             const paqueteFinal = {
                 id: Date.now().toString(36),
                 alumno: sessionData.nombre,
                 grupo: sessionData.grupo,
                 fecha: new Date().toLocaleDateString(),
-                resultados: {} // Calcularemos los scores aquí para facilitar la vida al admin
+                resultados: {}
             };
 
-            // Calcular Scores
+            // Cálculo básico de scores
             sessionData.testsIds.forEach(tid => {
                 const raws = sessionData.respuestas[tid];
-                const sum = raws.reduce((a,b)=>a+b,0);
-                paqueteFinal.resultados[tid] = {
-                    score: sum,
-                    raw: raws // Guardamos crudos por si acaso
-                };
+                let score = 0;
+                // Sumatoria simple para Likert, para VAK podríamos guardar raw o frecuencia
+                if(CATALOGO_PRUEBAS[tid].tipo === 'likert_0_3') {
+                     score = raws.reduce((a,b)=>a+b,0);
+                } else {
+                    // Para VAK guardamos el array completo para análisis posterior
+                    score = raws.join(','); 
+                }
+                
+                paqueteFinal.resultados[tid] = { score: score, raw: raws };
             });
 
-            const token = btoa(JSON.stringify(paqueteFinal));
+            // Encoding robusto
+            const jsonStr = JSON.stringify(paqueteFinal);
+            const token = btoa(encodeURIComponent(jsonStr));
             
             document.getElementById('step-questions').classList.add('hidden');
             document.getElementById('step-finish').classList.remove('hidden');
@@ -544,7 +590,7 @@
 
         function enviarTokenWhatsapp() {
             const token = document.getElementById('final-token-display').innerText;
-            const msg = `He terminado mis evaluaciones. Mi código es: ${token}`;
+            const msg = `He terminado mis evaluaciones. Mi código de resultado es: ${token}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
         
@@ -563,8 +609,7 @@
         // ============================================
 
         function toggleImportModal() {
-            const m = document.getElementById('import-modal');
-            m.classList.toggle('hidden');
+            document.getElementById('import-modal').classList.toggle('hidden');
         }
 
         function getDB() { return JSON.parse(localStorage.getItem('cbta_suite_db') || '[]'); }
@@ -575,25 +620,24 @@
             if(!input) return;
 
             try {
-                const data = JSON.parse(atob(input));
+                // Decoding robusto
+                const data = JSON.parse(decodeURIComponent(atob(input)));
                 let db = getDB();
 
-                // Buscar si existe alumno
                 let idx = db.findIndex(e => e.nombre === data.alumno && e.grupo === data.grupo);
                 
                 if (idx >= 0) {
-                    // Merge (Fusionar pruebas nuevas con viejas)
                     db[idx].resultados = { ...db[idx].resultados, ...data.resultados };
+                    db[idx].ultimaFecha = data.fecha;
                     alert(`✅ Expediente actualizado: ${data.alumno}`);
                 } else {
-                    // Nuevo
                     db.push({
                         nombre: data.alumno,
                         grupo: data.grupo,
                         resultados: data.resultados,
                         ultimaFecha: data.fecha
                     });
-                    alert(`✅ Nuevo expediente: ${data.alumno}`);
+                    alert(`✅ Nuevo expediente creado: ${data.alumno}`);
                 }
 
                 saveDB(db);
@@ -602,14 +646,15 @@
                 document.getElementById('import-token-input').value = "";
 
             } catch (e) {
-                alert("Código inválido.");
+                alert("❌ Código inválido. Asegúrate de copiar todo el texto.");
+                console.error(e);
             }
         }
 
         function renderizarTablaExpedientes() {
             const db = getDB();
             const tbody = document.getElementById('db-body');
-            document.getElementById('db-count').innerText = db.length;
+            document.getElementById('db-count').innerText = `${db.length} Alumnos`;
             
             tbody.innerHTML = '';
             
@@ -623,29 +668,36 @@
             db.forEach((exp, i) => {
                 let tags = '';
                 for(const [tid, res] of Object.entries(exp.resultados)) {
-                    // Estilos de badges según score (lógica simple visual)
-                    let color = 'bg-blue-100 text-blue-700';
-                    if(tid === 'IPA' && res.score > 90) color = 'bg-red-100 text-red-700';
-                    
-                    tags += `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold ${color} mr-1 mb-1">
-                        ${tid}: ${res.score} pts
+                    // Colores según prueba
+                    let color = 'bg-slate-100 text-slate-600';
+                    if(tid === 'IPA') color = 'bg-pink-100 text-pink-700 border-pink-200';
+                    if(tid === 'BECK') color = 'bg-blue-100 text-blue-700 border-blue-200';
+                    if(tid === 'VAK') color = 'bg-purple-100 text-purple-700 border-purple-200';
+
+                    let valDisplay = res.score;
+                    if(typeof res.score === 'string' && res.score.includes(',')) valDisplay = 'VAK Info'; // Simplificación visual
+
+                    tags += `<span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold ${color} mr-1 mb-1 border border-transparent hover:border-current cursor-default">
+                        ${tid}: ${valDisplay} pts
                     </span>`;
                 }
 
                 tbody.innerHTML += `
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-medium text-slate-800">${exp.nombre}</td>
-                    <td class="px-6 py-4 text-slate-500">${exp.grupo}</td>
+                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-slate-800 text-sm">${exp.nombre}</p>
+                        <p class="text-xs text-slate-400">${exp.grupo}</p>
+                    </td>
                     <td class="px-6 py-4">${tags}</td>
                     <td class="px-6 py-4 text-right">
-                        <button onclick="eliminarExpediente(${i})" class="text-red-400 hover:text-red-600 p-2"><i class="ph-bold ph-trash"></i></button>
+                         <button onclick="eliminarExpediente(${i})" class="text-slate-300 hover:text-red-500 p-2 transition-colors" title="Eliminar"><i class="ph-bold ph-trash text-lg"></i></button>
                     </td>
                 </tr>`;
             });
         }
         
         function eliminarExpediente(index) {
-            if(confirm('¿Borrar este expediente?')) {
+            if(confirm('¿Estás seguro de borrar este expediente? Esta acción no se puede deshacer.')) {
                 let db = getDB();
                 db.splice(index, 1);
                 saveDB(db);
@@ -653,6 +705,10 @@
             }
         }
 
+        // Cargar tabla al inicio si es admin
+        if(!window.location.search.includes('config')) {
+             renderizarTablaExpedientes();
+        }
     </script>
 </body>
 </html>
