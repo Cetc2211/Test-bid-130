@@ -45,16 +45,15 @@
         </div>
 
         <!-- ============================================== -->
-        <!-- ZONA DEL EVALUADOR (Acceso a la Suite)         -->
+        <!-- GESTIÓN & ADMINISTRACIÓN                       -->
         <!-- ============================================== -->
         <div>
-            <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider">Gestión & Admin</p>
+            <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider">Herramientas del Evaluador</p>
             
-            <!-- Botón Suite -->
+            <!-- 1. Gestor de Evaluaciones (Suite) -->
             <a href="suite.html" class="block w-full group relative overflow-hidden rounded-2xl bg-slate-900 p-6 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl ring-1 ring-slate-900/5 mb-4">
                 <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-slate-800/50 transition-all group-hover:scale-150"></div>
                 <div class="absolute -right-4 -bottom-8 h-24 w-24 rounded-full bg-brand-500 opacity-20 blur-2xl"></div>
-                
                 <div class="relative flex items-center justify-between z-10">
                     <div class="flex items-center gap-4">
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white backdrop-blur-sm border border-white/10">
@@ -62,51 +61,48 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-white leading-tight">Gestor de Evaluaciones</h3>
-                            <p class="text-xs text-slate-400 mt-1 font-medium">Baterías, Resultados y Expedientes.</p>
+                            <p class="text-xs text-slate-400 mt-1 font-medium">Baterías, Resultados y Pruebas.</p>
                         </div>
                     </div>
-                    <div class="text-white opacity-60 transition-transform group-hover:translate-x-1 group-hover:opacity-100">
-                        <i class="ph-bold ph-caret-right text-xl"></i>
-                    </div>
+                    <div class="text-white opacity-60 transition-transform group-hover:translate-x-1 group-hover:opacity-100"><i class="ph-bold ph-caret-right text-xl"></i></div>
                 </div>
             </a>
 
-            <!-- Botón Consentimiento -->
-            <a href="consentimiento.html" class="block w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between hover:border-slate-400 transition-colors group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+            <div class="grid grid-cols-2 gap-3">
+                <!-- 2. Entrevista Clínica -->
+                <a href="entrevista.html" class="block bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:border-slate-400 transition-colors group">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-colors">
+                        <i class="ph-bold ph-chats-circle text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-700 text-sm leading-tight">Entrevista Clínica</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Historia, Examen Mental y Diagnóstico.</p>
+                </a>
+
+                <!-- 3. Consentimiento -->
+                <a href="consentimiento.html" class="block bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:border-slate-400 transition-colors group">
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:bg-emerald-100 transition-colors">
                         <i class="ph-bold ph-file-text text-xl"></i>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-slate-700 text-sm">Consentimiento Informado</h3>
-                        <p class="text-xs text-slate-400">Generar documento PDF legal.</p>
-                    </div>
-                </div>
-                <i class="ph-bold ph-arrow-right text-slate-300 group-hover:text-slate-600"></i>
-            </a>
+                    <h3 class="font-bold text-slate-700 text-sm leading-tight">Consentimiento</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Generar documento legal PDF.</p>
+                </a>
+            </div>
         </div>
 
         <!-- ============================================== -->
-        <!-- PRUEBAS INDIVIDUALES (Acceso Rápido)           -->
+        <!-- ACCESO RÁPIDO (Indicadores)                    -->
         <!-- ============================================== -->
         <div>
-            <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider mt-6">Acceso Rápido (Consulta)</p>
-            
-            <div class="space-y-3 opacity-60 pointer-events-none grayscale">
-                <!-- Deshabilitados porque ahora se usa la Suite -->
-                <div class="w-full bg-white p-4 rounded-xl border border-gray-100 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-gray-50 text-gray-300 flex items-center justify-center">
-                        <i class="ph-bold ph-brain text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-400 text-sm">Pruebas Individuales</h3>
-                        <p class="text-xs text-gray-300">Usa el Gestor de arriba.</p>
-                    </div>
+            <p class="text-xs font-bold text-slate-400 uppercase mb-3 ml-1 tracking-wider mt-6">Estado del Sistema</p>
+            <div class="w-full bg-white p-4 rounded-xl border border-gray-100 flex items-center justify-between opacity-70">
+                <div class="flex items-center gap-3">
+                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                    <span class="text-xs font-medium text-slate-600">Base de Datos Local</span>
                 </div>
+                <span class="text-[10px] text-slate-400 font-mono">v3.0 READY</span>
             </div>
-            
             <p class="text-[10px] text-center text-slate-400 mt-8 opacity-60">
-                Sistema Integral v2.4 • CBTa 130
+                Sistema Integral Psicopedagógico • CBTa 130
             </p>
         </div>
 
