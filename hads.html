@@ -5,81 +5,207 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evaluación BAI - CBTa 130</title>
 <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f2f2f7; color: #1c1c1e; }
-    header { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; }
-    .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    body { font-family: "Segoe UI", Roboto, sans-serif; margin: 0; background-color: #f2f2f7; color: #1c1c1e; }
+    header { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); color: white; text-align: center; padding: 25px; font-weight: bold; font-size: 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .container { max-width: 900px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     h2 { color: #2e7d32; text-align: center; margin-top: 0; border-bottom: 2px solid #e8f5e9; padding-bottom: 10px; }
+    
     .input-group { margin-bottom: 15px; }
-    label { font-weight: 600; display: block; margin-bottom: 8px; }
-    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; min-width: 600px; table-layout: fixed; }
-    th, td { padding: 12px 5px; border-bottom: 1px solid #eee; vertical-align: middle; }
-    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; }
-    th:not(:first-child), td:not(:first-child) { width: 12.5%; text-align: center; }
+    label { font-weight: 600; display: block; margin-bottom: 5px; color: #333; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    
+    /* TABLA AJUSTADA */
+    .table-container { overflow-x: auto; margin-bottom: 20px; }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 15px; 
+        font-size: 0.85rem; 
+        min-width: 600px; 
+        table-layout: fixed; 
+    }
+    
+    th, td { padding: 10px 5px; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
+    
+    /* Anchos: Pregunta 50%, Opciones 12.5% */
+    th:first-child, td:first-child { width: 50%; text-align: left; padding-left: 10px; font-weight: 500; white-space: normal; line-height: 1.3; }
+    th:not(:first-child), td:not(:first-child) { width: 12.5%; }
+    
     th { background-color: #e8f5e9; color: #1b5e20; position: sticky; top: 0; font-weight: bold; }
     tr:nth-child(even) { background-color: #fafafa; }
-    input[type="radio"] { width: 24px; height: 24px; margin: 0 auto; display: block; cursor: pointer; }
+    
+    input[type="radio"] { width: 20px; height: 20px; margin: 0 auto; display: block; cursor: pointer; accent-color: #2e7d32; }
+
     .buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
     button { padding: 16px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: white; cursor: pointer; width: 100%; }
     .whatsapp { background-color: #25D366; }
     .local-save { background-color: #1565C0; }
-    .reset { background-color: #757575; }
     .btn-back { background-color: #78909c; }
-    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 10px; }
+    .reset { background-color: #757575; }
+    
+    #result-area { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 10px; border: 2px solid #c8e6c9; }
 </style>
 </head>
 <body>
 <header>CBTa No.130<br><span style="font-size:0.8em; font-weight:normal">Inventario de Ansiedad (BAI)</span></header>
+
 <div class="container">
     <div id="test-form">
-        <h2>Datos del Alumno</h2>
-        <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
-        <div class="input-group"><label>Fecha:</label><input type="date" id="fecha" required></div>
+        <h2>Datos del Estudiante</h2>
+        
+        <!-- DATOS COMPLETOS -->
+        <div class="input-group"><label>Nombre Completo:</label><input type="text" id="nombre"></div>
+        
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1"><label>Edad:</label><input type="number" id="edad"></div>
+            <div style="flex:1">
+                <label>Sexo:</label>
+                <select id="sexo">
+                    <option value="">-- Seleccione --</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="input-group"><label>Grupo/Semestre:</label><input type="text" id="grupo"></div>
+        <div class="input-group"><label>Fecha:</label><input type="date" id="fecha"></div>
+        
         <div style="background-color:#fff3cd; padding:15px; border-radius:8px; margin:20px 0; font-size:0.9em; border-left:5px solid #ffc107;">
-            <strong>Instrucciones:</strong> Indique cuánto le ha molestado cada síntoma durante la <strong>última semana</strong>.
+            <strong>Instrucciones:</strong> Indique cuánto le ha molestado cada síntoma durante la <strong>última semana</strong> (incluyendo hoy).
         </div>
+
         <div class="table-container">
-            <table><thead><tr><th>Síntoma</th><th>Nada<br>(0)</th><th>Leve<br>(1)</th><th>Mod<br>(2)</th><th>Sev<br>(3)</th></tr></thead><tbody id="tabla-preguntas"></tbody></table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Síntoma</th>
+                        <th>Nada<br>(0)</th>
+                        <th>Leve<br>(1)</th>
+                        <th>Mod<br>(2)</th>
+                        <th>Sev<br>(3)</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-preguntas"></tbody>
+            </table>
         </div>
+
         <div class="buttons">
             <button type="button" class="whatsapp" onclick="finalizarTest()">✅ Finalizar</button>
-            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar y Volver</button>
+            <button type="button" class="btn-back" onclick="window.location.href='index.html'">↩️ Cancelar</button>
         </div>
     </div>
+
+    <!-- RESULTADOS -->
     <div id="result-area">
-        <h3 style="color:#2e7d32;">Resultados Listos</h3>
+        <h3 style="color:#2e7d32;">📊 Resultados Listos</h3>
+        <p>Seleccione una acción para continuar:</p>
         <div class="buttons">
             <button type="button" class="local-save" onclick="guardarLocalmente()">💾 Guardar en Expediente</button>
-            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar WhatsApp</button>
-            <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo</button>
+            <button type="button" class="whatsapp" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
+            <button type="button" class="reset" onclick="location.reload()">🔄 Nuevo Test</button>
             <button type="button" class="btn-back" onclick="window.location.href='index.html'">🏠 Ir al Menú</button>
         </div>
     </div>
 </div>
+
 <script>
-    const NUMERO_DESTINO = "523111477413"; const STORAGE_KEY = "cbta_paciente_temp";
-    const preguntas = ["1. Entumecimiento", "2. Calor", "3. Temblor piernas", "4. Incapaz relajarse", "5. Miedo peor", "6. Mareo", "7. Palpitaciones", "8. Inestabilidad", "9. Terror", "10. Nerviosismo", "11. Ahogo", "12. Temblor manos", "13. Estremecimiento", "14. Miedo control", "15. Dificultad respirar", "16. Miedo morir", "17. Asustado", "18. Indigestión", "19. Desmayo", "20. Rubor", "21. Sudoración"];
+    const NUMERO_DESTINO = "523111477413"; 
+    const STORAGE_KEY = "cbta_paciente_temp";
+
+    const preguntas = [
+        "1. Entumecimiento u hormigueo", "2. Sensación de calor", "3. Temblor en las piernas",
+        "4. Incapacidad para relajarse", "5. Miedo a que suceda lo peor", "6. Mareo o aturdimiento",
+        "7. Palpitaciones o taquicardia", "8. Sensación de inestabilidad", "9. Sensación de terror",
+        "10. Nerviosismo", "11. Sensación de ahogo", "12. Temblor de manos",
+        "13. Temblor generalizado", "14. Miedo a perder el control", "15. Dificultad para respirar",
+        "16. Miedo a morir", "17. Asustado", "18. Indigestión o malestar abdominal",
+        "19. Sensación de desmayo", "20. Rubor facial", "21. Sudoración (no debida al calor)"
+    ];
+
     const tbody = document.getElementById('tabla-preguntas');
-    preguntas.forEach((p, i) => { tbody.innerHTML += `<tr><td>${p}</td>${[0,1,2,3].map(v=>`<td><input type="radio" name="item${i+1}" value="${v}"></td>`).join('')}</tr>`; });
+    preguntas.forEach((p, i) => {
+        let html = `<tr><td>${p}</td>${[0,1,2,3].map(v=>`<td><input type="radio" name="item${i+1}" value="${v}"></td>`).join('')}</tr>`;
+        tbody.innerHTML += html;
+    });
     document.getElementById('fecha').valueAsDate = new Date();
+
     let datosFinales = null;
+
     function finalizarTest() {
         try {
-            const nombre = document.getElementById('nombre').value; const fecha = document.getElementById('fecha').value;
-            if(!nombre) { alert("Nombre requerido"); return; }
-            let total = 0, count = 0; let scores = new Array(22).fill(0);
-            for(let i=1; i<=21; i++){ const el = document.querySelector(`input[name="item${i}"]:checked`); if(el) { let val = parseInt(el.value); total += val; scores[i] = val; count++; } }
-            if(count < 21) { alert(`Faltan preguntas (${count}/21)`); return; }
+            const nombre = document.getElementById('nombre').value;
+            if(!nombre) { alert("Por favor ingresa el nombre."); return; }
+
+            let total = 0, count = 0;
+            let scores = new Array(22).fill(0);
+
+            for(let i=1; i<=21; i++){
+                const el = document.querySelector(`input[name="item${i}"]:checked`);
+                if(el) { 
+                    let val = parseInt(el.value);
+                    total += val; 
+                    scores[i] = val; 
+                    count++; 
+                }
+            }
+            
+            if(count < 21) { 
+                alert(`Faltan preguntas por contestar (${count}/21).`); 
+                return; 
+            }
+
+            // Factores (Robles et al.)
             let f1 = scores[4]+scores[5]+scores[9]+scores[10]+scores[14]+scores[16]+scores[17]; 
             let f2 = scores[1]+scores[2]+scores[3]+scores[6]+scores[7]+scores[8]+scores[12]+scores[13]+scores[19]+scores[20]+scores[21];
-            let f3 = scores[11]+scores[15]+scores[18]; let f4 = scores[7]+scores[11]+scores[15]+scores[16];
-            datosFinales = { nombre, fecha, total, f1, f2, f3, f4 };
-            document.getElementById('test-form').style.display = 'none'; document.getElementById('result-area').style.display = 'block'; window.scrollTo(0,0);
-        } catch(e) { alert("Error: " + e.message); }
+            let f3 = scores[11]+scores[15]+scores[18];
+            let f4 = scores[7]+scores[11]+scores[15]+scores[16];
+
+            datosFinales = { 
+                nombre, 
+                edad: document.getElementById('edad').value,
+                sexo: document.getElementById('sexo').value,
+                grupo: document.getElementById('grupo').value,
+                fecha: document.getElementById('fecha').value,
+                total, f1, f2, f3, f4 
+            };
+
+            document.getElementById('test-form').style.display = 'none';
+            document.getElementById('result-area').style.display = 'block';
+            window.scrollTo(0,0);
+
+        } catch (e) {
+            alert("Error: " + e.message);
+        }
     }
-    function guardarLocalmente() { if(!datosFinales) return; let cur = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; let up = { ...cur, nombre: datosFinales.nombre, fecha: datosFinales.fecha, bai: datosFinales.total, f1: datosFinales.f1, f2: datosFinales.f2, f3: datosFinales.f3, f4: datosFinales.f4 }; localStorage.setItem(STORAGE_KEY, JSON.stringify(up)); alert("✅ BAI guardado."); }
-    function enviarWhatsApp(){ if(!datosFinales) return; let m = `🧠 *BAI*%0A👤 ${datosFinales.nombre}%0A📊 Total: ${datosFinales.total}`; window.open(`https://wa.me/${NUMERO_DESTINO}?text=${m}`, '_blank'); }
+
+    function guardarLocalmente() {
+        if(!datosFinales) { alert("No hay datos."); return; }
+        
+        try {
+            let current = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            let update = { 
+                ...current, 
+                nombre: datosFinales.nombre,
+                edad: datosFinales.edad,
+                sexo: datosFinales.sexo,
+                grupo: datosFinales.grupo,
+                fecha: datosFinales.fecha,
+                bai: datosFinales.total, 
+                f1: datosFinales.f1, f2: datosFinales.f2, f3: datosFinales.f3, f4: datosFinales.f4
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
+            alert("✅ Datos BAI guardados en expediente.");
+        } catch (e) {
+            alert("Error al guardar: " + e.message);
+        }
+    }
+
+    function enviarWhatsApp(){
+        if(!datosFinales) return;
+        const msg = `🧠 *BAI*%0A👤 ${datosFinales.nombre}%0A📅 ${datosFinales.fecha}%0A📊 Total: ${datosFinales.total}%0AFactores: ${datosFinales.f1}-${datosFinales.f2}-${datosFinales.f3}-${datosFinales.f4}`;
+        window.open(`https://wa.me/${NUMERO_DESTINO}?text=${msg}`, '_blank');
+    }
 </script>
 </body>
 </html>
