@@ -1,475 +1,412 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPA - Evaluación Cognitiva</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestor de Evaluaciones - Suite Integral</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<style>
+    body { font-family: -apple-system, sans-serif; background-color: #f4f6f8; padding: 20px; margin: 0; }
     
-    <!-- Tailwind CSS (CDN para funcionamiento sin instalación) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    /* BARRA SUPERIOR */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    .top-title { font-size: 1.2rem; font-weight: 800; color: #263238; margin: 0; }
+    .btn-home { background-color: #eceff1; color: #455a64; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; transition: 0.2s; }
+    .btn-home:hover { background-color: #cfd8dc; }
+
+    .main-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
     
-    <!-- Iconos Phosphor -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    /* COLUMNA IZQUIERDA (CAPTURA) */
+    .panel-captura { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); height: fit-content; max-height: 90vh; overflow-y: auto; }
+    .panel-title { color: #e91e63; font-size: 1rem; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #fce4ec; padding-bottom: 5px; }
     
-    <!-- Configuración de Fuentes y Colores Institucionales -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 0.75rem; font-weight: bold; color: #546e7a; margin-bottom: 3px; text-transform: uppercase; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; background: #fafafa; transition: 0.2s; }
+    input:focus { border-color: #e91e63; background: white; outline: none; }
+
+    /* GRID DE RESULTADOS */
+    .scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #f5f5f5; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+    .mini-label { font-size: 0.7rem; color: #78909c; font-weight: bold; }
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#fce4ec',   // Fondo suave
-                            100: '#f8bbd0',
-                            600: '#d81b60',  // Acento brillante
-                            800: '#ad1457',  // Institucional primario
-                            900: '#880e4f',  // Institucional oscuro
-                        }
+    /* SECCIONES ESPECÍFICAS */
+    .sec-ipa { border-left: 4px solid #c2185b; background: #fce4ec; padding: 10px; margin-top: 10px; border-radius: 4px; }
+    .ipa-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+    .ipa-item label { font-size: 0.6rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+    /* COLUMNA DERECHA (TABLA) */
+    .panel-tabla { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 500px; }
+    
+    .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .student-table th { text-align: left; font-size: 0.75rem; color: #90a4ae; text-transform: uppercase; padding: 10px; border-bottom: 1px solid #eee; }
+    .student-table td { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; font-size: 0.9rem; }
+    .student-table tr:hover { background-color: #f9fafb; }
+    
+    /* BADGES */
+    .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; display: inline-block; margin-right: 3px; margin-bottom: 2px; }
+    .bg-gray { background: #eceff1; color: #455a64; }
+    .bg-red { background: #ffebee; color: #c62828; }
+    .bg-pink { background: #fce4ec; color: #880e4f; } /* IPA */
+
+    /* BOTONES ACCIÓN */
+    .btn-action { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-view { background: #e3f2fd; color: #1565C0; }
+    .btn-view:hover { background: #1565C0; color: white; }
+    .btn-del { background: white; color: #ef5350; border: 1px solid #ef5350; }
+    .btn-del:hover { background: #ef5350; color: white; }
+
+    .btn-main { background: #e91e63; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3); }
+    
+    /* Responsive */
+    @media (max-width: 900px) { .main-container { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div style="display:flex; align-items:center; gap:15px;">
+        <div style="width:40px; height:40px; background:#e91e63; border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">SI</div>
+        <div>
+            <h1 class="top-title">Gestor de Evaluaciones</h1>
+            <span style="font-size:0.8rem; color:#78909c;">Base de Datos Local</span>
+        </div>
+    </div>
+    <a href="index.html" class="btn-home">⬅ Volver al Menú</a>
+</div>
+
+<div class="main-container">
+    
+    <!-- PANEL IZQUIERDO: FORMULARIO -->
+    <div class="panel-captura">
+        <div class="panel-title">👤 Datos del Estudiante</div>
+        <input type="hidden" id="id_exp">
+        
+        <div class="form-group"><label>Nombre Completo</label><input type="text" id="nombre"></div>
+        <div style="display:flex; gap:10px;">
+            <div class="form-group" style="flex:1"><label>Edad</label><input type="number" id="edad"></div>
+            <div class="form-group" style="flex:1"><label>Sexo</label><select id="sexo"><option value="">-</option><option value="H">Hombre</option><option value="M">Mujer</option></select></div>
+        </div>
+        <div class="form-group"><label>Grupo / Semestre</label><input type="text" id="grupo"></div>
+        <div class="form-group"><label>Fecha</label><input type="date" id="fecha"></div>
+
+        <div class="panel-title" style="margin-top:20px; color:#455a64; border-color:#eceff1;">📊 Resultados</div>
+        
+        <!-- Scores Generales -->
+        <div class="scores-grid">
+            <div><label>BAI</label><input type="number" id="bai"></div>
+            <div><label>BDI-II</label><input type="number" id="bdi"></div>
+            <div><label>PHQ-9</label><input type="number" id="phq"></div>
+            <div><label>GAD-7</label><input type="number" id="gad"></div>
+            <div><label>GOCA</label><input type="number" id="goca"></div>
+            <div><label>LIRA</label><input type="number" id="lira"></div>
+            <div><label>SSI</label><input type="number" id="ssi"></div>
+            <div><label>BHS</label><input type="number" id="bhs"></div>
+        </div>
+
+        <!-- SECCIÓN IPA (NUEVA) -->
+        <div class="sec-ipa">
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <label style="color:#880e4f;">🧠 IPA (PENAUTO)</label>
+                <input type="number" id="penTotal" placeholder="Total" style="width:60px; text-align:center; font-weight:bold;">
+            </div>
+            <div class="ipa-grid">
+                <!-- 15 Factores -->
+                <div class="ipa-item"><label>1.Filt</label><input type="number" id="penF1"></div>
+                <div class="ipa-item"><label>2.Pol</label><input type="number" id="penF2"></div>
+                <div class="ipa-item"><label>3.Sobre</label><input type="number" id="penF3"></div>
+                <div class="ipa-item"><label>4.Int</label><input type="number" id="penF4"></div>
+                <div class="ipa-item"><label>5.Cat</label><input type="number" id="penF5"></div>
+                <div class="ipa-item"><label>6.Pers</label><input type="number" id="penF6"></div>
+                <div class="ipa-item"><label>7.Cont</label><input type="number" id="penF7"></div>
+                <div class="ipa-item"><label>8.Just</label><input type="number" id="penF8"></div>
+                <div class="ipa-item"><label>9.Emoc</label><input type="number" id="penF9"></div>
+                <div class="ipa-item"><label>10.Cam</label><input type="number" id="penF10"></div>
+                <div class="ipa-item"><label>11.Eti</label><input type="number" id="penF11"></div>
+                <div class="ipa-item"><label>12.Cul</label><input type="number" id="penF12"></div>
+                <div class="ipa-item"><label>13.Deb</label><input type="number" id="penF13"></div>
+                <div class="ipa-item"><label>14.Raz</label><input type="number" id="penF14"></div>
+                <div class="ipa-item"><label>15.Rec</label><input type="number" id="penF15"></div>
+            </div>
+        </div>
+
+        <!-- Campos Ocultos (Resto de variables) -->
+        <div style="display:none;">
+            <input id="hadsA"><input id="hadsD"><input id="idareE"><input id="idareR">
+            <input id="ebmaIAR"><input id="ebmaPerfil"><input id="scoreCDFR">
+            <input id="f1"><input id="f2"><input id="f3"><input id="f4"> <!-- BAI Factors -->
+            <input id="flagPHQ"><input id="ssiFlags"><input id="gocaNivel">
+            <input id="cssrsId"><input id="cssrsPlan"><input id="cssrsCond">
+        </div>
+
+        <div style="margin-top:20px;">
+            <button onclick="guardarExpediente()" class="btn-main">💾 Guardar Cambios</button>
+            <button onclick="generarPDF()" class="btn-main" style="background:#37474f; margin-top:10px;">📄 Generar PDF</button>
+            <button onclick="limpiar()" style="background:transparent; color:#ef5350; border:none; width:100%; padding:10px; cursor:pointer; margin-top:5px;">Borrar Formulario</button>
+        </div>
+    </div>
+
+    <!-- PANEL DERECHO: TABLA -->
+    <div class="panel-tabla">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2 style="margin:0; font-size:1.1rem; color:#263238;">Expedientes Activos</h2>
+            <input type="text" id="search" placeholder="🔍 Buscar..." style="width:200px; padding:8px;" onkeyup="renderTable()">
+        </div>
+
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th>Estudiante</th>
+                    <th>Resultados Recientes</th>
+                    <th style="text-align:right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Se llena con JS -->
+            </tbody>
+        </table>
+        
+        <div id="empty-msg" style="text-align:center; color:#90a4ae; padding:40px; display:none;">
+            No hay expedientes. Realiza un test y guarda los datos para verlos aquí.
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const DB_KEY = "cbta_db_expedientes";
+    const TEMP_KEY = "cbta_paciente_temp";
+    
+    // Nombres de factores IPA para el PDF
+    const ipaNames = [
+        "Filtraje", "Pens. Polarizado", "Sobregeneralización", "Int. Pensamiento", "Visión Catastrófica",
+        "Personalización", "Falacia Control", "Falacia Justicia", "Raz. Emocional", "Falacia Cambio",
+        "Etiquetas Globales", "Culpabilidad", "Los Deberías", "Falacia Razón", "Falacia Recompensa"
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('fecha').valueAsDate = new Date();
+        cargarDesdeTemp();
+        renderTable();
+    });
+
+    // 1. RENDERIZAR TABLA
+    function renderTable() {
+        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const tbody = document.getElementById('tableBody');
+        const filtro = document.getElementById('search').value.toLowerCase();
+        const emptyMsg = document.getElementById('empty-msg');
+        
+        tbody.innerHTML = "";
+        let visibleCount = 0;
+
+        db.forEach(x => {
+            if((x.nombre || "").toLowerCase().includes(filtro)) {
+                visibleCount++;
+                let badges = "";
+                // Mostrar etiquetas si hay datos
+                if(x.bai) badges += `<span class="badge bg-gray">BAI:${x.bai}</span>`;
+                if(x.bdi) badges += `<span class="badge bg-blue">BDI:${x.bdi}</span>`;
+                if(x.penTotal) badges += `<span class="badge bg-pink">IPA:${x.penTotal}</span>`;
+                if(x.goca) badges += `<span class="badge bg-orange">GOCA:${x.goca}</span>`;
+                if(x.ssi) badges += `<span class="badge bg-red">SSI:${x.ssi}</span>`;
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:bold; color:#37474f;">${x.nombre}</div>
+                        <div style="font-size:0.75rem; color:#90a4ae;">${x.grupo || 'Sin grupo'} • ${x.fechaReg || ''}</div>
+                    </td>
+                    <td>${badges || '-'}</td>
+                    <td style="text-align:right;">
+                        <button class="btn-action btn-view" onclick="cargarExpediente('${x.id_exp}')">
+                            👁️ VER
+                        </button>
+                        <button class="btn-action btn-del" onclick="borrarExpediente('${x.id_exp}')">
+                            🗑️
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+        });
+
+        emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // 2. CARGAR EXPEDIENTE (Al hacer clic en VER)
+    function cargarExpediente(id) {
+        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const record = db.find(x => x.id_exp === id);
+        if(record) {
+            llenarFormulario(record);
+            // Scroll suave hacia arriba (móvil)
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    function llenarFormulario(d) {
+        const set = (id, val) => { 
+            const el = document.getElementById(id);
+            if(el) el.value = (val !== undefined && val !== null) ? val : ""; 
+        };
+
+        set('nombre', d.nombre); set('edad', d.edad); set('sexo', d.sexo); 
+        set('grupo', d.grupo); set('fecha', d.fecha); set('id_exp', d.id_exp);
+
+        // Scores Básicos
+        set('scorePHQ', d.phq); set('flagPHQ', d.phqFlag); set('scoreGAD', d.gad);
+        set('hadsA', d.hadsA); set('hadsD', d.hadsD);
+        set('scoreBAI', d.bai); set('f1', d.f1); set('f2', d.f2); set('f3', d.f3); set('f4', d.f4);
+        set('idareE', d.idareE); set('idareR', d.idareR);
+        set('scoreBDI', d.bdi); set('scoreBHS', d.bhs);
+        
+        // IPA
+        set('penTotal', d.penTotal);
+        for(let i=1; i<=15; i++) set(`penF${i}`, d[`penF${i}`]);
+
+        // Riesgo y Pedagógico
+        set('scoreSSI', d.ssi); set('ssiFlags', d.ssiFlags);
+        set('scorePlut', d.plut); set('scoreGOCA', d.goca); set('gocaNivel', d.gocaNivel);
+        set('scoreLIRA', d.lira); set('liraCrisis', d.liraCrisis);
+        set('scoreCDFR', d.cdfr); set('cdfrCita', d.cdfrCita);
+        set('ebmaIAR', d.ebmaIAR); set('ebmaPerfil', d.ebmaPerfil);
+        set('cssrsId', d.cId); set('cssrsPlan', d.cPlan); set('cssrsCond', d.cCond);
+    }
+
+    function cargarDesdeTemp() {
+        const raw = localStorage.getItem(TEMP_KEY);
+        if(raw) {
+            const d = JSON.parse(raw);
+            if(confirm(`📥 Datos temporales encontrados de: ${d.nombre}\n¿Deseas cargarlos para guardar?`)) {
+                llenarFormulario(d);
+            }
+        }
+    }
+
+    // 3. GUARDAR
+    function guardarExpediente() {
+        const nombre = document.getElementById('nombre').value;
+        if(!nombre) { alert("Ingresa un nombre"); return; }
+
+        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        let id = document.getElementById('id_exp').value;
+        
+        const inputs = document.querySelectorAll('input, select');
+        let record = {};
+        inputs.forEach(i => record[i.id] = i.value);
+        record.fechaReg = new Date().toLocaleDateString();
+
+        // Lógica especial para IPA (asegurar que se guarden los factores)
+        record.penTotal = document.getElementById('penTotal').value;
+        for(let i=1; i<=15; i++) record[`penF${i}`] = document.getElementById(`penF${i}`).value;
+
+        if(id) {
+            const index = db.findIndex(x => x.id_exp === id);
+            if(index !== -1) db[index] = record;
+        } else {
+            record.id_exp = Date.now().toString();
+            db.push(record);
+            document.getElementById('id_exp').value = record.id_exp;
+        }
+
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        localStorage.removeItem(TEMP_KEY); // Limpiar temp
+        renderTable();
+        alert("✅ Guardado correctamente.");
+    }
+
+    function borrarExpediente(id) {
+        if(confirm("¿Eliminar este expediente permanentemente?")) {
+            let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+            db = db.filter(x => x.id_exp !== id);
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            renderTable();
+        }
+    }
+
+    function limpiar() {
+        document.querySelectorAll('input').forEach(i => i.value = "");
+        document.getElementById('fecha').valueAsDate = new Date();
+    }
+
+    // 4. GENERAR PDF (Con IPA Detallado)
+    function generarPDF() {
+        const val = (id) => document.getElementById(id).value;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Header
+        doc.setFillColor(233, 30, 99); doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
+        doc.text("CBTa No. 130 - Informe Integral", 105, 20, null, null, "center");
+        doc.setFontSize(12); doc.text("Perfil Clínico y Psicopedagógico", 105, 30, null, null, "center");
+
+        // Datos
+        doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.text(`Nombre: ${val('nombre')}`, 20, 50);
+        doc.text(`Edad: ${val('edad')} | Grupo: ${val('grupo')}`, 140, 50);
+        doc.line(20, 55, 190, 55);
+
+        let y = 65;
+        const addRow = (t, s, i, color=false) => {
+            if(y>270){doc.addPage();y=20;}
+            doc.setFont("helvetica", "bold"); doc.text(t, 20, y);
+            doc.setFont("helvetica", "normal"); doc.text(s ? s.toString() : "-", 80, y);
+            if(color) doc.setTextColor(200,0,0);
+            doc.text(i || "", 100, y);
+            doc.setTextColor(0);
+            doc.line(20, y+2, 190, y+2); y+=8;
+        };
+
+        // Resultados Generales
+        if(val('scorePHQ')) addRow("PHQ-9 (Depresión)", val('scorePHQ'), val('scorePHQ')>=10?"ALERTA":"Bajo", val('scorePHQ')>=10);
+        if(val('scoreGAD')) addRow("GAD-7 (Ansiedad)", val('scoreGAD'), val('scoreGAD')>=10?"ALERTA":"Bajo", val('scoreGAD')>=10);
+        if(val('scoreBAI')) addRow("BAI (Ansiedad)", val('scoreBAI'), val('scoreBAI')>15?"Significativo":"Bajo", val('scoreBAI')>15);
+        if(val('scoreBDI')) addRow("BDI-II (Depresión)", val('scoreBDI'), val('scoreBDI')>18?"Significativo":"Bajo", val('scoreBDI')>18);
+        if(val('scoreSSI')) addRow("SSI (Riesgo)", val('scoreSSI'), val('scoreSSI')>5?"RIESGO":"Bajo", true);
+
+        // SECCIÓN IPA (TABLA DETALLADA)
+        if(val('penTotal')) {
+            y+=5;
+            doc.setFillColor(252, 228, 236); doc.rect(20, y-5, 170, 8, 'F'); // Fondo rosa suave
+            doc.setFont("helvetica", "bold"); doc.setTextColor(136, 14, 79);
+            doc.text(`INVENTARIO DE PENSAMIENTOS (IPA) - Total: ${val('penTotal')}`, 25, y);
+            y+=10; doc.setTextColor(0); doc.setFontSize(9);
+
+            // Tabla 3 columnas
+            let xCol = 20;
+            for(let i=0; i<15; i++) {
+                let score = val(`penF${i+1}`);
+                if(score) {
+                    let nivel = score<=3 ? "Bajo" : score<=6 ? "Medio" : "ALTO";
+                    if(nivel === "ALTO") doc.setTextColor(198, 40, 40); // Rojo para altos
+                    doc.text(`${ipaNames[i]}: ${score} (${nivel})`, xCol, y);
+                    doc.setTextColor(0);
+                    
+                    y+=6;
+                    if((i+1)%5 === 0) { // Salto columna cada 5 items
+                        y -= 30; 
+                        xCol += 60;
                     }
                 }
             }
-        }
-    </script>
-
-    <style>
-        /* Estilos base para scroll suave y fondo */
-        body { 
-            background-color: #f3f4f6; 
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
-        
-        /* Animaciones suaves */
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Estilos para impresión */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; }
-            .shadow-lg { box-shadow: none !important; }
-        }
-    </style>
-</head>
-<body class="text-slate-800 antialiased min-h-screen pb-10">
-
-    <!-- ENCABEZADO FIJO -->
-    <header class="bg-gradient-to-r from-brand-900 to-brand-800 text-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/10 p-2 rounded-lg backdrop-blur-sm">
-                    <i class="ph-bold ph-brain text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight">Test IPA</h1>
-                    <p class="text-xs text-brand-100 opacity-90">Inventario de Pensamientos</p>
-                </div>
-            </div>
-            <!-- Botón discreto para reiniciar si se necesita -->
-            <button onclick="if(confirm('¿Reiniciar test?')) location.reload()" class="text-white/80 hover:text-white transition-colors">
-                <i class="ph ph-arrow-counter-clockwise text-xl"></i>
-            </button>
-        </div>
-    </header>
-
-    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
-
-        <!-- ============================================== -->
-        <!-- 1. SECCIÓN DE DATOS DE IDENTIFICACIÓN          -->
-        <!-- ============================================== -->
-        <section id="section-identity" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4">
-                <h2 class="font-bold text-slate-700 flex items-center gap-2">
-                    <i class="ph-duotone ph-user-circle text-brand-800 text-xl"></i>
-                    Datos del Evaluado
-                </h2>
-            </div>
-            
-            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
-                <!-- Nombre -->
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre Completo</label>
-                    <div class="relative">
-                        <i class="ph ph-user absolute left-3 top-3 text-slate-400"></i>
-                        <input type="text" id="nombre" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-600 outline-none transition-all font-semibold text-slate-700 placeholder-slate-400" placeholder="Ej. Juan Pérez López">
-                    </div>
-                </div>
-
-                <!-- Grupo -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Grupo / Semestre</label>
-                    <div class="relative">
-                        <i class="ph ph-users-three absolute left-3 top-3 text-slate-400"></i>
-                        <input type="text" id="grupo" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-600 outline-none transition-all" placeholder="Ej. 6° A Programación">
-                    </div>
-                </div>
-
-                <!-- Fecha -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha de Aplicación</label>
-                    <div class="relative">
-                        <i class="ph ph-calendar-blank absolute left-3 top-3 text-slate-400"></i>
-                        <input type="date" id="fecha" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-600 outline-none transition-all">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 2. INSTRUCCIONES Y CUESTIONARIO                -->
-        <!-- ============================================== -->
-        <section id="section-test" class="space-y-6">
-            
-            <!-- Instrucciones -->
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg flex gap-3 text-sm text-blue-800 shadow-sm">
-                <i class="ph-fill ph-info text-xl flex-shrink-0 mt-0.5"></i>
-                <p>
-                    <strong>Instrucciones:</strong> Lea cada afirmación y seleccione la opción que mejor describa con qué frecuencia tiene estos pensamientos. 
-                    <span class="block mt-1 text-xs opacity-80">(0 = Nunca, 1 = A veces, 2 = Bastantes veces, 3 = Con mucha frecuencia)</span>
-                </p>
-            </div>
-
-            <!-- Tabla de Preguntas -->
-            <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
-                        <thead class="text-xs text-brand-900 uppercase bg-brand-50 border-b border-brand-100">
-                            <tr>
-                                <th class="px-4 py-4 w-3/5 font-bold">Pensamiento / Situación</th>
-                                <th class="px-1 py-4 text-center w-[10%]">0</th>
-                                <th class="px-1 py-4 text-center w-[10%]">1</th>
-                                <th class="px-1 py-4 text-center w-[10%]">2</th>
-                                <th class="px-1 py-4 text-center w-[10%]">3</th>
-                            </tr>
-                        </thead>
-                        <tbody id="questions-body" class="divide-y divide-slate-100">
-                            <!-- JS insertará las filas aquí -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Botón de Acción -->
-            <div class="sticky bottom-4 z-40 bg-white/80 backdrop-blur p-2 rounded-2xl shadow-xl border border-slate-200">
-                <button onclick="calcularResultados()" class="w-full bg-brand-800 hover:bg-brand-900 text-white font-bold py-4 rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 text-lg">
-                    <i class="ph-bold ph-check-circle"></i>
-                    Finalizar y Ver Resultados
-                </button>
-            </div>
-        </section>
-
-        <!-- ============================================== -->
-        <!-- 3. RESULTADOS (Oculto inicialmente)            -->
-        <!-- ============================================== -->
-        <section id="section-results" class="hidden space-y-6 fade-in pt-4">
-            
-            <!-- Tarjeta de Resumen -->
-            <div class="bg-white rounded-2xl shadow-lg border-t-8 border-brand-800 overflow-hidden">
-                <div class="p-8 text-center">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4 shadow-inner">
-                        <i class="ph-fill ph-check text-3xl"></i>
-                    </div>
-                    
-                    <h2 class="text-2xl font-bold text-slate-800 mb-1">Evaluación Completada</h2>
-                    <p id="res-nombre" class="text-lg text-brand-800 font-medium mb-6">Alumno: --</p>
-                    
-                    <div class="flex justify-center items-end gap-2 mb-2">
-                        <span class="text-6xl font-black text-slate-800 tracking-tighter" id="res-score">0</span>
-                        <span class="text-lg text-slate-400 font-medium mb-2">/ 135 pts</span>
-                    </div>
-                    
-                    <div id="res-badge" class="inline-block px-6 py-2 rounded-full text-sm font-bold tracking-wide bg-gray-200 text-gray-600 mb-6">
-                        CALCULANDO...
-                    </div>
-
-                    <p class="text-slate-500 text-sm max-w-md mx-auto">
-                        A continuación se presenta el desglose de las distorsiones cognitivas detectadas. 
-                        Los niveles "Alto" indican áreas de oportunidad prioritarias.
-                    </p>
-                </div>
-                
-                <!-- Botón Principal: WhatsApp -->
-                <div class="bg-slate-50 p-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3 justify-center">
-                    <button onclick="enviarWhatsApp()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md flex items-center justify-center gap-2 transition-colors">
-                        <i class="ph-bold ph-whatsapp-logo text-xl"></i>
-                        Enviar Resultados al Evaluador
-                    </button>
-                    <button onclick="window.print()" class="sm:w-auto bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors">
-                        <i class="ph-bold ph-printer text-xl"></i>
-                        Imprimir
-                    </button>
-                </div>
-            </div>
-
-            <!-- Desglose de Factores -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="factors-grid">
-                <!-- Se llena con JS -->
-            </div>
-
-        </section>
-
-    </main>
-
-    <script>
-        // === CONFIGURACIÓN ===
-        const NUMERO_EVALUADOR = "523111477413"; // Número destino predeterminado
-        
-        const preguntas = [
-            "1. No puedo soportar ciertas cosas que me pasan.",
-            "2. Solamente me pasan cosas malas.",
-            "3. Todo lo que hago me sale mal.",
-            "4. Sé que piensan mal de mí.",
-            "5. ¿Y si tengo alguna enfermedad grave?.",
-            "6. Soy inferior a la gente en casi todo.",
-            "7. Si otros cambiaran su actitud yo me sentiría mejor.",
-            "8. ¡No hay derecho a que me traten así!.",
-            "9. Si me siento triste es porque soy un enfermo mental.",
-            "10. Mis problemas dependen de los que me rodean.",
-            "11. Soy un desastre como persona.",
-            "12. Yo tengo la culpa de todo lo que me pasa.",
-            "13. Debería de estar bien y no tener estos problemas.",
-            "14. Sé que tengo la razón y no me entienden.",
-            "15. Aunque ahora sufra, algún día tendré mi recompensa.",
-            "16. Es horrible que me pase esto.",
-            "17. Mi vida es un continuo fracaso.",
-            "18. Siempre tendré este problema.",
-            "19. Sé que me están mintiendo y engañando.",
-            "20. ¿Y si me vuelvo loco y pierdo la cabeza?.",
-            "21. Soy superior a la gente en casi todo.",
-            "22. Yo soy responsable del sufrimiento de los que me rodean.",
-            "23. Si me quisieran de verdad no me tratarían así.",
-            "24. Me siento culpable, y es porque he hecho algo malo.",
-            "25. Si tuviera más apoyo no tendría estos problemas.",
-            "26. Alguien que conozco es un imbécil.",
-            "27. Otros tienen la culpa de lo que me pasa.",
-            "28. No debería de cometer estos errores.",
-            "29. No quiere reconocer que estoy en lo cierto.",
-            "30. Ya vendrán mejores tiempos.",
-            "31. Es insoportable, no puedo aguantar más.",
-            "32. Soy incompetente e inútil.",
-            "33. Nunca podré salir de esta situación.",
-            "34. Quieren hacerme daño.",
-            "35. ¿Y si les pasa algo malo a las personas a quienes quiero?.",
-            "36. La gente hace las cosas mejor que yo.",
-            "37. Soy una víctima de mis circunstancias.",
-            "38. No me tratan como deberían hacerlo y me merezco.",
-            "39. Si tengo estos síntomas es porque soy un enfermo.",
-            "40. Si tuviera mejor situación económica no tendría estos problemas.",
-            "41. Soy un neurótico.",
-            "42. Lo que me pasa es un castigo que merezco.",
-            "43. Debería recibir más atención y cariño de otros.",
-            "44. Tengo razón, y voy a hacer lo que me da la gana.",
-            "45. Tarde o temprano me irán las cosas mejor."
-        ];
-
-        const factores = [
-            "Filtraje", "Pensamiento Polarizado", "Sobregeneralización", "Interpretación Pensamiento",
-            "Visión Catastrófica", "Personalización", "Falacia de Control", "Falacia de Justicia",
-            "Razonamiento Emocional", "Falacia de Cambio", "Etiquetas Globales", "Culpabilidad",
-            "Los Deberías", "Falacia de Razón", "Falacia Recompensa Divina"
-        ];
-
-        let datosResultado = null;
-
-        // === INICIALIZACIÓN ===
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('fecha').valueAsDate = new Date();
-            renderTable();
-        });
-
-        function renderTable() {
-            const tbody = document.getElementById('questions-body');
-            let html = '';
-            
-            preguntas.forEach((p, index) => {
-                const num = index + 1;
-                const texto = p.split('. ')[1]; // Quitar número del string original si existe
-                
-                // Color alternado para filas
-                const bgClass = num % 2 === 0 ? 'bg-slate-50' : 'bg-white';
-                
-                html += `
-                <tr class="${bgClass} hover:bg-brand-50 transition-colors">
-                    <td class="px-4 py-3 border-r border-slate-100">
-                        <span class="text-xs font-bold text-slate-400 mr-1">${num}.</span>
-                        <span class="text-slate-700 font-medium">${texto}</span>
-                    </td>
-                    ${[0, 1, 2, 3].map(val => `
-                        <td class="p-0 text-center align-middle border-r border-slate-100 last:border-0 relative">
-                            <label class="block w-full h-full py-4 cursor-pointer group">
-                                <input type="radio" name="q${num}" value="${val}" class="peer sr-only">
-                                <div class="w-8 h-8 mx-auto rounded-full border-2 border-slate-300 text-transparent 
-                                            peer-checked:bg-brand-600 peer-checked:border-brand-600 peer-checked:text-white
-                                            group-hover:border-brand-300 transition-all flex items-center justify-center font-bold">
-                                    ${val}
-                                </div>
-                            </label>
-                        </td>
-                    `).join('')}
-                </tr>`;
-            });
-            tbody.innerHTML = html;
+            y += 35; // Espacio después de la tabla IPA
+            doc.setFontSize(10);
         }
 
-        // === CÁLCULO DE RESULTADOS ===
-        function calcularResultados() {
-            // 1. Validar Identificación
-            const nombre = document.getElementById('nombre').value.trim();
-            const grupo = document.getElementById('grupo').value.trim();
-            const fecha = document.getElementById('fecha').value;
+        // Otros
+        if(val('scoreGOCA')) addRow("GOCA (Aula)", val('scoreGOCA'), val('scoreGOCA')>80?"Alerta":"Bajo");
+        if(val('scoreLIRA')) addRow("LIRA (Académico)", val('scoreLIRA'), val('scoreLIRA')>=5?"REFERIR":"-");
 
-            if (!nombre || !grupo) {
-                alert("⚠️ Por favor, ingresa tu Nombre y Grupo al inicio de la página.");
-                document.getElementById('section-identity').scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
+        y+=10;
+        doc.rect(20, y, 170, 30);
+        doc.text("Observaciones:", 22, y+5);
 
-            // 2. Obtener respuestas y sumar
-            let puntajes = []; // base 1
-            let total = 0;
-            let contestadas = 0;
-
-            for (let i = 1; i <= 45; i++) {
-                const opcion = document.querySelector(`input[name="q${i}"]:checked`);
-                if (opcion) {
-                    const val = parseInt(opcion.value);
-                    puntajes[i] = val;
-                    total += val;
-                    contestadas++;
-                }
-            }
-
-            // Validar completitud
-            if (contestadas < 45) {
-                alert(`⚠️ Aún faltan ${45 - contestadas} preguntas por responder.`);
-                return;
-            }
-
-            // 3. Calcular Factores (Lógica: item i, i+15, i+30)
-            let detalleFactores = [];
-            for (let f = 0; f < 15; f++) {
-                // Indices de preguntas (1-based)
-                const q1 = f + 1;
-                const q2 = f + 16;
-                const q3 = f + 31;
-                
-                const suma = puntajes[q1] + puntajes[q2] + puntajes[q3];
-                
-                let nivel = "Bajo";
-                if (suma >= 4 && suma <= 6) nivel = "Medio";
-                if (suma >= 7) nivel = "Alto";
-
-                detalleFactores.push({
-                    nombre: factores[f],
-                    suma: suma,
-                    nivel: nivel
-                });
-            }
-
-            // 4. Determinar Nivel Global
-            let nivelGlobal = "BAJO";
-            let colorGlobal = "bg-green-500";
-            if (total > 45) { nivelGlobal = "MEDIO"; colorGlobal = "bg-yellow-500"; }
-            if (total > 90) { nivelGlobal = "ALTO"; colorGlobal = "bg-red-600"; }
-
-            // Guardar datos en memoria para WhatsApp
-            datosResultado = {
-                nombre, grupo, fecha, total, nivelGlobal, detalleFactores
-            };
-
-            // === RENDERIZAR RESULTADOS ===
-            
-            // Llenar tarjeta principal
-            document.getElementById('res-nombre').innerText = `Alumno: ${nombre} (${grupo})`;
-            document.getElementById('res-score').innerText = total;
-            
-            const badge = document.getElementById('res-badge');
-            badge.className = `inline-block px-6 py-2 rounded-full text-sm font-bold tracking-wide text-white mb-6 ${colorGlobal}`;
-            badge.innerText = `NIVEL DE DISTORSIÓN: ${nivelGlobal}`;
-
-            // Llenar Grid de Factores
-            const grid = document.getElementById('factors-grid');
-            grid.innerHTML = ''; // Limpiar
-
-            detalleFactores.forEach((item, idx) => {
-                // Estilos según nivel
-                let borderClass = "border-green-500";
-                let bgClass = "bg-green-50";
-                let textClass = "text-green-700";
-                
-                if (item.nivel === "Medio") {
-                    borderClass = "border-yellow-500";
-                    bgClass = "bg-yellow-50";
-                    textClass = "text-yellow-700";
-                } else if (item.nivel === "Alto") {
-                    borderClass = "border-red-500";
-                    bgClass = "bg-red-50";
-                    textClass = "text-red-700";
-                }
-
-                grid.innerHTML += `
-                    <div class="bg-white rounded-lg shadow-sm border-l-4 ${borderClass} p-4 flex justify-between items-center">
-                        <div>
-                            <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Factor ${idx + 1}</span>
-                            <h4 class="font-bold text-slate-800 text-sm">${item.nombre}</h4>
-                        </div>
-                        <div class="text-right">
-                            <span class="block text-xl font-bold ${textClass}">${item.suma}</span>
-                            <span class="text-[10px] font-bold uppercase tracking-wider ${textClass} bg-white px-2 py-0.5 rounded border border-current opacity-80">${item.nivel}</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Mostrar Sección
-            document.getElementById('section-identity').classList.add('opacity-50', 'pointer-events-none');
-            document.getElementById('section-test').classList.add('hidden');
-            document.getElementById('section-results').classList.remove('hidden');
-            
-            // Scroll arriba
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // === ENVIAR POR WHATSAPP ===
-        function enviarWhatsApp() {
-            if (!datosResultado) return;
-
-            const d = datosResultado;
-            
-            // Filtrar distorsiones altas para resaltarlas en el mensaje
-            const altas = d.detalleFactores.filter(f => f.nivel === "Alto").map(f => f.nombre);
-            
-            // Construir Mensaje
-            let msg = `*RESULTADOS TEST IPA* 🧠%0A`;
-            msg += `👤 *Alumno:* ${d.nombre}%0A`;
-            msg += `🏫 *Grupo:* ${d.grupo}%0A`;
-            msg += `📅 *Fecha:* ${d.fecha}%0A%0A`;
-            
-            msg += `📊 *Puntuación Global:* ${d.total} (${d.nivelGlobal})%0A`;
-            
-            if (altas.length > 0) {
-                msg += `⚠️ *Atención Prioritaria en:*%0A`;
-                altas.forEach(a => msg += `- ${a}%0A`);
-            } else {
-                msg += `✅ Sin distorsiones críticas.%0A`;
-            }
-            
-            msg += `%0A📝 *Detalle Completo:*%0A`;
-            d.detalleFactores.forEach((f, i) => {
-                // Solo enviamos si es medio o alto para no saturar el mensaje, o todos si se prefiere
-                if(f.nivel !== "Bajo") {
-                    msg += `${i+1}. ${f.nombre}: ${f.suma} (${f.nivel})%0A`;
-                }
-            });
-
-            // Abrir API de WhatsApp
-            window.open(`https://api.whatsapp.com/send?phone=${NUMERO_EVALUADOR}&text=${msg}`, '_blank');
-        }
-    </script>
+        doc.save(`Expediente_${val('nombre')}.pdf`);
+    }
+</script>
 </body>
 </html>
+
 
