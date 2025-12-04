@@ -5,120 +5,210 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestor de Evaluaciones - Suite Integral</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-    body { font-family: -apple-system, sans-serif; background-color: #f4f6f8; padding: 20px; margin: 0; }
+    /* ESTILO PROFESIONAL (Basado en tu imagen) */
+    :root { --primary: #d81b60; --primary-dark: #ad1457; --bg: #f4f6f8; --text: #263238; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
     
-    /* BARRA SUPERIOR */
-    .top-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-    .top-title { font-size: 1.2rem; font-weight: 800; color: #263238; margin: 0; }
-    .btn-home { background-color: #eceff1; color: #455a64; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; transition: 0.2s; }
-    .btn-home:hover { background-color: #cfd8dc; }
-
-    .main-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
+    /* HEADER */
+    .top-bar { background: white; padding: 15px 25px; border-radius: 16px; box-shadow: 0 2px 15px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .brand { display: flex; align-items: center; gap: 15px; }
+    .brand-icon { width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; }
+    .brand-text h1 { font-size: 1.1rem; font-weight: 800; margin: 0; }
+    .brand-text p { font-size: 0.8rem; color: #90a4ae; margin: 0; }
     
-    /* COLUMNA IZQUIERDA (CAPTURA) */
-    .panel-captura { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); height: fit-content; }
-    .panel-title { color: #e91e63; font-size: 1rem; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+    /* LAYOUT GRID */
+    .dashboard-grid { display: grid; grid-template-columns: 350px 1fr; gap: 25px; max-width: 1400px; margin: 0 auto; }
     
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 0.75rem; font-weight: bold; color: #546e7a; margin-bottom: 4px; text-transform: uppercase; }
-    input, select { width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box; background: #fafafa; transition: 0.2s; }
-    input:focus { border-color: #e91e63; background: white; outline: none; }
-
-    /* COLUMNA DERECHA (TABLA) */
-    .panel-tabla { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 500px; }
+    /* PANELES */
+    .panel { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); height: fit-content; }
     
-    .student-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    .student-table th { text-align: left; font-size: 0.75rem; color: #90a4ae; text-transform: uppercase; padding: 10px; border-bottom: 1px solid #eee; }
-    .student-table td { padding: 15px 10px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
-    .student-table tr:hover { background-color: #f9fafb; cursor: pointer; }
+    /* FORMULARIOS */
+    .section-title { font-size: 0.9rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+    .input-group { margin-bottom: 15px; }
+    label { display: block; font-size: 0.75rem; font-weight: 700; color: #546e7a; margin-bottom: 5px; letter-spacing: 0.5px; }
+    input, select { width: 100%; padding: 12px; border: 2px solid #eceff1; border-radius: 10px; font-size: 0.9rem; transition: 0.2s; box-sizing: border-box; }
+    input:focus { border-color: var(--primary); outline: none; background: #fff; }
+
+    /* LISTA DE PRUEBAS (Izquierda) */
+    .test-list { display: flex; flex-direction: column; gap: 8px; max-height: 500px; overflow-y: auto; padding-right: 5px; }
+    .test-item { display: flex; align-items: center; padding: 12px; border: 2px solid #f0f2f5; border-radius: 12px; transition: 0.2s; background: white; }
+    .test-item:hover { border-color: #e0e0e0; background: #fafafa; }
+    .test-item input { width: 20px; height: 20px; margin: 0 10px 0 0; accent-color: var(--primary); cursor: pointer; border: 2px solid #ddd; }
     
-    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-right: 5px; margin-bottom: 2px; }
-    .bg-gray { background: #eceff1; color: #455a64; }
-    .bg-red { background: #ffebee; color: #c62828; }
-    .bg-orange { background: #fff3e0; color: #ef6c00; }
-    .bg-blue { background: #e3f2fd; color: #1565C0; }
-    .bg-purple { background: #f3e5f5; color: #7b1fa2; }
+    .test-info { flex: 1; cursor: help; } /* Cursor de ayuda para indicar tooltip */
+    .test-name { font-weight: 600; font-size: 0.9rem; color: #37474f; }
+    .test-desc { font-size: 0.7rem; color: #90a4ae; }
+    
+    .btn-preview { background: #e3f2fd; color: #1565C0; border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; margin-left: 5px; }
+    .btn-preview:hover { background: #1565C0; color: white; }
 
-    /* BOTONES */
-    .btn-action { width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-    .btn-open { background: #e3f2fd; color: #1976D2; margin-right: 5px; }
-    .btn-open:hover { background: #1976D2; color: white; }
-    .btn-del { background: #ffebee; color: #c62828; }
-    .btn-del:hover { background: #c62828; color: white; }
+    /* BOTÓN GENERAR */
+    .btn-generate { background: var(--primary); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 15px rgba(216, 27, 96, 0.3); transition: transform 0.2s; }
+    .btn-generate:active { transform: scale(0.98); }
 
-    .btn-main { background: #e91e63; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3); }
-    .btn-main:active { transform: scale(0.98); }
+    /* TABLA EXPEDIENTES (Derecha) */
+    .student-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+    .student-table th { text-align: left; font-size: 0.75rem; color: #b0bec5; font-weight: 800; padding: 0 15px; text-transform: uppercase; }
+    .student-table td { background: #fcfcfc; padding: 15px; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; }
+    .student-table td:first-child { border-left: 1px solid #f0f0f0; border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+    .student-table td:last-child { border-right: 1px solid #f0f0f0; border-top-right-radius: 12px; border-bottom-right-radius: 12px; text-align: right; }
+    
+    .user-avatar { width: 35px; height: 35px; background: #eceff1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #546e7a; font-size: 0.8rem; margin-right: 10px; }
+    .user-info { display: flex; align-items: center; }
+    
+    .badge { font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; font-weight: 700; background: #eceff1; color: #546e7a; margin-right: 4px; }
+    .badge.alert { background: #ffebee; color: #c62828; }
+    
+    .actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .btn-icon { width: 36px; height: 36px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .btn-edit { background: #e3f2fd; color: #1976D2; }
+    .btn-edit:hover { background: #1976D2; color: white; }
+    .btn-del { background: #fff; border: 1px solid #ffcdd2; color: #e53935; }
 
-    /* MODAL SIMPLIFICADO */
-    .scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f5f5f5; padding: 10px; border-radius: 8px; margin-top: 10px; }
+    /* MODAL EDICIÓN (Overlay) */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 1000; display: none; justify-content: center; align-items: center; }
+    .modal-content { background: white; width: 90%; max-width: 800px; max-height: 90vh; border-radius: 20px; padding: 30px; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+    
+    .close-modal { float: right; cursor: pointer; font-size: 1.5rem; color: #90a4ae; }
+    
+    /* Grilla de Inputs en Modal */
+    .scores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px; background: #f5f5f5; padding: 15px; border-radius: 12px; }
+    .score-item label { font-size: 0.7rem; margin-bottom: 2px; }
+    .score-item input { padding: 8px; text-align: center; font-weight: bold; color: #37474f; }
 
-    /* Responsive */
-    @media (max-width: 800px) {
-        .main-container { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
 <div class="top-bar">
-    <div style="display:flex; align-items:center; gap:15px;">
-        <div style="width:40px; height:40px; background:#e91e63; border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">SI</div>
-        <div>
-            <h1 class="top-title">Gestor de Evaluaciones</h1>
-            <span style="font-size:0.8rem; color:#78909c;">Suite Integral v12.0</span>
+    <div class="brand">
+        <div class="brand-icon">📊</div>
+        <div class="brand-text">
+            <h1>Gestor de Evaluaciones</h1>
+            <p>Suite Integral v13.0</p>
         </div>
     </div>
-    <a href="index.html" class="btn-home">⬅ Volver al Menú</a>
+    <div style="display:flex; gap:10px;">
+        <button onclick="window.location.href='index.html'" class="btn-preview" style="width:auto; padding:0 15px; font-weight:bold;">🏠 Ir al Menú Principal</button>
+    </div>
 </div>
 
-<div class="main-container">
+<div class="dashboard-grid">
     
-    <!-- PANEL IZQUIERDO: FORMULARIO DE EDICIÓN -->
-    <div class="panel-captura">
-        <div class="panel-title">📝 Datos del Expediente</div>
-        
-        <input type="hidden" id="id_exp"> <!-- ID Oculto -->
-        
-        <div class="form-group">
-            <label>Nombre del Alumno</label>
-            <input type="text" id="nombre" placeholder="Ej. Juan Pérez">
-        </div>
-        
-        <div style="display:flex; gap:10px;">
-            <div class="form-group" style="flex:1">
-                <label>Edad</label>
-                <input type="number" id="edad">
-            </div>
-            <div class="form-group" style="flex:1">
-                <label>Fecha</label>
-                <input type="date" id="fecha">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label>Grupo / Semestre</label>
-            <input type="text" id="grupo" placeholder="Ej. 6A Programación">
+    <!-- PANEL IZQUIERDO: DISPATCHER (Enviar Pruebas) -->
+    <div class="panel">
+        <div class="section-title">🚀 Nueva Batería</div>
+        <p style="font-size:0.85rem; color:#78909c; margin-bottom:20px;">Selecciona las pruebas y genera el enlace para el alumno.</p>
+
+        <div class="test-list">
+            <!-- LISTA COMPLETA DE PRUEBAS -->
+            <!-- Función auxiliar para generar items -->
+            <script>
+                const tests = [
+                    {id:'chkPHQ', n:'PHQ-9', t:'Cuestionario de Salud (Depresión)', f:'phq9.html'},
+                    {id:'chkGAD', n:'GAD-7', t:'Escala de Ansiedad Generalizada', f:'gad7.html'},
+                    {id:'chkBAI', n:'BAI', t:'Inventario de Ansiedad de Beck', f:'ansiedadbeck.html'},
+                    {id:'chkBDI', n:'BDI-II', t:'Inventario de Depresión de Beck', f:'depbeck.html'},
+                    {id:'chkHADS', n:'HADS', t:'Escala Hospitalaria de Ansiedad y Depresión', f:'hads.html'},
+                    {id:'chkIDARE', n:'IDARE', t:'Inventario de Ansiedad Rasgo-Estado', f:'idare.html'},
+                    {id:'chkPEN', n:'PenAuto (IPA)', t:'Inventario de Pensamientos Automáticos', f:'penauto.html'},
+                    {id:'chkSSI', n:'SSI', t:'Escala de Ideación Suicida', f:'ssibeck.html'},
+                    {id:'chkBHS', n:'BHS', t:'Escala de Desesperanza de Beck', f:'bhs.html'},
+                    {id:'chkPlut', n:'Plutchik', t:'Escala de Riesgo Suicida', f:'plutchik.html'},
+                    {id:'chkCSS', n:'Columbia', t:'Escala de Severidad Suicida', f:'columbia.html'},
+                    {id:'chkGOCA', n:'GOCA', t:'Guía de Observación Conductual (Docente)', f:'goca.html'},
+                    {id:'chkLIRA', n:'LIRA', t:'Lista de Riesgo Académico (Docente)', f:'lira.html'},
+                    {id:'chkCDFR', n:'CDFR', t:'Cuestionario de Factores de Riesgo', f:'cdfr.html'},
+                    {id:'chkEBMA', n:'EBMA', t:'Escala de Motivación Académica', f:'ebma.html'}
+                ];
+
+                tests.forEach(t => {
+                    document.write(`
+                        <div class="test-item">
+                            <input type="checkbox" id="${t.id}">
+                            <div class="test-info" title="${t.t}">
+                                <div class="test-name">${t.n}</div>
+                                <div class="test-desc">${t.t.substring(0, 28)}...</div>
+                            </div>
+                            <button class="btn-preview" title="Ver prueba" onclick="window.open('${t.f}', '_blank')">👁️</button>
+                        </div>
+                    `);
+                });
+            </script>
         </div>
 
-        <div style="border-top:1px dashed #ccc; margin:15px 0;"></div>
-        <div class="panel-title" style="color:#455a64; font-size:0.9rem;">📊 Resultados Cargados</div>
+        <button class="btn-generate" onclick="generarLink()">🔗 Generar Link Único</button>
+    </div>
 
+    <!-- PANEL DERECHO: DATABASE (Expedientes) -->
+    <div class="panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <div class="section-title" style="margin:0;">📂 Expedientes Activos</div>
+            <input type="text" id="search" placeholder="🔍 Buscar alumno..." style="padding:8px; width:200px; border-radius:8px; border:1px solid #ddd;" onkeyup="renderTable()">
+        </div>
+
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th>Alumno / Grupo</th>
+                    <th>Resultados Clave</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Se llena con JS -->
+            </tbody>
+        </table>
+        
+        <div id="empty-msg" style="text-align:center; color:#b0bec5; margin-top:40px;">
+            <div style="font-size:3rem; margin-bottom:10px;">📭</div>
+            No hay expedientes guardados.<br>Realiza una prueba y guárdala.
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE EDICIÓN / VISUALIZACIÓN -->
+<div id="editModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2 style="color:#37474f; margin-top:0;">📝 Detalle del Expediente</h2>
+        
+        <input type="hidden" id="id_exp">
+        
+        <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+            <div><label>Nombre</label><input type="text" id="nombre"></div>
+            <div><label>Edad</label><input type="number" id="edad"></div>
+            <div><label>Grupo</label><input type="text" id="grupo"></div>
+            <div><label>Fecha</label><input type="date" id="fecha"></div>
+        </div>
+
+        <div class="section-title">📊 Resultados Clínicos</div>
         <div class="scores-grid">
-            <div><label>PHQ-9</label><input type="number" id="scorePHQ"></div>
-            <div><label>GAD-7</label><input type="number" id="scoreGAD"></div>
-            <div><label>BAI</label><input type="number" id="scoreBAI"></div>
-            <div><label>BDI-II</label><input type="number" id="scoreBDI"></div>
-            <div><label>IPA</label><input type="number" id="penTotal"></div>
-            <div><label>GOCA</label><input type="number" id="scoreGOCA"></div>
-            <div><label>LIRA</label><input type="number" id="scoreLIRA"></div>
-            <div><label>SSI</label><input type="number" id="scoreSSI"></div>
+            <div class="score-item"><label>PHQ-9</label><input type="number" id="scorePHQ"></div>
+            <div class="score-item"><label>GAD-7</label><input type="number" id="scoreGAD"></div>
+            <div class="score-item"><label>BAI</label><input type="number" id="scoreBAI"></div>
+            <div class="score-item"><label>BDI-II</label><input type="number" id="scoreBDI"></div>
+            <div class="score-item"><label>HADS-A</label><input type="number" id="hadsA"></div>
+            <div class="score-item"><label>HADS-D</label><input type="number" id="hadsD"></div>
+            <div class="score-item"><label>IPA</label><input type="number" id="penTotal"></div>
+            <div class="score-item"><label>IDARE-E</label><input type="number" id="idareE"></div>
         </div>
-        
+
+        <div class="section-title" style="margin-top:20px; color:#7b1fa2;">🚨 Riesgo y Psicopedagogía</div>
+        <div class="scores-grid" style="background:#f3e5f5;">
+            <div class="score-item"><label>SSI</label><input type="number" id="scoreSSI"></div>
+            <div class="score-item"><label>BHS</label><input type="number" id="scoreBHS"></div>
+            <div class="score-item"><label>GOCA</label><input type="number" id="scoreGOCA"></div>
+            <div class="score-item"><label>LIRA</label><input type="number" id="scoreLIRA"></div>
+            <div class="score-item"><label>EBMA(IAR)</label><input type="number" id="ebmaIAR"></div>
+        </div>
+
         <!-- Campos Ocultos para PDF -->
         <div style="display:none;">
-            <input id="sexo"><input id="hadsA"><input id="hadsD"><input id="idareE"><input id="idareR"><input id="scoreBHS"><input id="ebmaIAR"><input id="scoreCDFR"><input id="scorePlut">
-            <!-- Factores -->
+            <input id="sexo"><input id="idareR"><input id="scoreCDFR"><input id="scorePlut">
             <input id="f1"><input id="f2"><input id="f3"><input id="f4">
             <input id="flagPHQ"><input id="ssiFlags"><input id="gocaNivel">
             <input id="liraCrisis"><input id="cdfrCita"><input id="ebmaPerfil">
@@ -127,100 +217,81 @@
             <input id="penF1"><input id="penF2"><input id="penF3"><input id="penF4"><input id="penF5"><input id="penF6"><input id="penF7"><input id="penF8"><input id="penF9"><input id="penF10"><input id="penF11"><input id="penF12"><input id="penF13"><input id="penF14"><input id="penF15">
         </div>
 
-        <div style="margin-top:20px;">
-            <button onclick="guardarExpediente()" class="btn-main">💾 Guardar Cambios</button>
-            <button onclick="generarPDF()" class="btn-main" style="background:#37474f; margin-top:10px;">📄 Generar PDF</button>
-            <button onclick="limpiarFormulario()" style="background:transparent; color:#78909c; border:none; width:100%; padding:10px; cursor:pointer; margin-top:5px;">Limpiar / Nuevo</button>
+        <div style="margin-top:25px; display:flex; gap:10px;">
+            <button class="btn-generate" style="background:#1976D2;" onclick="guardarCambios()">💾 Guardar Cambios</button>
+            <button class="btn-generate" style="background:#37474f;" onclick="generarPDF()">📄 Descargar PDF</button>
         </div>
     </div>
-
-    <!-- PANEL DERECHO: LISTA DE EXPEDIENTES -->
-    <div class="panel-tabla">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2 style="margin:0; font-size:1.1rem; color:#263238;">Expedientes Activos</h2>
-            <span id="counter" style="background:#eceff1; padding:5px 10px; border-radius:10px; font-size:0.8rem; font-weight:bold;">0</span>
-        </div>
-        <input type="text" id="searchBox" placeholder="🔍 Buscar alumno..." style="margin-top:15px; padding:12px;" onkeyup="renderTable()">
-
-        <table class="student-table">
-            <thead>
-                <tr>
-                    <th>Alumno / Grupo</th>
-                    <th>Resultados Clave</th>
-                    <th style="text-align:right;">Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <!-- JS llena esto -->
-            </tbody>
-        </table>
-    </div>
-
 </div>
 
 <script>
     const DB_KEY = "cbta_db_expedientes";
-    const TEMP_KEY = "cbta_paciente_temp"; 
-    document.getElementById('fecha').valueAsDate = new Date();
+    const TEMP_KEY = "cbta_paciente_temp";
+    const NUMERO_DESTINO = "523111477413";
+    const ipaNames = ["Filtraje", "Pens. Polarizado", "Sobregeneralización", "Int. Pensamiento", "Visión Catastrófica", "Personalización", "Falacia Control", "Falacia Justicia", "Raz. Emocional", "Falacia Cambio", "Etiquetas Globales", "Culpabilidad", "Los Deberías", "Falacia Razón", "Falacia Recompensa"];
 
-    window.addEventListener('DOMContentLoaded', () => {
-        cargarDesdeTemp();
+    document.addEventListener('DOMContentLoaded', () => {
         renderTable();
+        checkTempData();
     });
 
-    // 1. TABLA (El corazón del sistema)
+    // --- FUNCIÓN 1: TABLA DE EXPEDIENTES ---
     function renderTable() {
         const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
         const tbody = document.getElementById('tableBody');
-        const filtro = document.getElementById('searchBox').value.toLowerCase();
+        const filtro = document.getElementById('search').value.toLowerCase();
+        const emptyMsg = document.getElementById('empty-msg');
         
-        document.getElementById('counter').innerText = db.length;
         tbody.innerHTML = "";
+        let count = 0;
 
-        if(db.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px; color:#90a4ae;">No hay expedientes guardados aún.</td></tr>`;
-            return;
-        }
+        db.forEach(x => {
+            if((x.nombre || "").toLowerCase().includes(filtro)) {
+                count++;
+                let badges = "";
+                // Badges inteligentes (solo si hay dato)
+                if(x.bai) badges += `<span class="badge">BAI:${x.bai}</span>`;
+                if(x.bdi) badges += `<span class="badge">BDI:${x.bdi}</span>`;
+                if(x.goca) badges += `<span class="badge">GOCA:${x.goca}</span>`;
+                if(x.ssi > 0) badges += `<span class="badge alert">SSI:${x.ssi}</span>`;
 
-        db.filter(x => (x.nombre || "").toLowerCase().includes(filtro)).forEach(x => {
-            // Crear Badges de Resultados
-            let badges = "";
-            if(x.scoreBAI) badges += `<span class="badge bg-gray">BAI:${x.scoreBAI}</span>`;
-            if(x.scoreBDI) badges += `<span class="badge bg-blue">BDI:${x.scoreBDI}</span>`;
-            if(x.penTotal) badges += `<span class="badge bg-purple">IPA:${x.penTotal}</span>`;
-            if(x.scoreGOCA) badges += `<span class="badge bg-orange">GOCA:${x.scoreGOCA}</span>`;
-            if(x.scoreSSI >= 1) badges += `<span class="badge bg-red">SSI:${x.scoreSSI}</span>`;
-
-            let row = document.createElement('tr');
-            row.innerHTML = `
-                <td>
-                    <div style="font-weight:bold; color:#263238;">${x.nombre}</div>
-                    <div style="font-size:0.75rem; color:#78909c;">${x.grupo || 'Sin grupo'} • ${x.fechaReg || ''}</div>
-                </td>
-                <td>${badges || '<span style="color:#cfd8dc; font-size:0.8rem;">Sin datos</span>'}</td>
-                <td style="text-align:right; display:flex; justify-content:flex-end; gap:5px;">
-                    <button class="btn-action btn-open" title="Abrir Expediente" onclick="cargarExpediente('${x.id_exp}')">📂</button>
-                    <button class="btn-action btn-del" title="Eliminar" onclick="borrarExpediente('${x.id_exp}')">🗑️</button>
-                </td>
-            `;
-            // Evento para clic en fila (excepto botones)
-            row.addEventListener('click', (e) => {
-                if(e.target.tagName !== 'BUTTON') cargarExpediente(x.id_exp);
-            });
-            tbody.appendChild(row);
+                let row = `<tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">${x.nombre.charAt(0)}</div>
+                            <div>
+                                <div style="font-weight:700; font-size:0.9rem;">${x.nombre}</div>
+                                <div style="font-size:0.75rem; color:#90a4ae;">${x.grupo || 'Sin Grupo'} • ${x.fechaReg}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${badges || '<span style="color:#cfd8dc; font-size:0.7rem;">Sin datos</span>'}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-icon btn-edit" onclick="abrirExpediente('${x.id_exp}')" title="Abrir / Editar">✏️</button>
+                            <button class="btn-icon btn-del" onclick="borrarExpediente('${x.id_exp}')" title="Eliminar">🗑️</button>
+                        </div>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            }
         });
+        
+        emptyMsg.style.display = count === 0 ? 'block' : 'none';
     }
 
-    // 2. CARGAR DATOS AL FORMULARIO
-    function cargarExpediente(id) {
+    // --- FUNCIÓN 2: ABRIR MODAL Y CARGAR ---
+    function abrirExpediente(id) {
         const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
         const record = db.find(x => x.id_exp === id);
         if(record) {
             llenarFormulario(record);
-            // Efecto visual para indicar carga
-            document.querySelector('.panel-captura').style.backgroundColor = "#fffde7";
-            setTimeout(() => { document.querySelector('.panel-captura').style.backgroundColor = "white"; }, 300);
+            document.getElementById('editModal').style.display = 'flex';
         }
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').style.display = 'none';
     }
 
     function llenarFormulario(d) {
@@ -228,133 +299,157 @@
             const el = document.getElementById(id);
             if(el) el.value = (val !== undefined && val !== null) ? val : ""; 
         };
+        // Datos Generales
+        set('id_exp', d.id_exp); set('nombre', d.nombre); set('edad', d.edad); 
+        set('grupo', d.grupo); set('fecha', d.fecha); set('sexo', d.sexo);
         
-        // Generales
-        set('nombre', d.nombre); set('edad', d.edad); set('fecha', d.fecha); set('grupo', d.grupo); set('sexo', d.sexo);
-        set('id_exp', d.id_exp);
-
         // Scores
-        set('scorePHQ', d.phq); set('flagPHQ', d.phqFlag); set('scoreGAD', d.gad);
-        set('hadsA', d.hadsA); set('hadsD', d.hadsD);
-        set('scoreBAI', d.bai); set('f1', d.f1); set('f2', d.f2); set('f3', d.f3); set('f4', d.f4);
-        set('idareE', d.idareE); set('idareR', d.idareR);
-        set('scoreBDI', d.bdi); set('scoreBHS', d.bhs);
-        set('scoreSSI', d.ssi); set('ssiFlags', d.ssiFlags);
-        set('scorePlut', d.plut); set('scoreGOCA', d.goca); set('gocaNivel', d.gocaNivel);
-        set('scoreLIRA', d.lira); set('liraCrisis', d.liraCrisis);
-        set('scoreCDFR', d.cdfr); set('cdfrCita', d.cdfrCita);
-        set('ebmaIAR', d.ebmaIAR); set('ebmaPerfil', d.ebmaPerfil);
-        set('penTotal', d.penTotal);
-
-        // Columbia & IPA Factors
+        set('scorePHQ', d.phq); set('scoreGAD', d.gad); set('scoreBAI', d.bai);
+        set('scoreBDI', d.bdi); set('hadsA', d.hadsA); set('hadsD', d.hadsD);
+        set('penTotal', d.penTotal); set('idareE', d.idareE); set('idareR', d.idareR);
+        set('scoreSSI', d.ssi); set('scoreBHS', d.bhs); set('scoreGOCA', d.goca);
+        set('scoreLIRA', d.lira); set('ebmaIAR', d.ebmaIAR);
+        
+        // Ocultos
+        set('flagPHQ', d.phqFlag); set('ssiFlags', d.ssiFlags);
+        set('gocaNivel', d.gocaNivel); set('liraCrisis', d.liraCrisis);
+        set('ebmaPerfil', d.ebmaPerfil); set('cdfrCita', d.cdfrCita);
         set('cssrsId', d.cId); set('cssrsPlan', d.cPlan); set('cssrsCond', d.cCond);
+        
+        // IPA Factores
         for(let i=1; i<=15; i++) set(`penF${i}`, d[`penF${i}`]);
     }
 
-    function cargarDesdeTemp() {
+    // --- FUNCIÓN 3: GUARDAR DESDE MODAL ---
+    function guardarCambios() {
+        const id = document.getElementById('id_exp').value;
+        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        
+        // Recopilar datos del modal
+        const inputs = document.querySelectorAll('#editModal input, #editModal select');
+        let newData = {};
+        inputs.forEach(i => newData[i.id] = i.value);
+        newData.fechaReg = new Date().toLocaleDateString();
+
+        // Actualizar
+        const index = db.findIndex(x => x.id_exp === id);
+        if(index !== -1) {
+            db[index] = { ...db[index], ...newData }; // Merge
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            alert("✅ Expediente actualizado.");
+            renderTable();
+            closeModal();
+        }
+    }
+
+    // --- FUNCIÓN 4: DETECTAR DATOS NUEVOS DE TEST ---
+    function checkTempData() {
         const raw = localStorage.getItem(TEMP_KEY);
         if(raw) {
             const d = JSON.parse(raw);
-            // Solo cargar automáticamente si no hay conflicto, o preguntar
-            if(confirm(`📥 Recibidos datos nuevos de: ${d.nombre}. ¿Cargar al formulario?`)) {
-                llenarFormulario(d);
+            if(confirm(`📥 Se han recibido datos de: ${d.nombre}\n¿Deseas crear o actualizar su expediente?`)) {
+                // Guardar directo en DB y borrar temp
+                let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+                
+                // Buscar si ya existe por nombre (simple match)
+                let existingIndex = db.findIndex(x => x.nombre === d.nombre);
+                
+                if(existingIndex !== -1) {
+                    // Actualizar existente
+                    db[existingIndex] = { ...db[existingIndex], ...d };
+                    alert("🔄 Expediente existente actualizado.");
+                } else {
+                    // Crear nuevo
+                    d.id_exp = Date.now().toString();
+                    d.fechaReg = new Date().toLocaleDateString();
+                    db.push(d);
+                    alert("✨ Nuevo expediente creado.");
+                }
+                
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
+                localStorage.removeItem(TEMP_KEY);
+                renderTable();
             }
         }
     }
 
-    // 3. GUARDAR
-    function guardarExpediente() {
-        const nombre = document.getElementById('nombre').value;
-        if(!nombre) { alert("El nombre es obligatorio para guardar."); return; }
-
-        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        let id = document.getElementById('id_exp').value;
+    // --- FUNCIÓN 5: GENERAR LINK WHATSAPP (Panel Izquierdo) ---
+    function generarLink() {
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        let msg = "Hola, por favor contesta las siguientes evaluaciones:%0A%0A";
+        let c = 0;
         
-        // Capturar todos los inputs
-        const inputs = document.querySelectorAll('input, select');
-        let record = {};
-        inputs.forEach(i => record[i.id] = i.value);
+        tests.forEach(t => {
+            if(document.getElementById(t.id).checked) {
+                c++;
+                msg += `*${c}. ${t.n}:*%0A${base + t.f}%0A%0A`;
+            }
+        });
+        msg += "Envía los resultados al finalizar. ¡Gracias!";
         
-        // Datos calculados o de sistema
-        record.fechaReg = new Date().toLocaleDateString();
-        // Asegurar compatibilidad de nombres de variables
-        record.bai = document.getElementById('scoreBAI').value;
-        record.bdi = document.getElementById('scoreBDI').value;
-        record.penTotal = document.getElementById('penTotal').value;
-
-        if(id) {
-            const index = db.findIndex(x => x.id_exp === id);
-            if(index !== -1) db[index] = record;
-        } else {
-            record.id_exp = Date.now().toString();
-            db.push(record);
-            document.getElementById('id_exp').value = record.id_exp;
-        }
-
-        localStorage.setItem(DB_KEY, JSON.stringify(db));
-        localStorage.removeItem(TEMP_KEY); // Limpiar temp
-        
-        renderTable();
-        alert("✅ Expediente guardado exitosamente.");
+        if(c===0) alert("Selecciona al menos una prueba.");
+        else window.open(`https://wa.me/${NUMERO_DESTINO}?text=${msg}`, '_blank');
     }
 
+    // --- FUNCIÓN 6: BORRAR ---
     function borrarExpediente(id) {
-        if(confirm("¿Eliminar permanentemente este expediente?")) {
+        if(confirm("¿Estás seguro de borrar este expediente?")) {
             let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
             db = db.filter(x => x.id_exp !== id);
             localStorage.setItem(DB_KEY, JSON.stringify(db));
             renderTable();
-            limpiarFormulario();
         }
     }
 
-    function limpiarFormulario() {
-        document.querySelectorAll('input').forEach(i => i.value = "");
-        document.getElementById('fecha').valueAsDate = new Date();
-    }
-
-    // 4. PDF GENERATOR (Minimizado para brevedad, funcional)
+    // --- FUNCIÓN 7: GENERAR PDF ---
     function generarPDF() {
         const val = (id) => document.getElementById(id).value;
-        const d = { nombre: val('nombre'), edad: val('edad'), fecha: val('fecha'), grupo: val('grupo') };
-        // Mapear scores para reporte
-        d.bai = val('scoreBAI'); d.bdi = val('scoreBDI'); d.pen = val('penTotal'); d.goca = val('scoreGOCA');
-        
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
-        doc.setFillColor(233, 30, 99); doc.rect(0, 0, 210, 30, 'F'); // Encabezado rosa/rojo
+        doc.setFillColor(216, 27, 96); doc.rect(0, 0, 210, 40, 'F');
         doc.setTextColor(255); doc.setFontSize(16); doc.setFont("helvetica", "bold");
-        doc.text("CBTa No. 130 - Informe Integral", 105, 18, null, null, "center");
+        doc.text("CBTa No. 130 - Informe Integral", 105, 20, null, null, "center");
         
-        doc.setTextColor(0); doc.setFontSize(11); doc.setFont("helvetica", "normal");
-        doc.text(`Estudiante: ${d.nombre}`, 20, 45);
-        doc.text(`Edad: ${d.edad} | Grupo: ${d.grupo} | Fecha: ${d.fecha}`, 20, 52);
-        doc.line(20, 58, 190, 58);
+        doc.setTextColor(0); doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.text(`Estudiante: ${val('nombre')}`, 20, 50);
+        doc.text(`Edad: ${val('edad')} | Grupo: ${val('grupo')}`, 140, 50);
+        doc.line(20, 55, 190, 55);
 
-        let y = 70;
-        const addR = (lbl, v) => {
-            if(v) {
-                doc.text(lbl, 20, y);
-                doc.setFont("helvetica", "bold");
-                doc.text(v.toString(), 160, y);
-                doc.setFont("helvetica", "normal");
-                doc.line(20, y+2, 190, y+2);
-                y+=10;
-            }
+        let y = 65;
+        const addR = (l, v, i, alert=false) => {
+            if(y>270){doc.addPage();y=20;}
+            doc.setFont("helvetica", "bold"); doc.text(l, 20, y);
+            doc.setFont("helvetica", "normal"); doc.text(v ? v.toString() : "-", 90, y);
+            if(alert) doc.setTextColor(200,0,0);
+            doc.text(i || "", 120, y);
+            doc.setTextColor(0);
+            doc.line(20, y+2, 190, y+2); y+=8;
         };
 
-        doc.setFontSize(12); doc.setTextColor(38, 50, 56);
-        doc.text("RESUMEN DE RESULTADOS", 20, y); y+=10;
-        doc.setFontSize(10);
+        // Clínica
+        addR("PHQ-9 (Dep)", val('scorePHQ'), val('scorePHQ')>=10?"ALERTA":"", val('scorePHQ')>=10);
+        addR("GAD-7 (Ans)", val('scoreGAD'), val('scoreGAD')>=10?"ALERTA":"", val('scoreGAD')>=10);
+        addR("BAI (Ans)", val('scoreBAI'), val('scoreBAI')>15?"Alto":"", val('scoreBAI')>15);
+        addR("BDI-II (Dep)", val('scoreBDI'), val('scoreBDI')>18?"Alto":"", val('scoreBDI')>18);
+        
+        // IPA Detalle
+        if(val('penTotal')) {
+            addR("IPA (Pensamientos)", val('penTotal'), val('penTotal')>45?"Alto":"", val('penTotal')>90);
+            y+=2; doc.setFontSize(8); doc.setTextColor(100);
+            let highs = [];
+            for(let i=1; i<=15; i++) { if(val(`penF${i}`) >= 7) highs.push(ipaNames[i-1]); }
+            if(highs.length > 0) doc.text("Altos en: " + highs.join(", "), 20, y);
+            y+=6; doc.setFontSize(10); doc.setTextColor(0);
+        }
 
-        addR("Inventario de Ansiedad (BAI)", d.bai);
-        addR("Inventario de Depresión (BDI-II)", d.bdi);
-        addR("Pensamientos Automáticos (IPA)", d.pen);
-        addR("Observación Conductual (GOCA)", d.goca);
-        // Agregar más aquí...
+        // Riesgo
+        addR("SSI (Suicida)", val('scoreSSI'), val('scoreSSI')>5?"RIESGO":"", true);
+        addR("GOCA (Aula)", val('scoreGOCA'), val('scoreGOCA')>80?"Alerta":"", val('scoreGOCA')>80);
+        addR("EBMA (IAR)", val('ebmaIAR'), val('ebmaPerfil'));
 
-        doc.save(`Reporte_${d.nombre}.pdf`);
+        y+=10; doc.rect(20, y, 170, 40); doc.text("Observaciones:", 22, y+5);
+        doc.save(`Expediente_${val('nombre')}.pdf`);
     }
 </script>
 </body>
