@@ -883,9 +883,9 @@
                         </div>
                     </div>`;
                 } else if (test.tipo === 'opcion_multiple_valorada') {
-                    // Múltiples opciones con valores ponderados
-                    const qTxt = item.t || item;
-                    const ops = item.o || [];
+                    // Múltiples opciones con valores ponderados (soporta BDI con item.ops y LIRA con item.o)
+                    const qTxt = item.t || item.p || item;
+                    const ops = item.o || item.ops || [];
                     let html = `<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                         <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${qTxt}</p>
                         <div class="space-y-2">`;
@@ -900,8 +900,9 @@
                     html += `</div></div>`;
                     container.innerHTML += html;
                 } else { 
-                    const qTxt = item.p || item;
-                    const ops = item.ops || [];
+                    // Fallback para otros tipos
+                    const qTxt = item.p || item.t || item;
+                    const ops = item.ops || item.o || [];
                     container.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                         <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${qTxt}</p>
