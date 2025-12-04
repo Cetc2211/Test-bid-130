@@ -882,6 +882,23 @@
                             <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="F" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-red-500 peer-checked:text-white">NO</div></label>
                         </div>
                     </div>`;
+                } else if (test.tipo === 'opcion_multiple') {
+                    // Opción múltiple simple (VAK - estilos de aprendizaje)
+                    const qTxt = item.p || item;
+                    const ops = item.ops || [];
+                    let html = `<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${qTxt}</p>
+                        <div class="space-y-2">`;
+                    ops.forEach((opt, opIdx) => {
+                        const txt = opt;
+                        const val = opt;
+                        html += `<label class="flex items-start gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50 transition-all bg-slate-50/50">
+                            <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border border-slate-300 bg-white shrink-0"><input type="radio" name="q_${testId}_${idx}" value="${val}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0"><div class="w-3 h-3 rounded-full bg-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity"></div></div>
+                            <span class="text-xs font-medium text-slate-600">${txt}</span>
+                        </label>`;
+                    });
+                    html += `</div></div>`;
+                    container.innerHTML += html;
                 } else if (test.tipo === 'opcion_multiple_valorada') {
                     // Múltiples opciones con valores ponderados (soporta BDI con item.ops y LIRA con item.o)
                     const qTxt = item.t || item.p || item;
@@ -969,9 +986,9 @@
                 } else if(test.tipo === 'verdadero_falso') {
                     const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
                     if(el) { respuestas.push(el.value); respondido = true; }
-                } else if(test.tipo === 'opcion_multiple_valorada') {
+                } else if(['opcion_multiple', 'opcion_multiple_valorada'].includes(test.tipo)) {
                     const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
-                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
+                    if(el) { respuestas.push(el.value); respondido = true; }
                 } else {
                     const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
                     if(el) { respuestas.push(el.value); respondido = true; }
