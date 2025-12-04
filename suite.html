@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suite de Evaluación Psicopedagógica</title>
+    <title>Suite de Evaluación Psicopedagógica v2.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -11,7 +11,8 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { 50: '#fdf2f8', 100: '#fce7f3', 500: '#ec4899', 600: '#db2777', 800: '#9d174d', 900: '#831843' }
+                        brand: { 50: '#fdf2f8', 100: '#fce7f3', 500: '#ec4899', 600: '#db2777', 800: '#9d174d', 900: '#831843' },
+                        idare: { 50: '#eceff1', 100: '#cfd8dc', 600: '#546e7a', 800: '#37474f' } // Colores específicos IDARE
                     }
                 }
             }
@@ -34,8 +35,8 @@
         
         <header class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4 w-full md:w-auto">
-                <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-3 rounded-xl transition-colors" title="Volver al Menú">
-                    <i class="ph-bold ph-arrow-left text-xl"></i>
+                <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-3 rounded-xl transition-colors" title="Limpiar / Inicio">
+                    <i class="ph-bold ph-arrows-clockwise text-xl"></i>
                 </a>
                 <div class="flex items-center gap-3">
                     <div class="bg-gradient-to-br from-brand-800 to-brand-600 text-white p-3 rounded-xl shadow-lg shadow-brand-600/20">
@@ -43,7 +44,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
-                        <p class="text-sm text-slate-500">Suite Integral v2.6</p>
+                        <p class="text-sm text-slate-500">Suite Integral v2.7 (+IDARE)</p>
                     </div>
                 </div>
             </div>
@@ -235,6 +236,21 @@
                 id: 'BAI', titulo: 'Inventario de Ansiedad (BAI)', descripcion: 'Indique cuánto le ha molestado cada síntoma.', icono: 'ph-heartbeat', tipo: 'likert_0_3',
                 items: ["Entumecimiento", "Calor", "Temblor de piernas", "Incapaz de relajarse", "Miedo a que suceda lo peor", "Mareo", "Palpitaciones", "Inestabilidad", "Terror", "Nerviosismo", "Sensación de ahogo", "Temblor de manos", "Estremecimiento", "Miedo a perder el control", "Dificultad para respirar", "Miedo a morir", "Asustado", "Indigestión", "Desmayo", "Rubor facial", "Sudoración"]
             },
+            'IDARE': {
+                id: 'IDARE', titulo: 'Ansiedad Rasgo-Estado (IDARE)', descripcion: 'Parte 1: Cómo se siente AHORA. Parte 2: Cómo se siente GENERALMENTE.', icono: 'ph-waves', tipo: 'likert_1_4',
+                items: [
+                    // Parte 1: Estado (0-19)
+                    "1. Me siento calmado", "2. Me siento seguro", "3. Estoy tenso", "4. Estoy contrariado", "5. Me siento a gusto",
+                    "6. Me siento alterado", "7. Estoy preocupado por posibles desgracias", "8. Me siento descansado", "9. Me siento ansioso", "10. Me siento cómodo",
+                    "11. Me siento con confianza", "12. Me siento nervioso", "13. Estoy agitado", "14. Me siento a punto de explotar", "15. Me siento relajado",
+                    "16. Me siento satisfecho", "17. Estoy preocupado", "18. Me siento aturdido", "19. Me siento alegre", "20. Me siento bien",
+                    // Parte 2: Rasgo (20-39)
+                    "21. Me siento bien", "22. Me canso rápidamente", "23. Siento ganas de llorar", "24. Quisiera ser tan feliz como otros", "25. Pierdo oportunidades por no decidir",
+                    "26. Me siento descansado", "27. Soy una persona tranquila", "28. Siento que las dificultades se amontonan", "29. Me preocupo demasiado por cosas sin importancia", "30. Soy feliz",
+                    "31. Tomo las cosas muy a pecho", "32. Me falta confianza en mí mismo", "33. Me siento seguro", "34. Trato de evitar enfrentar crisis", "35. Me siento melancólico",
+                    "36. Me siento satisfecho", "37. Ideas poco importantes me molestan", "38. Me afectan tanto los desengaños", "39. Soy una persona estable", "40. Me pongo tenso cuando pienso en mis asuntos"
+                ]
+            },
             'VAK': {
                 id: 'VAK', titulo: 'Estilos de Aprendizaje (VAK)', descripcion: 'Selecciona la opción que te identifique.', icono: 'ph-eye', tipo: 'opcion_multiple',
                 items: [
@@ -418,23 +434,20 @@
             const testId = sessionData.testsIds[currentTestIndex];
             const test = CATALOGO_PRUEBAS[testId];
             
-            // Estilos especiales
+            // Estilos de tarjeta según tipo de prueba
             const card = document.getElementById('current-test-card');
             const iconParent = document.getElementById('current-test-icon').parentElement;
             
-            if(testId === 'CSSRS') {
-                card.className = "bg-red-50 p-5 rounded-2xl shadow-sm border border-red-200 flex items-start gap-4";
-                iconParent.className = "bg-red-100 p-3 rounded-xl text-red-700 shrink-0";
-            } else if (testId === 'BDI') {
-                card.className = "bg-blue-50 p-5 rounded-2xl shadow-sm border border-blue-200 flex items-start gap-4";
-                iconParent.className = "bg-blue-100 p-3 rounded-xl text-blue-700 shrink-0";
-            } else if (testId === 'EBMA') {
-                card.className = "bg-teal-50 p-5 rounded-2xl shadow-sm border border-teal-200 flex items-start gap-4";
-                iconParent.className = "bg-teal-100 p-3 rounded-xl text-teal-700 shrink-0";
-            } else {
-                card.className = "bg-white p-5 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-4";
-                iconParent.className = "bg-brand-50 p-3 rounded-xl text-brand-700 shrink-0";
-            }
+            let cardClass = "bg-white border-brand-100";
+            let iconClass = "bg-brand-50 text-brand-700";
+
+            if(testId === 'CSSRS') { cardClass="bg-red-50 border-red-200"; iconClass="bg-red-100 text-red-700"; }
+            else if (testId === 'BDI') { cardClass="bg-blue-50 border-blue-200"; iconClass="bg-blue-100 text-blue-700"; }
+            else if (testId === 'EBMA') { cardClass="bg-teal-50 border-teal-200"; iconClass="bg-teal-100 text-teal-700"; }
+            else if (testId === 'IDARE') { cardClass="bg-idare-50 border-idare-100"; iconClass="bg-idare-800 text-white"; }
+            
+            card.className = `${cardClass} p-5 rounded-2xl shadow-sm border flex items-start gap-4 transition-colors duration-500`;
+            iconParent.className = `${iconClass} p-3 rounded-xl shrink-0`;
 
             document.getElementById('current-test-title').innerText = test.titulo;
             document.getElementById('current-test-desc').innerText = test.descripcion;
@@ -450,6 +463,11 @@
             test.items.forEach((item, idx) => {
                 const num = idx + 1;
                 
+                // Separador Visual para IDARE Parte 2
+                if(testId === 'IDARE' && idx === 20) {
+                     container.innerHTML += `<div class="py-4 text-center"><span class="bg-idare-800 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">Parte 2: Generalmente</span></div>`;
+                }
+
                 if (test.tipo === 'columbia_flow') {
                     const hidden = item.hidden ? 'hidden' : '';
                     const trig = item.triggers ? JSON.stringify(item.triggers) : '[]';
@@ -468,6 +486,16 @@
                         <div class="grid grid-cols-4 gap-2 bg-slate-50 p-2 rounded-xl">
                             ${[0,1,2,3].map(v => `<label class="cursor-pointer relative group"><input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only"><div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-brand-600 peer-checked:text-white transition-all shadow-sm">${v}</div></label>`).join('')}
                         </div>
+                    </div>`;
+                } else if (test.tipo === 'likert_1_4') { // IDARE (1-4)
+                    const colors = "peer-checked:bg-idare-800 peer-checked:text-white";
+                    container.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-idare-800 font-bold">${num}.</span> ${item}</p>
+                        <div class="grid grid-cols-4 gap-2 bg-slate-50 p-2 rounded-xl">
+                            ${[1,2,3,4].map(v => `<label class="cursor-pointer relative group"><input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only"><div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center ${colors} transition-all shadow-sm">${v}</div></label>`).join('')}
+                        </div>
+                         <div class="flex justify-between px-2 mt-1 text-[9px] text-gray-400 font-medium"><span>No / Casi Nunca</span><span>Mucho / Casi Siempre</span></div>
                     </div>`;
                 } else if (test.tipo === 'likert_1_5') { // EBMA
                     container.innerHTML += `
@@ -540,9 +568,7 @@
 
             if(incompleto) return alert("Responde todas las preguntas visibles.");
             
-            if(test.tipo !== 'verdadero_falso' && test.tipo !== 'opcion_multiple') {
-                 res = res.map(v => parseInt(v));
-            } else if (test.tipo === 'opcion_multiple_valorada') { 
+            if(test.tipo === 'likert_1_4' || test.tipo === 'likert_1_5' || test.tipo === 'likert_0_3' || test.tipo === 'opcion_multiple_valorada') {
                  res = res.map(v => parseInt(v));
             }
 
@@ -578,16 +604,24 @@
                     if(r[8] > 0) niv += " ⚠️ Riesgo";
                     score = `${sum} (${niv})`;
                 } else if (tid === 'EBMA') {
-                    // Calculo IAR y Perfil
                     const getAvg = (s,e) => { let x=0; for(let i=s;i<=e;i++) x+=r[i]; return x/5; };
                     let A=getAvg(0,4), B=getAvg(5,9), C=getAvg(10,14), D=getAvg(15,19), E=getAvg(20,24);
                     let iar = (2*A + 1*B - 1*C - 2*D).toFixed(1);
-                    
                     let p = "Mixto";
-                    if(A>=4 && B>=3.5 && D<2.5) p="Intrínseco";
-                    else if(A<2.5 && D>=4) p="Externo";
-                    else if(E>=3.5) p="Desmotivado";
+                    if(A>=4 && B>=3.5 && D<2.5) p="Intrínseco"; else if(A<2.5 && D>=4) p="Externo"; else if(E>=3.5) p="Desmotivado";
                     score = `IAR:${iar} (${p})`;
+                } else if (tid === 'IDARE') {
+                    // IDARE Logic (Separar Estado/Rasgo + Inversos)
+                    // Estado (0-19). Inv: 1,2,5,8,10,11,15,16,19,20 (Indices 0-based: 0,1,4,7,9,10,14,15,18,19)
+                    // Rasgo (20-39). Inv: 21,26,27,30,33,36,39 (Indices 0-based: 20,25,26,29,32,35,38)
+                    const invE = [0,1,4,7,9,10,14,15,18,19];
+                    const invR = [20,25,26,29,32,35,38];
+                    let sE = 0, sR = 0;
+                    r.forEach((v, i) => {
+                        if(i<20) sE += invE.includes(i) ? (5-v) : v; // Estado
+                        else sR += invR.includes(i) ? (5-v) : v;     // Rasgo
+                    });
+                    score = `E:${sE} | R:${sR}`;
                 } else score = r.join(',');
                 
                 result.resultados[tid] = { score, raw: r };
@@ -611,10 +645,8 @@
                 const d = JSON.parse(decodeURIComponent(atob(document.getElementById('import-token-input').value.trim())));
                 let db = getDB();
                 let idx = db.findIndex(e => e.nombre === d.alumno && e.grupo === d.grupo);
-                
                 if(idx >= 0) { db[idx].resultados = { ...db[idx].resultados, ...d.resultados }; db[idx].ultimaFecha = d.fecha; }
                 else db.push({ nombre: d.alumno, grupo: d.grupo, resultados: d.resultados, ultimaFecha: d.fecha });
-                
                 saveDB(db); renderizarTablaExpedientes(); toggleImportModal(); document.getElementById('import-token-input').value = "";
                 alert("✅ Datos guardados.");
             } catch (e) { alert("Código inválido"); }
@@ -637,7 +669,7 @@
                     if(tid==='CSSRS' && String(res.score).includes("CRÍTICO")) color = 'bg-red-600 text-white animate-pulse';
                     else if(tid==='BDI' && String(res.score).includes("GRAVE")) color = 'bg-blue-600 text-white';
                     else if(tid==='CDFR' && String(res.score).includes("Alto")) color = 'bg-orange-100 text-orange-800';
-                    else if(tid==='EBMA' && String(res.score).includes("Desmotivado")) color = 'bg-purple-100 text-purple-800';
+                    else if(tid==='IDARE') color = 'bg-idare-100 text-idare-800 border border-idare-600';
                     
                     tags += `<span class="inline-block px-2 py-1 rounded text-[10px] font-bold ${color} mr-1 mb-1">${txt}</span>`;
                 }
