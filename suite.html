@@ -978,7 +978,19 @@
             }
         }
 
-        // Columbia Logic & Finalizar (Mismo que v2.8 pero asegurando que se guarden edad/sexo)
+        // ============================================
+        // Columbia Logic for CSSRS
+        // ============================================
+        function columbiaLogic(input, triggers) {
+            if (input.value === '1' && triggers && triggers.length > 0) {
+                triggers.forEach(tid => {
+                    const block = document.getElementById(tid + '_block');
+                    if (block) block.classList.remove('hidden');
+                });
+            }
+        }
+
+        // Finalizar (guardando edad/sexo)
         function finalize(data) { /*...*/} // Simplified ref
 
         function finalizar() {
@@ -1009,17 +1021,26 @@
                     let nivel = score>=15?"GRAVE":score>=10?"Moderado":score>=5?"Leve":"Mínimo";
                     score = `${score} (${nivel})`;
                 } else if(tid === 'HADS') {
+                    // HADS: 14 items - Ansiedad (impares: 0,2,4,6,8,10,12,13), Depresión (pares: 1,3,5,7,9,11)
+                    // Items invertidos: Depresión (1,3,5,7,9,11) se deben invertir (3-valor)
                     let ans = 0, dep = 0;
                     r.forEach((v, i) => {
-                        if([0,2,4,6,8].includes(i)) ans += parseInt(v);
-                        else dep += (3 - parseInt(v));
+                        const val = parseInt(v);
+                        if([0,2,4,6,8,10,12,13].includes(i)) {
+                            // Ansiedad - items impares en índice (0,2,4,6,8,10,12,13)
+                            ans += val;
+                        } else {
+                            // Depresión - items pares en índice (1,3,5,7,9,11) - invertidos
+                            dep += (3 - val);
+                        }
                     });
                     let ansN = ans>11?"CASO":ans>8?"BORDE":"Normal";
                     let depN = dep>11?"CASO":dep>8?"BORDE":"Normal";
                     score = `A:${ans}(${ansN}) D:${dep}(${depN})`;
                 } else if(tid === 'SSI') {
+                    // SSI tiene solo 5 items de screening (max 10 puntos)
                     score = r.reduce((a,b)=>a+parseInt(b),0);
-                    score = `${score} (${score>20?"CRÍTICO":score>10?"Alto":"Bajo"})`;
+                    score = `${score} (${score>=6?"CRÍTICO":score>=3?"Moderado":"Bajo"})`;
                 } else if(tid === 'PLUTCHIK') {
                     score = r.reduce((a,b)=>a+(b==='V'?1:0),0);
                     score = `${score}/15`;
