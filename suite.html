@@ -309,6 +309,86 @@
         // 1. CATÁLOGO CON INSTRUCCIONES FORMALES
         // ============================================
         const CATALOGO_PRUEBAS = {
+            'PHQ9': {
+                id: 'PHQ9', titulo: 'Cuestionario de Salud (PHQ-9)', icono: 'ph-heartbeat', tipo: 'likert_0_3',
+                instrucciones: 'Durante las últimas 2 semanas, ¿qué tan seguido ha tenido molestias por los siguientes problemas?',
+                items: [
+                    "Poco interés o placer en hacer las cosas",
+                    "Se ha sentido decaído, deprimido o sin esperanza",
+                    "Ha tenido dificultad para conciliar o mantener el sueño",
+                    "Se ha sentido cansado o con poca energía",
+                    "Ha tenido poco apetito o ha comido demasiado",
+                    "Se ha sentido mal consigo mismo o como un fracaso",
+                    "Ha tenido dificultad para concentrarse",
+                    "Se ha movido o hablado lentamente o muy rápido",
+                    "Ha tenido pensamientos de que sería mejor estar muerto"
+                ]
+            },
+            'GAD7': {
+                id: 'GAD7', titulo: 'Escala de Ansiedad Generalizada (GAD-7)', icono: 'ph-waves', tipo: 'likert_0_3',
+                instrucciones: 'Durante las últimas 2 semanas, ¿qué tan frecuentemente ha experimentado los siguientes síntomas?',
+                items: [
+                    "Nerviosismo o ansiedad",
+                    "No poder parar o controlar la preocupación",
+                    "Preocupación excesiva por diferentes cosas",
+                    "Dificultad para relajarse",
+                    "Inquietud (dificultad para permanecer quieto)",
+                    "Irritabilidad",
+                    "Miedo a que algo malo pueda suceder"
+                ]
+            },
+            'HADS': {
+                id: 'HADS', titulo: 'Escala Hospitalaria de Ansiedad y Depresión (HADS)', icono: 'ph-hospital', tipo: 'likert_0_3',
+                instrucciones: 'Lea cada frase y marque la respuesta que mejor corresponda a cómo se ha sentido durante la última semana.',
+                items: [
+                    "Me siento tenso/a o intranquilo/a",
+                    "Sigo disfrutando de las cosas como siempre",
+                    "Siento una sensación de miedo como si fuera a suceder algo horrible",
+                    "Soy capaz de reírme y ver el lado cómico de las cosas",
+                    "Me siento preocupado/a",
+                    "Me siento optimista respecto del futuro",
+                    "Experimento sensaciones de pánico",
+                    "Disfruto leyendo o viendo TV",
+                    "Me siento ansioso/a",
+                    "Me siento feliz",
+                    "Me siento confiado/a en mí mismo/a",
+                    "Me siento tan inquieto/a que me resulta difícil estar quieto/a",
+                    "Espero algo con ilusión",
+                    "Experimento sensaciones súbitas de pánico"
+                ]
+            },
+            'SSI': {
+                id: 'SSI', titulo: 'Escala de Ideación Suicida de Beck (SSI)', icono: 'ph-warning-octagon', tipo: 'ssi_flow',
+                instrucciones: 'Elija la opción que mejor describa su actitud actual o más reciente. Responda con sinceridad.',
+                items: [
+                    {t: "Deseo de vivir", o: [{v:0, t:"Moderado a Fuerte"}, {v:1, t:"Débil"}, {v:2, t:"Ninguno"}]},
+                    {t: "Deseo de morir", o: [{v:0, t:"Ninguno"}, {v:1, t:"Débil"}, {v:2, t:"Moderado a Fuerte"}]},
+                    {t: "Razones para vivir vs morir", o: [{v:0, t:"Vivir supera a Morir"}, {v:1, t:"Iguales"}, {v:2, t:"Morir supera a Vivir"}]},
+                    {t: "Deseo de intento suicida activo", o: [{v:0, t:"Ninguno"}, {v:1, t:"Débil"}, {v:2, t:"Moderado a Fuerte"}]},
+                    {t: "Deseo suicida pasivo", o: [{v:0, t:"Tomaría precauciones para vivir"}, {v:1, t:"Dejaría al azar"}, {v:2, t:"Evitaría pasos para vivir"}]}
+                ]
+            },
+            'PLUTCHIK': {
+                id: 'PLUTCHIK', titulo: 'Escala de Riesgo Suicida de Plutchik', icono: 'ph-shield-warning', tipo: 'verdadero_falso',
+                instrucciones: 'Responda SÍ o NO a las siguientes preguntas sobre cómo se ha sentido o sus conductas recientes.',
+                items: [
+                    "Toma medicamentos habituales (aspirinas, píldoras para dormir)",
+                    "Tiene dificultad para conciliar el sueño",
+                    "Ha notado que podría perder el control sobre sí mismo",
+                    "Tiene poco interés en relacionarse con la gente",
+                    "Ve el futuro con más pesimismo que optimismo",
+                    "Se ha sentido inútil o sin valor",
+                    "Ve su futuro sin ninguna esperanza",
+                    "Se ha sentido tan fracasado que quería abandonar todo",
+                    "¿Está deprimido/a ahora?",
+                    "¿Está separado, divorciado o viudo?",
+                    "¿Sabe si algún familiar ha intentado suicidarse?",
+                    "¿Ha estado tan enfadado que podría matar a alguien?",
+                    "¿Ha pensado alguna vez en suicidarse?",
+                    "¿Ha comentado a alguien que quería suicidarse?",
+                    "¿Ha intentado alguna vez quitarse la vida?"
+                ]
+            },
             'IPA': {
                 id: 'IPA', titulo: 'Inventario de Pensamientos Automáticos (IPA)', icono: 'ph-brain', tipo: 'likert_0_3',
                 instrucciones: 'A continuación encontrará una lista de pensamientos que suele tener la gente. Lea cada uno de ellos y marque la frecuencia con la que ha tenido este pensamiento en la última semana. Asegúrese de responder a todos los ítems.',
@@ -328,8 +408,14 @@
             },
             'BAI': {
                 id: 'BAI', titulo: 'Inventario de Ansiedad de Beck (BAI)', icono: 'ph-heartbeat', tipo: 'likert_0_3',
-                instrucciones: 'Abajo hay una lista de síntomas comunes de la ansiedad. Lea cada uno de los ítems atentamente e indique cuánto le ha molestado cada síntoma durante la ÚLTIMA SEMANA, incluyendo el día de hoy.',
-                items: ["Entumecimiento u hormigueo", "Sensación de calor", "Temblor en las piernas", "Incapaz de relajarse", "Miedo a que suceda lo peor", "Mareo o aturdimiento", "Palpitaciones o taquicardia", "Sensación de inestabilidad", "Terror", "Nerviosismo", "Sensación de ahogo", "Temblor de manos", "Estremecimiento", "Miedo a perder el control", "Dificultad para respirar", "Miedo a morir", "Asustado", "Indigestión o malestar estomacal", "Desmayo", "Rubor facial", "Sudoración (no debida al calor)"]
+                instrucciones: 'Indique cuánto le ha molestado cada síntoma durante la última semana (incluyendo hoy). 0=Nada, 1=Leve, 2=Moderado, 3=Severo.',
+                items: [
+                    "Entumecimiento u hormigueo", "Sensación de calor", "Temblor en las piernas", "Incapacidad para relajarse", "Miedo a que suceda lo peor", 
+                    "Mareo o aturdimiento", "Palpitaciones o taquicardia", "Sensación de inestabilidad", "Sensación de terror", "Nerviosismo", 
+                    "Sensación de ahogo", "Temblor de manos", "Temblor generalizado", "Miedo a perder el control", "Dificultad para respirar", 
+                    "Miedo a morir", "Asustado", "Indigestión o malestar abdominal", "Sensación de desmayo", "Rubor facial", 
+                    "Sudoración (no debida al calor)"
+                ]
             },
             'IDARE': {
                 id: 'IDARE', titulo: 'Inventario de Ansiedad Rasgo-Estado (IDARE)', icono: 'ph-waves', tipo: 'likert_1_4',
@@ -445,6 +531,29 @@
                     "Me sentiría mal conmigo mismo si no lo hago", "No quiero decepcionar a mi familia", "Es lo que se espera de alguien de mi edad", "Me sentiría culpable si desperdicio esta oportunidad", "Quiero que mis padres se sientan orgullosos de mí",
                     "Mis padres me obligan a venir", "Es obligatorio hasta los 18 años", "Para evitar problemas o castigos en casa", "No tengo otra opción", "Me quitan privilegios si no vengo",
                     "Honestamente, no sé para qué vengo", "Siento que pierdo el tiempo aquí", "No le veo sentido a seguir estudiando", "Creo que la escuela no me sirve para nada", "Ya no me importa si termino o no"
+                ]
+            },
+            'GOCA': {
+                id: 'GOCA', titulo: 'Guía de Observación Conductual (GOCA - Docente)', icono: 'ph-binoculars', tipo: 'likert_0_3',
+                instrucciones: 'Instrumento para que docentes evalúen conductas observadas en el estudiante. Escala: 0=No observado, 1=Raramente, 2=Frecuentemente, 3=Constantemente.',
+                items: [
+                    "Participa activamente en clase", "Completa tareas y trabajos asignados", "Sigue instrucciones del docente", "Se relaciona positivamente con compañeros", "Respeta las normas de convivencia",
+                    "Muestra interés en los temas", "Tiene dificultad para concentrarse", "Presenta conductas disruptivas", "Falta frecuentemente a clase", "Presenta trabajos de calidad",
+                    "Demuestra esfuerzo en sus actividades", "Solicita ayuda cuando la necesita", "Es responsable con sus compromisos", "Muestra respeto hacia la autoridad", "Colabora en trabajo grupal"
+                ]
+            },
+            'LIRA': {
+                id: 'LIRA', titulo: 'Lista de Riesgo Académico (LIRA)', icono: 'ph-triangle-warning', tipo: 'opcion_multiple_valorada',
+                instrucciones: 'Cuestionario para identificar factores que puedan afectar el desempeño académico del estudiante.',
+                items: [
+                    {t: "1. Situación económica familiar", o: [{v:-1, t:"Estable"}, {v:0, t:"Regular"}, {v:2, t:"Inestable"}, {v:3, t:"Crítica"}]},
+                    {t: "2. Apoyo familiar para estudios", o: [{v:-1, t:"Fuerte"}, {v:0, t:"Moderado"}, {v:2, t:"Débil"}, {v:3, t:"Nulo"}]},
+                    {t: "3. Desempeño académico previo", o: [{v:-1, t:"Excelente"}, {v:0, t:"Bueno"}, {v:2, t:"Regular"}, {v:3, t:"Deficiente"}]},
+                    {t: "4. Horas dedicadas a estudio extraclase", o: [{v:-1, t:">10 horas/semana"}, {v:0, t:"5-10 horas"}, {v:2, t:"1-5 horas"}, {v:3, t:"Ninguna"}]},
+                    {t: "5. Acceso a tecnología/internet", o: [{v:-1, t:"Sí, ambos"}, {v:0, t:"Solo uno"}, {v:2, t:"Acceso limitado"}, {v:3, t:"Ninguno"}]},
+                    {t: "6. Situaciones estresantes recientes", o: [{v:0, t:"Ninguna"}, {v:1, t:"Leve"}, {v:2, t:"Moderada"}, {v:3, t:"Severa"}]},
+                    {t: "7. Conductas de riesgo (sustancias, etc.)", o: [{v:0, t:"Ninguna"}, {v:2, t:"Ocasional"}, {v:3, t:"Frecuente"}]},
+                    {t: "8. Ideación o conducta suicida", o: [{v:0, t:"No"}, {v:2, t:"Alguna vez"}, {v:3, t:"Frecuente"}]}
                 ]
             }
         };
@@ -685,15 +794,16 @@
             const iconParent = document.getElementById('current-test-icon-box');
             let iconClass = "bg-slate-100 text-slate-600"; // Default
 
-            if(testId === 'CSSRS') iconClass="bg-red-100 text-red-700";
-            else if (testId === 'BDI') iconClass="bg-blue-100 text-blue-700";
+            if(['CSSRS','SSI','PLUTCHIK'].includes(testId)) iconClass="bg-red-100 text-red-700";
+            else if (['BDI','PHQ9','GAD7','HADS'].includes(testId)) iconClass="bg-blue-100 text-blue-700";
             else if (testId === 'EBMA') iconClass="bg-teal-100 text-teal-700";
             else if (testId === 'IDARE') iconClass="bg-idare-800 text-white";
+            else if (['BAI','IPA'].includes(testId)) iconClass="bg-yellow-100 text-yellow-700";
             
             iconParent.className = `p-3 rounded-lg ${iconClass}`;
 
             document.getElementById('current-test-title').innerText = test.titulo;
-            document.getElementById('current-test-desc').innerText = test.instrucciones; // Usamos INSTRUCCIONES FORMALES
+            document.getElementById('current-test-desc').innerText = test.instrucciones;
             document.getElementById('current-test-icon').className = `ph-fill ${test.icono} text-2xl`;
 
             const container = document.getElementById('questions-container');
@@ -722,6 +832,20 @@
                             <label class="columbia-btn flex-1 cursor-pointer"><input type="radio" name="${item.id}" value="0" class="peer sr-only" onchange='columbiaLogic(this, ${trig})'><div class="h-14 rounded-xl border-2 border-slate-100 bg-green-50 text-green-700 font-bold flex items-center justify-center peer-checked:bg-green-600 peer-checked:text-white">NO</div></label>
                         </div>
                     </div>`;
+                } else if (test.tipo === 'ssi_flow') {
+                    // SSI - Preguntas de opción múltiple con valores
+                    const opts = item.o || [];
+                    let html = `<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-red-600 font-bold">${num}.</span> ${item.t}</p>
+                        <div class="space-y-2">`;
+                    opts.forEach((opt, opIdx) => {
+                        html += `<label class="flex items-start gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-red-50 transition-all bg-slate-50/50">
+                            <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border border-slate-300 bg-white shrink-0"><input type="radio" name="q_${testId}_${idx}" value="${opt.v}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0"><div class="w-3 h-3 rounded-full bg-red-600 opacity-0 peer-checked:opacity-100 transition-opacity"></div></div>
+                            <span class="text-xs font-medium text-slate-600">${opt.t}</span>
+                        </label>`;
+                    });
+                    html += `</div></div>`;
+                    container.innerHTML += html;
                 } else if (test.tipo === 'likert_0_3') {
                     container.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
@@ -754,10 +878,27 @@
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                         <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${item}</p>
                         <div class="flex gap-4 bg-slate-50 p-3 rounded-xl">
-                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="V" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-green-600 peer-checked:text-white">Verdadero</div></label>
-                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="F" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-red-500 peer-checked:text-white">Falso</div></label>
+                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="V" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-green-600 peer-checked:text-white">SÍ</div></label>
+                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="F" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-red-500 peer-checked:text-white">NO</div></label>
                         </div>
                     </div>`;
+                } else if (test.tipo === 'opcion_multiple_valorada') {
+                    // Múltiples opciones con valores ponderados
+                    const qTxt = item.t || item;
+                    const ops = item.o || [];
+                    let html = `<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${qTxt}</p>
+                        <div class="space-y-2">`;
+                    ops.forEach((opt, opIdx) => {
+                        const txt = opt.t || opt;
+                        const val = opt.v !== undefined ? opt.v : opIdx;
+                        html += `<label class="flex items-start gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50 transition-all bg-slate-50/50">
+                            <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border border-slate-300 bg-white shrink-0"><input type="radio" name="q_${testId}_${idx}" value="${val}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0"><div class="w-3 h-3 rounded-full bg-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity"></div></div>
+                            <span class="text-xs font-medium text-slate-600">${txt}</span>
+                        </label>`;
+                    });
+                    html += `</div></div>`;
+                    container.innerHTML += html;
                 } else { 
                     const qTxt = item.p || item;
                     const ops = item.ops || [];
@@ -780,7 +921,76 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Columbia Logic & Finalizar (Mismo que v2.8 pero asegurando que se guarden edad/sexo)
+        // ============================================
+        // Función para pasar a siguiente prueba
+        // ============================================
+        function siguientePrueba() {
+            const testId = sessionData.testsIds[currentTestIndex];
+            const test = CATALOGO_PRUEBAS[testId];
+            
+            // Recopilar respuestas del test actual
+            let respuestas = [];
+            let todoResponder = true;
+            
+            test.items.forEach((item, idx) => {
+                let respondido = false;
+                
+                if(test.tipo === 'columbia_flow') {
+                    const el = document.querySelector(`input[name="${item.id}"]:checked`);
+                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
+                } else if(test.tipo === 'ssi_flow') {
+                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
+                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
+                } else if(['likert_0_3', 'likert_1_4', 'likert_1_5'].includes(test.tipo)) {
+                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
+                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
+                } else if(test.tipo === 'verdadero_falso') {
+                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
+                    if(el) { respuestas.push(el.value); respondido = true; }
+                } else if(test.tipo === 'opcion_multiple_valorada') {
+                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
+                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
+                } else {
+                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
+                    if(el) { respuestas.push(el.value); respondido = true; }
+                }
+                
+                if(!respondido && test.tipo !== 'columbia_flow') {
+                    todoResponder = false;
+                }
+            });
+            
+            if(!todoResponder) {
+                alert(`Por favor responde todas las preguntas de ${test.titulo}`);
+                return;
+            }
+            
+            // Guardar respuestas
+            sessionData.respuestas[testId] = respuestas;
+            
+            // Pasar a siguiente prueba
+            currentTestIndex++;
+            
+            if(currentTestIndex < sessionData.testsIds.length) {
+                cargarPruebaActual();
+            } else {
+                finalizar();
+            }
+        }
+
+        // ============================================
+        // Columbia Logic for CSSRS
+        // ============================================
+        function columbiaLogic(input, triggers) {
+            if (input.value === '1' && triggers && triggers.length > 0) {
+                triggers.forEach(tid => {
+                    const block = document.getElementById(tid + '_block');
+                    if (block) block.classList.remove('hidden');
+                });
+            }
+        }
+
+        // Finalizar (guardando edad/sexo)
         function finalize(data) { /*...*/} // Simplified ref
 
         function finalizar() {
@@ -801,9 +1011,44 @@
                 const r = sessionData.respuestas[tid];
                 let score = 0;
                 
-                // --- LOGICA DE CALIFICACIÓN (IGUAL) ---
-                if(tid === 'IPA' || tid === 'BAI') score = r.reduce((a,b)=>a+b,0);
-                else if(tid === 'BHS') {
+                // --- LOGICA DE CALIFICACIÓN ---
+                if(tid === 'PHQ9') {
+                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    let nivel = score>=20?"GRAVE":score>=15?"Moderado":score>=10?"Leve":"Mínimo";
+                    score = `${score} (${nivel})`;
+                } else if(tid === 'GAD7') {
+                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    let nivel = score>=15?"GRAVE":score>=10?"Moderado":score>=5?"Leve":"Mínimo";
+                    score = `${score} (${nivel})`;
+                } else if(tid === 'HADS') {
+                    // HADS: 14 items - Ansiedad (impares: 0,2,4,6,8,10,12,13), Depresión (pares: 1,3,5,7,9,11)
+                    // Items invertidos: Depresión (1,3,5,7,9,11) se deben invertir (3-valor)
+                    let ans = 0, dep = 0;
+                    r.forEach((v, i) => {
+                        const val = parseInt(v);
+                        if([0,2,4,6,8,10,12,13].includes(i)) {
+                            // Ansiedad - items impares en índice (0,2,4,6,8,10,12,13)
+                            ans += val;
+                        } else {
+                            // Depresión - items pares en índice (1,3,5,7,9,11) - invertidos
+                            dep += (3 - val);
+                        }
+                    });
+                    let ansN = ans>11?"CASO":ans>8?"BORDE":"Normal";
+                    let depN = dep>11?"CASO":dep>8?"BORDE":"Normal";
+                    score = `A:${ans}(${ansN}) D:${dep}(${depN})`;
+                } else if(tid === 'SSI') {
+                    // SSI tiene solo 5 items de screening (max 10 puntos)
+                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    score = `${score} (${score>=6?"CRÍTICO":score>=3?"Moderado":"Bajo"})`;
+                } else if(tid === 'PLUTCHIK') {
+                    score = r.reduce((a,b)=>a+(b==='V'?1:0),0);
+                    score = `${score}/15`;
+                } else if(tid === 'IPA') {
+                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                } else if(tid === 'BAI') {
+                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                } else if(tid === 'BHS') {
                     const key = [2,4,7,9,11,12,14,16,17,18,20];
                     score = r.reduce((acc,v,i) => acc + (key.includes(i+1)?(v==='V'?1:0):(v==='F'?1:0)), 0);
                 } else if(tid === 'CDFR') {
@@ -833,6 +1078,35 @@
                         else sR += invR.includes(i) ? (5-v) : v;
                     });
                     score = `E:${sE} | R:${sR}`;
+                } else if (tid === 'IDARE') {
+                    const invE = [0,1,4,7,9,10,14,15,18,19];
+                    const invR = [20,25,26,29,32,35,38];
+                    let sE = 0, sR = 0;
+                    r.forEach((v, i) => {
+                        if(i<20) sE += invE.includes(i) ? (5-v) : v;
+                        else sR += invR.includes(i) ? (5-v) : v;
+                    });
+                    score = `E:${sE} | R:${sR}`;
+                } else if (tid === 'VAK') {
+                    // Contar votos por estilo
+                    let v=0, a=0, k=0;
+                    r.forEach((val, i) => {
+                        if(val.includes('Visual')) v++;
+                        else if(val.includes('Auditivo')) a++;
+                        else if(val.includes('Kinestésico')) k++;
+                    });
+                    let max = Math.max(v,a,k);
+                    let estilo = v===max?"Visual":a===max?"Auditivo":"Kinestésico";
+                    score = estilo;
+                } else if (tid === 'GOCA') {
+                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    let nivel = score>=36?"Excelente":score>=24?"Bueno":score>=12?"Regular":"Requiere apoyo";
+                    score = `${score}/45 (${nivel})`;
+                } else if (tid === 'LIRA') {
+                    let sum = r.reduce((a,b)=>a+parseInt(b),0);
+                    if(sum<0) sum = 0;
+                    let niv = sum>20?"CRÍTICO":sum>12?"Alto":sum>5?"Moderado":"Bajo";
+                    score = `${sum} (${niv})`;
                 } else score = r.join(',');
                 
                 result.resultados[tid] = { score, raw: r };
