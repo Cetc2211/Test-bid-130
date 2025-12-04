@@ -922,6 +922,27 @@
         }
 
         // ============================================
+        // Lógica Columbia - Preguntas Condicionales
+        // ============================================
+        function columbiaLogic(inputElement, triggers) {
+            if (inputElement.value === '1' && triggers && triggers.length > 0) {
+                triggers.forEach(trigId => {
+                    const block = document.getElementById(trigId + '_block');
+                    if (block) block.classList.remove('hidden');
+                });
+            } else if (inputElement.value === '0' && triggers && triggers.length > 0) {
+                triggers.forEach(trigId => {
+                    const block = document.getElementById(trigId + '_block');
+                    if (block) {
+                        block.classList.add('hidden');
+                        const inputs = block.querySelectorAll('input');
+                        inputs.forEach(inp => inp.checked = false);
+                    }
+                });
+            }
+        }
+
+        // ============================================
         // Función para pasar a siguiente prueba
         // ============================================
         function siguientePrueba() {
@@ -1009,17 +1030,27 @@
                     let nivel = score>=15?"GRAVE":score>=10?"Moderado":score>=5?"Leve":"Mínimo";
                     score = `${score} (${nivel})`;
                 } else if(tid === 'HADS') {
+                    // Ansiedad: ítems 0,2,4,6,8,10,12,13 (invertidos: 0,2,4,6,8,13)
+                    // Depresión: ítems 1,3,5,7,9,11,12 (invertidos: 1,3,5,7,9,11)
                     let ans = 0, dep = 0;
+                    const invAns = [0,2,4,6,8,13];
+                    const invDep = [1,3,5,7,9,11];
                     r.forEach((v, i) => {
-                        if([0,2,4,6,8].includes(i)) ans += parseInt(v);
-                        else dep += (3 - parseInt(v));
+                        const val = parseInt(v);
+                        if([0,2,4,6,8,10,12,13].includes(i)) {
+                            ans += invAns.includes(i) ? (3 - val) : val;
+                        }
+                        if([1,3,5,7,9,11].includes(i)) {
+                            dep += invDep.includes(i) ? (3 - val) : val;
+                        }
                     });
                     let ansN = ans>11?"CASO":ans>8?"BORDE":"Normal";
                     let depN = dep>11?"CASO":dep>8?"BORDE":"Normal";
                     score = `A:${ans}(${ansN}) D:${dep}(${depN})`;
                 } else if(tid === 'SSI') {
                     score = r.reduce((a,b)=>a+parseInt(b),0);
-                    score = `${score} (${score>20?"CRÍTICO":score>10?"Alto":"Bajo"})`;
+                    let nivel = score>20?"CRÍTICO":score>9?"Alto":score>4?"Ideación":"Bajo";
+                    score = `${score} (${nivel})`;
                 } else if(tid === 'PLUTCHIK') {
                     score = r.reduce((a,b)=>a+(b==='V'?1:0),0);
                     score = `${score}/15`;
