@@ -1,1058 +1,154 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suite de Evaluación Psicopedagógica v3.6 (Formatos Clínicos Fijos)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { 50: '#fdf2f8', 100: '#fce7f3', 500: '#ec4899', 600: '#db2777', 800: '#9d174d', 900: '#831843' },
-                        idare: { 50: '#eceff1', 100: '#cfd8dc', 600: '#546e7a', 800: '#37474f' }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .columbia-btn input:checked + div { ring-width: 2px; ring-offset-width: 2px; }
-        .expedient-card { cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
-        .expedient-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        
-        /* Estilo para simular campos del formulario de historia clínica */
-        .doc-field-line { border-bottom: 1px solid #4b5563; padding-left: 4px; padding-right: 4px; }
-        .doc-field-textarea { border: 1px solid #d1d5db; padding: 6px; resize: vertical; }
-        .doc-section-header { background-color: #f3f4f6; padding: 6px; font-weight: bold; }
-        .doc-signature-line { border-bottom: 1px solid #1f2937; height: 3rem; margin-top: 1rem; }
-    </style>
-</head>
-<body class="bg-gray-50 text-slate-800 min-h-screen font-sans selection:bg-brand-100">
+<script>
+    // ... (CATÁLOGOS, CONSTANTES, y el resto del código hasta aquí) ...
 
-    <div id="view-admin" class="max-w-7xl mx-auto p-4 md:p-6 space-y-6 pb-20">
-        
-        <header class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4 w-full md:w-auto">
-                <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-3 rounded-xl transition-colors" title="Limpiar / Inicio">
-                    <i class="ph-bold ph-arrows-clockwise text-xl"></i>
-                </a>
-                <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-br from-brand-800 to-brand-600 text-white p-3 rounded-xl shadow-lg shadow-brand-600/20">
-                        <i class="ph-bold ph-stack text-2xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
-                        <p class="text-sm text-slate-500">Suite Integral v3.6 (Formatos Fijos)</p>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-                 <button onclick="toggleModal('import-modal')" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-95">
-                    <i class="ph-bold ph-download-simple"></i> IMPORTAR CÓDIGO
-                </button>
-                <button onclick="toggleModal('new-expedient-modal')" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-95">
-                    <i class="ph-bold ph-folder-plus"></i> NUEVO EXPEDIENTE
-                </button>
-            </div>
-        </header>
+    let currentExpedientIndex = -1; 
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4 space-y-6">
-                <section class="bg-white rounded-2xl shadow-lg border-t-4 border-brand-600 overflow-hidden sticky top-6">
-                    <div class="p-6">
-                        <h2 class="text-lg font-bold text-slate-800 mb-1 flex items-center gap-2">
-                            <i class="ph-duotone ph-paper-plane-tilt text-brand-600"></i> Generar Batería
-                        </h2>
-                        <p class="text-xs text-slate-400 mb-6">Selecciona las pruebas y genera el link.</p>
-                        
-                        <div class="space-y-4 mb-6">
-                            <div>
-                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nombre Alumno</label>
-                                <input type="text" id="adm-nombre" placeholder="Ej. Juan Pérez" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Grupo / Semestre</label>
-                                <input type="text" id="adm-grupo" placeholder="Ej. 6A Programación" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
-                            </div>
-                        </div>
-
-                        <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Pruebas Disponibles</div>
-                        <div id="tests-checklist" class="space-y-2 mb-8 max-h-64 overflow-y-auto pr-1">
-                            </div>
-
-                        <button onclick="generarLinkBateria()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold flex justify-center items-center gap-2 shadow-lg shadow-brand-600/30 transition-all active:scale-95">
-                            <i class="ph-bold ph-link"></i> Generar Link Único
-                        </button>
-
-                        <div id="link-result-area" class="hidden mt-6 pt-6 border-t border-dashed border-slate-200 animate-fade-in">
-                            <div class="bg-green-50 border border-green-200 rounded-xl p-4">
-                                <p class="text-xs text-green-800 font-bold mb-2"><i class="ph-fill ph-check-circle"></i> Link listo:</p>
-                                <div class="flex gap-2 mb-3">
-                                    <input type="text" id="final-link" readonly class="w-full text-[10px] font-mono bg-white border border-green-200 p-2 rounded text-slate-600">
-                                    <button onclick="copiarLink()" class="bg-white border border-green-200 text-green-600 px-3 rounded hover:bg-green-100"><i class="ph-bold ph-copy"></i></button>
-                                </div>
-                                <button onclick="enviarWhatsAppLink()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-md">
-                                    <i class="ph-bold ph-whatsapp-logo text-lg"></i> Enviar por WhatsApp
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <div class="lg:col-span-8">
-                <section class="bg-white rounded-2xl shadow-sm border border-gray-200 h-full flex flex-col min-h-[500px]">
-                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
-                        <div>
-                            <h3 class="font-bold text-slate-700 text-lg">Expedientes Activos (Carpetas)</h3>
-                            <p class="text-xs text-slate-400">Base de datos local</p>
-                        </div>
-                        <span id="db-count" class="bg-brand-100 text-brand-700 text-xs px-3 py-1 rounded-full font-bold border border-brand-200">0</span>
-                    </div>
-                    <div class="p-6 flex-1 overflow-auto">
-                        <div id="db-body-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
-                        
-                        <div id="empty-state" class="hidden flex flex-col items-center justify-center h-64 text-center p-8">
-                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-300"><i class="ph-duotone ph-folder-open text-3xl"></i></div>
-                            <h4 class="text-slate-600 font-bold">Sin expedientes</h4>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
-    </div>
-
-    <div id="view-student" class="hidden min-h-screen bg-slate-50 flex flex-col">
-        <div class="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-50 shadow-sm">
-            <div class="max-w-2xl mx-auto flex justify-between items-center mb-2">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center text-white"><i class="ph-bold ph-student"></i></div>
-                    <p class="text-xs font-bold text-slate-600 uppercase tracking-wider">Modo Evaluación</p>
-                </div>
-                <div class="text-right">
-                    <p id="st-progress" class="text-brand-600 font-bold text-sm">0%</p>
-                </div>
-            </div>
-            <div class="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div id="progress-bar" class="h-full bg-brand-600 transition-all duration-500 ease-out" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <div class="flex-1 max-w-2xl mx-auto w-full p-4 md:p-6 pb-32">
-            
-            <div id="step-welcome" class="text-center py-8 fade-in">
-                <h2 class="text-2xl font-bold text-slate-800 mb-2">Bienvenido/a, <span id="welcome-name" class="text-brand-600"></span></h2>
-                <p class="text-slate-500 mb-8 text-sm">Antes de comenzar, por favor completa tu ficha de identificación.</p>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 max-w-sm mx-auto text-left space-y-4 mb-8">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre Completo</label>
-                        <input type="text" id="read-name" readonly class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Grupo / Semestre</label>
-                        <input type="text" id="read-group" readonly class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-500 text-sm">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Edad *</label>
-                            <input type="number" id="st-age" placeholder="Años" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-600 outline-none text-sm font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Sexo *</label>
-                            <select id="st-sex" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-600 outline-none text-sm">
-                                <option value="">Elegir...</option>
-                                <option value="H">Hombre</option>
-                                <option value="M">Mujer</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <p class="text-xs text-slate-400 mb-4">Se aplicarán las siguientes pruebas:</p>
-                <div id="test-list-preview" class="space-y-2 mb-8 text-left max-w-sm mx-auto"></div>
-
-                <button onclick="iniciarSecuencia()" class="bg-brand-600 hover:bg-brand-700 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-600/20 w-full md:w-auto">
-                    Iniciar Evaluación <i class="ph-bold ph-arrow-right ml-2"></i>
-                </button>
-            </div>
-
-            <div id="step-questions" class="hidden fade-in">
-                
-                <div class="bg-slate-800 text-white rounded-t-2xl p-4 shadow-md mb-0">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ficha de Identificación</h3>
-                            <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm font-mono text-slate-200">
-                                <span><i class="ph-fill ph-user"></i> <span id="ficha-nombre">...</span></span>
-                                <span><i class="ph-fill ph-users-three"></i> <span id="ficha-grupo">...</span></span>
-                                <span><i class="ph-fill ph-cake"></i> <span id="ficha-edad">--</span> años</span>
-                                <span><i class="ph-fill ph-gender-intersex"></i> <span id="ficha-sexo">--</span></span>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div id="ficha-fecha" class="text-xs text-slate-400">00/00/0000</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white border-x border-b border-gray-200 p-6 rounded-b-2xl shadow-sm mb-8">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div id="current-test-icon-box" class="p-3 rounded-lg bg-slate-100 text-slate-600">
-                            <i id="current-test-icon" class="ph-fill ph-clipboard-text text-2xl"></i>
-                        </div>
-                        <div>
-                            <h2 id="current-test-title" class="text-xl font-bold text-slate-800">Nombre de la Prueba</h2>
-                            <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-bold uppercase">Psicometría</span>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                        <h4 class="text-xs font-bold text-blue-800 uppercase mb-1">Instrucciones:</h4>
-                        <p id="current-test-desc" class="text-sm text-blue-900 leading-relaxed text-justify">...</p>
-                    </div>
-                </div>
-
-                <div id="questions-container" class="space-y-6"></div>
-
-                <button onclick="siguientePrueba()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-10 hover:bg-slate-900 flex items-center justify-center gap-2">
-                    Siguiente Sección <i class="ph-bold ph-caret-right"></i>
-                </button>
-            </div>
-
-            <div id="step-finish" class="hidden text-center py-10 fade-in">
-                
-                <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce"><i class="ph-fill ph-check-circle text-5xl"></i></div>
-                <h2 class="text-3xl font-bold text-slate-800 mb-2">¡Evaluación Finalizada!</h2>
-                <p class="text-slate-500 mb-8 max-w-xs mx-auto">Tus respuestas han sido encriptadas correctamente.</p>
-                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 max-w-sm mx-auto relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-3 tracking-widest">CÓDIGO DE RESULTADOS</p>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5 font-mono text-xs break-all text-slate-600 text-left relative group">
-                        <div id="final-token-display" class="max-h-32 overflow-y-auto pr-2">...</div>
-                    </div>
-                    <div class="space-y-3">
-                        <button onclick="enviarTokenWhatsapp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 transition-all active:scale-95"><i class="ph-bold ph-whatsapp-logo text-xl"></i> Enviar a Evaluador</button>
-                        <button onclick="copiarToken()" class="w-full bg-white text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-50 border border-slate-200 transition-colors">Copiar Código</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="import-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-0 overflow-hidden">
-            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-800">Importar Resultados</h3>
-                <button onclick="toggleModal('import-modal')" class="text-slate-400 hover:text-red-500 transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
-            </div>
-            <div class="p-6">
-                <p class="text-sm text-slate-500 mb-3">Pega aquí el código de texto del alumno.</p>
-                <textarea id="import-token-input" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 font-mono text-xs focus:ring-2 focus:ring-brand-600 outline-none mb-6 resize-none"></textarea>
-                <button onclick="procesarImportacion()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20"><i class="ph-bold ph-check-circle"></i> Procesar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="preview-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full h-[90vh] flex flex-col overflow-hidden">
-            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center shrink-0">
-                <h3 class="text-lg font-bold text-slate-800">Vista Previa: <span id="preview-title" class="text-brand-600"></span></h3>
-                <button onclick="toggleModal('preview-modal')" class="text-slate-400 hover:text-red-500 transition-colors"><i class="ph-bold ph-x text-lg"></i></button>
-            </div>
-            <div class="p-4 bg-blue-50 border-b border-blue-100 text-xs text-blue-800 px-6 italic" id="preview-instructions">
-                </div>
-            <div id="preview-content" class="p-6 overflow-y-auto bg-slate-50/50 space-y-6 flex-1"></div>
-        </div>
-    </div>
-
-    <div id="detail-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full h-[90vh] flex flex-col overflow-hidden">
-            <div class="bg-slate-800 text-white px-6 py-5 border-b border-slate-700 flex justify-between items-center shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white/10 p-2 rounded-lg"><i class="ph-bold ph-folder-user text-2xl"></i></div>
-                    <div>
-                        <h3 id="detail-name" class="text-xl font-bold">Nombre Alumno</h3>
-                        <p id="detail-meta" class="text-xs text-slate-400">Grupo: --</p>
-                    </div>
-                </div>
-                <button onclick="toggleModal('detail-modal')" class="text-slate-400 hover:text-white transition-colors bg-slate-700 p-2 rounded-lg"><i class="ph-bold ph-x text-lg"></i></button>
-            </div>
-            
-            <div class="bg-slate-100 p-4 border-b border-slate-200 shrink-0 flex gap-4 overflow-x-auto no-scrollbar">
-                <button onclick="cargarInstrumento('cuantitativo')" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 text-white font-bold text-sm shadow-md transition-colors">
-                    <i class="ph-bold ph-chart-bar text-lg"></i> Resultados Pruebas
-                </button>
-                 <button onclick="abrirModalCaptura('ENTREVISTA')" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-slate-700 font-bold text-sm hover:bg-slate-50 border border-slate-300 shadow-sm transition-colors">
-                    <i class="ph-bold ph-clipboard-text text-lg text-brand-600"></i> Entrevista Clínica
-                </button>
-                <button onclick="abrirModalCaptura('CONSENTIMIENTO')" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-slate-700 font-bold text-sm hover:bg-slate-50 border border-slate-300 shadow-sm transition-colors">
-                    <i class="ph-bold ph-check-square text-lg text-green-600"></i> Consentimiento Informado
-                </button>
-                </div>
-
-            <div id="detail-content" class="p-6 overflow-y-auto bg-slate-50 flex-1 space-y-4">
-                </div>
-        </div>
-    </div>
+    // ... (Funciones de Control y Lógica Admin) ...
     
-    <div id="document-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full h-[95vh] flex flex-col overflow-hidden">
-            <div class="bg-slate-800 text-white px-6 py-4 border-b border-slate-700 flex justify-between items-center shrink-0">
-                <h3 class="text-lg font-bold"><i id="doc-icon" class="ph-bold ph-file-text"></i> <span id="doc-title"></span></h3>
-                <button onclick="toggleModal('document-modal')" class="text-slate-400 hover:text-white transition-colors bg-slate-700 p-2 rounded-lg"><i class="ph-bold ph-x text-lg"></i></button>
-            </div>
-            <div id="document-content-area" class="flex-1 overflow-y-auto p-8 bg-gray-50">
-                </div>
-            <div class="bg-slate-100 p-4 border-t border-slate-200 flex justify-end gap-3 shrink-0">
-                <button onclick="guardarDocumento('ENTREVISTA')" id="btn-save-ENTREVISTA" class="hidden bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-2 rounded-xl transition-colors"><i class="ph-bold ph-floppy-disk"></i> Guardar Entrevista</button>
-                <button onclick="guardarDocumento('CONSENTIMIENTO')" id="btn-save-CONSENTIMIENTO" class="hidden bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-2 rounded-xl transition-colors"><i class="ph-bold ph-floppy-disk"></i> Guardar Consentimiento</button>
-                <button onclick="toggleModal('document-modal')" class="bg-white border border-slate-300 text-slate-700 font-bold px-6 py-2 rounded-xl transition-colors">Cancelar</button>
-            </div>
-        </div>
-    </div>
+    // ============================================
+    // 7. GESTIÓN DE EXPEDIENTE CLÍNICO Y CREACIÓN
+    // ============================================
+    
+    // Función central para abrir el escritorio del expediente
+    function abrirEscritorioExpediente(idx) {
+        const db = getDB();
+        const exp = db[idx];
+        
+        // CRÍTICO: Establecer el índice global inmediatamente
+        currentExpedientIndex = idx;
+        
+        document.getElementById('detail-name').innerText = exp.nombre;
+        document.getElementById('detail-meta').innerText = `Grupo: ${exp.grupo} | Edad: ${exp.edad||'--'} | Sexo: ${exp.sexo||'--'} | Última Actualización: ${exp.ultimaFecha}`;
+        
+        // Aseguramos que se abra el modal
+        document.getElementById('detail-modal').classList.remove('hidden');
+        
+        // Cargar la vista de resultados por defecto
+        cargarInstrumento('cuantitativo');
+    }
 
-    <div id="new-expedient-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[60] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden">
-            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-800"><i class="ph-bold ph-folder-plus"></i> Crear Nuevo Expediente</h3>
-                <button onclick="toggleModal('new-expedient-modal')" class="text-slate-400 hover:text-red-500 transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nombre Completo</label>
-                    <input type="text" id="new-name" placeholder="Ej. Ana García" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Grupo / Semestre</label>
-                    <input type="text" id="new-group" placeholder="Ej. 2B Humanidades" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Edad</label>
-                        <input type="number" id="new-age" placeholder="Años" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm font-medium">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Sexo</label>
-                        <select id="new-sex" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 outline-none text-sm">
-                            <option value="">Elegir...</option>
-                            <option value="H">Hombre</option>
-                            <option value="M">Mujer</option>
-                        </select>
-                    </div>
-                </div>
-                <button onclick="crearNuevoExpediente()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20 mt-3"><i class="ph-bold ph-check-circle"></i> Guardar Ficha y Abrir Expediente</button>
-            </div>
-        </div>
-    </div>
+    /**
+     * Abre el Modal de Documento (Entrevista o Consentimiento)
+     * @param {string} instId - ID del instrumento ('ENTREVISTA' o 'CONSENTIMIENTO').
+     */
+    function abrirModalCaptura(instId) {
+        // Solo abrimos si ya tenemos un expediente activo
+        if (currentExpedientIndex === -1) {
+            alert("Error: Por favor, selecciona un expediente primero.");
+            return;
+        }
+
+        // 1. Cierra el escritorio (detail-modal) si está abierto
+        document.getElementById('detail-modal').classList.add('hidden');
+        
+        const exp = getDB()[currentExpedientIndex];
+        const docMeta = CATALOGO_CLINICO[instId];
+        
+        document.getElementById('doc-title').innerText = docMeta.titulo;
+        document.getElementById('doc-icon').className = `ph-bold ${docMeta.icono}`;
+        
+        // 2. Control de botones de Guardado
+        document.getElementById('btn-save-ENTREVISTA').classList.add('hidden');
+        document.getElementById('btn-save-CONSENTIMIENTO').classList.add('hidden');
+        document.getElementById(`btn-save-${instId}`).classList.remove('hidden');
+
+        const contentArea = document.getElementById('document-content-area');
+        const data = exp.dataClinica[instId] || {};
+        
+        // 3. Renderizado del documento
+        if (instId === 'ENTREVISTA') {
+            contentArea.innerHTML = renderEntrevista(exp, data);
+        } else if (instId === 'CONSENTIMIENTO') {
+            contentArea.innerHTML = renderConsentimiento(exp, data);
+        }
+        
+        // 4. Muestra el modal de documento
+        document.getElementById('document-modal').classList.remove('hidden');
+    }
 
 
-    <script>
-        // ============================================
-        // 1. CATÁLOGOS
-        // ============================================
-        const CATALOGO_PRUEBAS = {
-            'PHQ9': { id: 'PHQ9', titulo: 'Cuestionario de Salud (PHQ-9)', icono: 'ph-heartbeat', tipo: 'likert_0_3', instrucciones: 'Durante las últimas 2 semanas, ¿qué tan seguido ha tenido molestias por los siguientes problemas?',
-                items: [
-                    "Poco interés o placer en hacer las cosas", "Se ha sentido decaído, deprimido o sin esperanza", "Ha tenido dificultad para conciliar o mantener el sueño",
-                    "Se ha sentido cansado o con poca energía", "Ha tenido poco apetito o ha comido demasiado", "Se ha sentido mal consigo mismo o como un fracaso",
-                    "Ha tenido dificultad para concentrarse", "Se ha movido o hablado lentamente o muy rápido", "Ha tenido pensamientos de que sería mejor estar muerto"
-                ]
-            },
-            'GAD7': { id: 'GAD7', titulo: 'Escala de Ansiedad Generalizada (GAD-7)', icono: 'ph-waves', tipo: 'likert_0_3', instrucciones: 'Durante las últimas 2 semanas, ¿qué tan frecuentemente ha experimentado los siguientes síntomas?',
-                items: [
-                    "Nerviosismo o ansiedad", "No poder parar o controlar la preocupación", "Preocupación excesiva por diferentes cosas", "Dificultad para relajarse",
-                    "Inquietud (dificultad para permanecer quieto)", "Irritabilidad", "Miedo a que algo malo pueda suceder"
-                ]
-            },
-            'HADS': { id: 'HADS', titulo: 'Escala Hospitalaria de Ansiedad y Depresión (HADS)', icono: 'ph-hospital', tipo: 'likert_0_3', instrucciones: 'Lea cada frase y marque la respuesta que mejor corresponda a cómo se ha sentido durante la última semana.',
-                items: [
-                    "Me siento tenso/a o intranquilo/a", "Sigo disfrutando de las cosas como siempre", "Siento una sensación de miedo como si fuera a suceder algo horrible",
-                    "Soy capaz de reírme y ver el lado cómico de las cosas", "Me siento preocupado/a", "Me siento optimista respecto del futuro", "Experimento sensaciones de pánico",
-                    "Disfruto leyendo o viendo TV", "Me siento ansioso/a", "Me siento feliz", "Me siento confiado/a en mí mismo/a",
-                    "Me siento tan inquieto/a que me resulta difícil estar quieto/a", "Espero algo con ilusión", "Experimento sensaciones súbitas de pánico"
-                ]
-            },
-            'SSI': { id: 'SSI', titulo: 'Escala de Ideación Suicida de Beck (SSI)', icono: 'ph-warning-octagon', tipo: 'ssi_flow', instrucciones: 'Elija la opción que mejor describa su actitud actual o más reciente. Responda con sinceridad.',
-                items: [
-                    {t: "Deseo de vivir", o: [{v:0, t:"Moderado a Fuerte"}, {v:1, t:"Débil"}, {v:2, t:"Ninguno"}]},
-                    {t: "Deseo de morir", o: [{v:0, t:"Ninguno"}, {v:1, t:"Débil"}, {v:2, t:"Moderado a Fuerte"}]},
-                    {t: "Razones para vivir vs morir", o: [{v:0, t:"Vivir supera a Morir"}, {v:1, t:"Iguales"}, {v:2, t:"Morir supera a Vivir"}]},
-                    {t: "Deseo de intento suicida activo", o: [{v:0, t:"Ninguno"}, {v:1, t:"Débil"}, {v:2, t:"Moderado a Fuerte"}]},
-                    {t: "Deseo suicida pasivo", o: [{v:0, t:"Tomaría precauciones para vivir"}, {v:1, t:"Dejaría al azar"}, {v:2, t:"Evitaría pasos para vivir"}]}
-                ]
-            },
-            'PLUTCHIK': { id: 'PLUTCHIK', titulo: 'Escala de Riesgo Suicida de Plutchik', icono: 'ph-shield-warning', tipo: 'verdadero_falso', instrucciones: 'Responda SÍ o NO a las siguientes preguntas sobre cómo se ha sentido o sus conductas recientes.',
-                items: [
-                    "Toma medicamentos habituales (aspirinas, píldulas para dormir)", "Tiene dificultad para conciliar el sueño", "Ha notado que podría perder el control sobre sí mismo",
-                    "Tiene poco interés en relacionarse con la gente", "Ve el futuro con más pesimismo que optimismo", "Se ha sentido inútil o sin valor", "Ve su futuro sin ninguna esperanza",
-                    "Se ha sentido tan fracasado que quería abandonar todo", "¿Está deprimido/a ahora?", "¿Está separado, divorciado o viudo?",
-                    "¿Sabe si algún familiar ha intentado suicidarse?", "¿Ha estado tan enfadado que podría matar a alguien?", "¿Ha pensado alguna vez en suicidarse?",
-                    "¿Ha comentado a alguien que quería suicidarse?", "¿Ha intentado alguna vez quitarse la vida?"
-                ]
-            },
-            'IPA': { id: 'IPA', titulo: 'Inventario de Pensamientos Automáticos (IPA)', icono: 'ph-brain', tipo: 'likert_0_3', instrucciones: 'A continuación encontrará una lista de pensamientos que suele tener la gente. Lea cada uno de ellos y marque la frecuencia con la que ha tenido este pensamiento en la última semana. Asegúrese de responder a todos los ítems.',
-                items: [
-                    "No puedo soportar ciertas cosas.", "Solamente me pasan cosas malas.", "Todo lo que hago me sale mal.", "Sé que piensan mal de mí.", "¿Y si tengo alguna enfermedad grave?.",
-                    "Soy inferior a la gente en casi todo.", "Si otros cambiaran su actitud yo me sentiría mejor.", "¡No hay derecho a que me traten así!.", "Si me siento triste es porque soy un enfermo mental.",
-                    "Mis problemas dependen de los que me rodean.", "Soy un desastre como persona.", "Yo tengo la culpa de todo lo que me pasa.", "Debería de estar bien y no tener estos problemas.",
-                    "Sé que tengo la razón y no me entienden.", "Aunque ahora sufra, algún día tendré mi recompensa.", "Es horrible que me pase esto.", "Mi vida es un continuo fracaso.",
-                    "Siempre tendré este problema.", "Sé que me están mintiendo y engañando.", "¿Y si me vuelvo loco y pierdo la cabeza?.", "Soy superior a la gente en casi todo.",
-                    "Yo soy responsable del sufrimiento de los que me rodean.", "Si me quisieran de verdad no me tratarían así.", "Me siento culpable, y es porque he hecho algo malo.",
-                    "Si tuviera más apoyo no tendría estos problemas.", "Alguien que conozco es un imbécil.", "Otros tienen la culpa de lo que me pasa.", "No debería de cometer estos errores.",
-                    "No quiere reconocer que estoy en lo cierto.", "Ya vendrán mejores tiempos.", "Es insoportable, no puedo aguantar más.", "Soy incompetente e inútil.", "Nunca podré salir de esta situación.",
-                    "Quieren hacerme daño.", "¿Y si les pasa algo malo a las personas a quienes quiero?.", "La gente hace las cosas mejor que yo.", "Soy una víctima de mis circunstancias.",
-                    "No me tratan como deberían hacerlo y me merezco.", "Si tengo estos síntomas es porque soy un enfermo.", "Si tuviera mejor situación económica no tendría estos problemas.",
-                    "Soy un neurótico.", "Lo que me pasa es un castigo que merezco.", "Debería recibir más atención y cariño de otros.", "Tengo razón, y voy a hacer lo que me da gana.", "Tarde o temprano me irán las cosas mejor."
-                ]
-            },
-            'BAI': { id: 'BAI', titulo: 'Inventario de Ansiedad de Beck (BAI)', icono: 'ph-heartbeat', tipo: 'likert_0_3', instrucciones: 'Indique cuánto le ha molestado cada síntoma durante la última semana (incluyendo hoy). 0=Nada, 1=Leve, 2=Moderado, 3=Severo.',
-                items: [
-                    "Entumecimiento u hormigueo", "Sensación de calor", "Temblor en las piernas", "Incapacidad para relajarse", "Miedo a que suceda lo peor", 
-                    "Mareo o aturdimiento", "Palpitaciones o taquicardia", "Sensación de inestabilidad", "Sensación de terror", "Nerviosismo", 
-                    "Sensación de ahogo", "Temblor de manos", "Temblor generalizado", "Miedo a perder el control", "Dificultad para respirar", 
-                    "Miedo a morir", "Asustado", "Indigestión o malestar abdominal", "Sensación de desmayo", "Rubor facial", 
-                    "Sudoración (no debida al calor)"
-                ]
-            },
-            'IDARE': { id: 'IDARE', titulo: 'Inventario de Ansiedad Rasgo-Estado (IDARE)', icono: 'ph-waves', tipo: 'likert_1_4', instrucciones: 'El inventario consta de dos partes. En la primera parte (ítems 1-20), indique cómo se siente AHORA MISMO, en este momento. En la segunda parte (ítems 21-40), indique cómo se siente GENERALMENTE. No hay respuestas correctas o incorrectas. No emplee mucho tiempo en cada frase.',
-                items: [
-                    "1. Me siento calmado", "2. Me siento seguro", "3. Estoy tenso", "4. Estoy contrariado", "5. Me siento a gusto", "6. Me siento alterado", "7. Estoy preocupado por posibles desgracias",
-                    "8. Me siento descansado", "9. Me siento ansioso", "10. Me siento cómodo", "11. Me siento con confianza", "12. Me siento nervioso", "13. Estoy agitado",
-                    "14. Me siento a punto de explotar", "15. Me siento relajado", "16. Me siento satisfecho", "17. Estoy preocupado", "18. Me siento aturdido", "19. Me siento alegre",
-                    "20. Me siento bien", "21. Me siento bien", "22. Me canso rápidamente", "23. Siento ganas de llorar", "24. Quisiera ser tan feliz como otros",
-                    "25. Pierdo oportunidades por no decidir", "26. Me siento descansado", "27. Soy una persona tranquila", "28. Siento que las dificultades se amontonan",
-                    "29. Me preocupo demasiado por cosas sin importancia", "30. Soy feliz", "31. Tomo las cosas muy a pecho", "32. Me falta confianza en mí mismo",
-                    "33. Me siento seguro", "34. Trato de evitar enfrentar crisis", "35. Me siento melancólico", "36. Me siento satisfecho",
-                    "37. Ideas poco importantes me molestan", "38. Me afectan tanto los desengaños", "39. Soy una persona estable", "40. Me pongo tenso cuando pienso en mis asuntos"
-                ]
-            },
-            'VAK': { id: 'VAK', titulo: 'Cuestionario de Estilos de Aprendizaje (VAK)', icono: 'ph-eye', tipo: 'opcion_multiple', instrucciones: 'Elige la opción que mejor represente tu comportamiento o preferencia en cada situación. Esto nos ayudará a identificar si tu estilo de aprendizaje es visual, auditivo o kinestésico.',
-                items: [
-                    { p: "¿Qué prefieres hacer en tu tiempo libre?", ops: ["Ver películas (Visual)", "Escuchar música (Auditivo)", "Hacer deporte (Kinestésico)"] },
-                    { p: "¿Cómo aprendes mejor?", ops: ["Viendo diagramas o videos", "Escuchando explicaciones", "Haciendo prácticas o maquetas"] },
-                    { p: "¿Qué te distrae más?", ops: ["El desorden visual", "Los ruidos", "La incomodidad física"] },
-                    { p: "¿Cómo te orientas en una ciudad nueva?", ops: ["Uso un mapa o GPS", "Pregunto a alguien", "Camino hasta encontrar referencias"] },
-                    { p: "Al comprar un coche te fijas en:", ops: ["El color y diseño", "El sonido del motor y equipo de audio", "La comodidad de los asientos"] }
-                ]
-            },
-            'BHS': { id: 'BHS', titulo: 'Escala de Desesperanza de Beck (BHS)', icono: 'ph-circle-half', tipo: 'verdadero_falso', instrucciones: 'A continuación hay 20 afirmaciones sobre el futuro. Lea cada una y determine si aplica a usted. Si la afirmación describe su actitud la última semana, marque VERDADERO. Si no es así, marque FALSO.',
-                items: [
-                    "Veo el futuro con esperanza y entusiasmo.", "Tal vez debería abandonar todo, porque no puedo hacer que las cosas mejoren.", "Cuando las cosas van mal, me alivia saber que las cosas no pueden permanecer así siempre.",
-                    "No puedo imaginar cómo será mi vida dentro de 10 años.", "Tengo tiempo suficiente para lograr las cosas que quiero hacer.", "En el futuro, espero conseguir lo que me pueda interesar.",
-                    "Mi futuro me parece oscuro.", "Espero más cosas buenas de la vida que lo que la gente común espera.", "Simplemente no tengo buena suerte, y no hay razón para creer que la tendré en el futuro.",
-                    "Mis experiencias pasadas me han preparado bien para mi futuro.", "Todo lo que puedo ver hacia adelante es más desagradable que agradable.", "No espero conseguir lo que realmente quiero.",
-                    "Cuando miro hacia el futuro, espero que seré más feliz de lo que soy ahora.", "Las cosas simplemente no marcharán como yo quiero.", "Tengo gran fé en el futuro.",
-                    "Nunca consigo lo que quiero, por lo que es absurdo querer cualquier cosa.", "Es muy improbable que pueda lograr alguna satisfacción real en el futuro.", "El futuro me parece vago e incierto.",
-                    "Puedo esperar más épocas buenas que malas.", "No vale la pena tratar de conseguir algo que deseo, porque probablemente no lo lograré."
-                ]
-            },
-            'CDFR': { id: 'CDFR', titulo: 'Cuestionario de Detección de Factores de Riesgo (CDFR)', icono: 'ph-shield-warning', tipo: 'opcion_multiple_valorada', instrucciones: 'Este cuestionario es confidencial y busca identificar factores que puedan afectar tu desempeño escolar o bienestar. Responde con total honestidad.',
-                items: [
-                    { p: "1. ¿Con quién vives?", ops: [{t:"Ambos padres", v:0}, {t:"Solo uno", v:1}, {t:"Familiares", v:1}, {t:"Solo/Amigos", v:3}] },
-                    { p: "4. ¿Alguien más estudió bachillerato?", ops: [{t:"Sí", v:-1}, {t:"No, soy el primero", v:2}] },
-                    { p: "5. ¿Aportas económicamente?", ops: [{t:"No", v:0}, {t:"Sí, ayuda", v:1}, {t:"Sí, dependen de mí", v:3}] },
-                    { p: "6. ¿Tienes lugar para estudiar?", ops: [{t:"Sí", v:-1}, {t:"A veces", v:1}, {t:"No, nunca", v:3}] },
-                    { p: "8. Situaciones difíciles recientes", ops: [{t:"Ninguna", v:0}, {t:"Sí, han pasado cosas", v:2}] },
-                    { p: "10. ¿Trabajas?", ops: [{t:"No trabajo", v:0}, {t:"<10 horas", v:1}, {t:"10-20 horas", v:2}, {t:">20 horas", v:3}] },
-                    { p: "13. Dificultad para materiales", ops: [{t:"Nunca", v:0}, {t:"A veces", v:1}, {t:"Frecuentemente", v:2}] },
-                    { p: "15. Tiempo traslado", ops: [{t:"<30 min", v:0}, {t:"30-60 min", v:1}, {t:">1 hora", v:2}] },
-                    { p: "16. ¿Dejar escuela por dinero?", ops: [{t:"No", v:0}, {t:"A veces", v:2}, {t:"Frecuente/Sí", v:3}] },
-                    { p: "17. ¿Reprobado antes?", ops: [{t:"No", v:0}, {t:"Sí", v:2}] },
-                    { p: "18. Promedio Secundaria", ops: [{t:"8.0 - 10", v:-1}, {t:"7.0 - 7.9", v:1}, {t:"< 7.0", v:3}] },
-                    { p: "22. Horas estudio extra", ops: [{t:"0-2 horas", v:2}, {t:"3-10 horas", v:0}, {t:">10 horas", v:-1}] },
-                    { p: "23. Internet/PC", ops: [{t:"Sí, ambos", v:-1}, {t:"Solo uno/A veces", v:1}, {t:"Ninguno", v:2}] },
-                    { p: "29. Motivación", ops: [{t:"Superación/Familia", v:-1}, {t:"Trabajo", v:0}, {t:"No sé/Obligado", v:2}] },
-                    { p: "30. Tristeza/Desesperanza", ops: [{t:"Nunca/Poco", v:0}, {t:"Varios días", v:1}, {t:"Casi todos los días", v:3}] },
-                    { p: "34. Amigos en escuela", ops: [{t:"Sí tengo", v:-1}, {t:"Pocos", v:1}, {t:"Ninguno", v:2}] },
-                    { p: "35. Bullying/Acoso", ops: [{t:"Nunca", v:0}, {t:"Alguna vez", v:1}, {t:"Frecuente", v:3}] },
-                    { p: "36. Sustancias", ops: [{t:"No", v:0}, {t:"Ocasional", v:2}, {t:"Frecuente", v:3}] },
-                    { p: "38. Autolesión/Muerte", ops: [{t:"Nunca", v:0}, {t:"Alguna vez", v:2}, {t:"Frecuente", v:3}] },
-                    { p: "41. Actividades extra", ops: [{t:"Sí", v:-1}, {t:"No", v:1}] },
-                    { p: "46. ¿Deseas cita?", ops: [{t:"No por ahora", v:0}, {t:"Sí, me gustaría", v:0}] }
-                ]
+    /**
+     * Lógica para guardar los datos de un documento estructurado.
+     */
+    function guardarDocumento(instId) {
+        const db = getDB();
+        const idx = currentExpedientIndex;
+        if (idx === -1 || !db[idx]) return alert("Error: Expediente no identificado.");
+
+        const docMeta = CATALOGO_CLINICO[instId];
+        let dataRecogida = {};
+        let formularioCompleto = true;
+        
+        // 1. Recoger datos de los campos definidos en el catálogo
+        docMeta.campos.forEach(campoId => {
+            let valor = '';
+            const inputEl = document.getElementById(campoId);
+            
+            if (inputEl) {
+                if (inputEl.type === 'checkbox' || inputEl.type === 'radio') {
+                    // Manejo de Checkboxes y Radio Buttons
+                    valor = inputEl.checked ? 'true' : '';
+                } else if (inputEl.tagName === 'SELECT') {
+                    valor = inputEl.value;
+                } else {
+                    // Campos de texto, número, fecha, textarea
+                    valor = inputEl.value.trim();
+                }
+            } else if (campoId === 'ci_autorizacion_si' || campoId === 'ci_autorizacion_no') {
+                 // Manejo del grupo de Radio Buttons de autorización
+                const radioGroup = 'ci_autorizacion';
+                const checkedEl = document.querySelector(`input[name="${radioGroup}"]:checked`);
+                dataRecogida[radioGroup] = checkedEl ? checkedEl.value : '';
+                return; // Saltar el resto del bucle si es un radio button individual ya manejado por grupo
+            } else if (campoId === 'ci_motivo_Rendimiento Académico' || campoId === 'ci_motivo_Orientación Vocacional' /*... otros motivos ...*/) {
+                // Manejo de Checkboxes fuera del bucle de campos, ya que pueden tener el mismo name
+                const groupName = 'ci_motivo'; // Nombre del grupo
+                const checkedElements = document.querySelectorAll(`input[name="${groupName}"]:checked`);
+                
+                // Si el campo es parte de un grupo de checkboxes, ya fue recogido, simplemente pasamos
+                // Esta parte requiere refactorizar el CATALOGO_CLINICO para evitar la duplicación de IDs en el loop.
+                
             }
-        };
-
-        // ============================================
-        // 1.2. CATÁLOGO DE INSTRUMENTOS CLÍNICOS ESTRUCTURADOS (Define IDs a recolectar)
-        // ============================================
-        const CATALOGO_CLINICO = {
-            'CONSENTIMIENTO': {
-                titulo: 'Consentimiento Informado: Orientación Educativa',
-                icono: 'ph-check-square',
-                campos: [
-                    'ci_folio', 'ci_fecha_doc', 'ci_estudiante_nombre', 'ci_edad', 'ci_semestre', 'ci_grupo', 'ci_curp', 
-                    'ci_responsable', 'ci_telefono', 'ci_evaluador', 'ci_cedula', 
-                    // Estos son grupos de checkboxes o radios, se recogen por su ID/nombre de grupo
-                    'ci_motivo_Rendimiento Académico', 'ci_motivo_Orientación Vocacional', 'ci_motivo_Aspectos Emocionales', 'ci_motivo_Tamizaje Preventivo',
-                    'ci_motivo_Conducta Escolar', 'ci_motivo_Solicitud Padres/Alumno', 'ci_motivo_Otro', 'ci_motivo_otro_text',
-                    'ci_proc_Entrevista Clínica', 'ci_proc_Pruebas Psicológicas', 'ci_proc_Consejería Breve', 'ci_proc_Entrevista Padres', 
-                    'ci_proc_Observación Áulica', 'ci_proc_Taller Grupal',
-                    'ci_autorizacion_si', 'ci_autorizacion_no' // Radio buttons para autorización
-                ]
-            },
-            'ENTREVISTA': {
-                titulo: 'Entrevista Clínica Psicopedagógica Integral',
-                icono: 'ph-clipboard-text',
-                campos: [
-                    'ec_expediente', 'ec_fecha', 'ec_entrevistador',
-                    'ec_nombre_estudiante', 'ec_edad', 'ec_semestre_grupo',
-                    'ec_motivo_manifiesto', 'ec_historia_problema', 
-                    'ec_dinamica_familiar', 'ec_promedio_actual', 'ec_materias_dificultad', 'ec_notas_conducta'
-                ]
-            }
-        };
-
-
-        // ============================================
-        // 1.1. MAPEO CENTRALIZADO DE ESTILOS DE PRUEBA
-        // ============================================
-        const COLOR_MAP = {
-            'CSSRS': { icon: 'bg-red-100 text-red-700', text: 'text-red-600', hover: 'hover:bg-red-50' },
-            'SSI': { icon: 'bg-red-100 text-red-700', text: 'text-red-600', hover: 'hover:bg-red-50' },
-            'PLUTCHIK': { icon: 'bg-red-100 text-red-700', text: 'text-red-600', hover: 'hover:bg-red-50' },
-            'BDI': { icon: 'bg-blue-100 text-blue-700', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
-            'PHQ9': { icon: 'bg-blue-100 text-blue-700', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
-            'GAD7': { icon: 'bg-blue-100 text-blue-700', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
-            'HADS': { icon: 'bg-blue-100 text-blue-700', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
-            'EBMA': { icon: 'bg-teal-100 text-teal-700', text: 'text-teal-600', hover: 'hover:bg-teal-50' },
-            'IDARE': { icon: 'bg-idare-800 text-white', text: 'text-idare-800', hover: 'hover:bg-idare-50' },
-            'BAI': { icon: 'bg-yellow-100 text-yellow-700', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' },
-            'IPA': { icon: 'bg-yellow-100 text-yellow-700', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' },
-            'default': { icon: 'bg-slate-100 text-slate-600', text: 'text-brand-600', hover: 'hover:bg-brand-50' }
-        };
-
-        let currentExpedientIndex = -1; 
-
-        // ============================================
-        // 2. CONTROLADOR GENERAL
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            const configHash = params.get('config');
-
-            if (configHash) {
-                document.getElementById('view-admin').classList.add('hidden'); 
-                iniciarModoAlumno(configHash);
-            }
-            else {
-                document.getElementById('view-student').classList.add('hidden'); 
-                iniciarModoAdmin();
-            }
+            
+            // 2. Guardar valor y verificar si es requerido (si hubiéramos definido la propiedad required)
+            dataRecogida[campoId] = valor;
         });
 
-        // ============================================
-        // 3. LOGICA ADMIN
-        // ============================================
-        function iniciarModoAdmin() {
-            const container = document.getElementById('tests-checklist');
-            let html = '';
-            for (const key in CATALOGO_PRUEBAS) {
-                const t = CATALOGO_PRUEBAS[key];
-                const styles = COLOR_MAP[key] || COLOR_MAP.default;
-                html += `
-                <div class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl ${styles.hover} transition-all bg-white shadow-sm">
-                    <label class="flex-1 flex items-center cursor-pointer">
-                        <input type="checkbox" value="${key}" class="w-5 h-5 ${styles.text.replace('text-', 'text-')} rounded border-gray-300 admin-test-check">
-                        <div class="ml-3 flex-1">
-                            <span class="block text-sm font-bold text-slate-700">${t.titulo}</span>
-                            <span class="block text-[10px] text-slate-400">${t.items.length} preguntas</span>
-                        </div>
-                        <i class="ph-bold ${t.icono} text-xl ${styles.text} mr-2"></i>
-                    </label>
-                    <button onclick="previewTest('${key}')" class="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Ver Prueba">
-                        <i class="ph-bold ph-eye text-lg"></i>
-                    </button>
-                </div>`;
+        // 3. Validación y Guardado (Simplificada por la estructura del CATALOGO_CLINICO)
+
+        // Asumiendo que el campo 'ci_autorizacion' se recolecta correctamente como un valor único ('SI AUTORIZO' / 'NO AUTORIZO')
+        const autorizacion = document.querySelector('input[name="ci_autorizacion"]:checked')?.value || '';
+
+        if (instId === 'CONSENTIMIENTO' && autorizacion !== 'SI AUTORIZO') {
+            if (!confirm("ADVERTENCIA: El consentimiento no ha sido autorizado. ¿Desea guardar el documento en este estado?")) {
+                 return;
             }
-            container.innerHTML = html;
-            renderizarTablaExpedientes();
         }
         
-        // --- EXPEDIENTES LOGIC (Renderizado como Carpetas) ---
-        function renderizarTablaExpedientes() {
-            const db = getDB();
-            const container = document.getElementById('db-body-cards');
-            document.getElementById('db-count').innerText = db.length;
-            container.innerHTML = '';
-            
-            if(db.length===0) return document.getElementById('empty-state').classList.remove('hidden');
-            document.getElementById('empty-state').classList.add('hidden');
-
-            db.forEach((exp, i) => {
-                let status = exp.resultados && Object.keys(exp.resultados).length > 0 ? `<span class="text-xs font-bold text-green-600"><i class="ph-fill ph-check-circle"></i> ${Object.keys(exp.resultados).length} Pruebas</span>` : `<span class="text-xs font-bold text-slate-400"><i class="ph-fill ph-hourglass"></i> Sin Pruebas</span>`;
-                
-                let riskIcon = 'ph-folder-open';
-                let riskColor = 'text-slate-600';
-                for(const res of Object.values(exp.resultados)) {
-                    if (String(res.score).includes("CRÍTICO") || String(res.score).includes("RIESGO ALTO")) {
-                        riskIcon = 'ph-warning-fill';
-                        riskColor = 'text-red-600';
-                        break;
-                    }
-                }
-
-                container.innerHTML += `
-                <div onclick="abrirEscritorioExpediente(${i})" class="expedient-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start gap-4">
-                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 ${riskColor} shrink-0">
-                        <i class="ph-bold ${riskIcon} text-2xl"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-slate-800 text-sm truncate" title="${exp.nombre}">${exp.nombre}</p>
-                        <p class="text-xs text-slate-500 truncate mb-2">${exp.grupo} • ${exp.edad || '?'} años</p>
-                        ${status}
-                    </div>
-                    <button onclick="event.stopPropagation(); if(confirm('¿Borrar expediente permanentemente?')) { let d=getDB(); d.splice(${i},1); saveDB(d); renderizarTablaExpedientes(); }" class="text-slate-400 hover:text-red-500 p-1 rounded transition-colors" title="Borrar">
-                        <i class="ph-bold ph-trash text-lg"></i>
-                    </button>
-                </div>`;
-            });
-        }
+        // RECOLECCIÓN FINAL DE CHECKBOXES/RADIOS DE GRUPO
+        // Recoger Checkboxes de Motivos y Procedimientos
+        const motivos = document.querySelectorAll('input[name="ci_motivo"]');
+        motivos.forEach(input => {
+            const id = `ci_motivo_${input.value.replace(/ /g, '_')}`; // Normalizar el ID
+            dataRecogida[id] = input.checked ? 'true' : '';
+        });
         
-        // --- PREVIEW LOGIC (Inalterado) ---
-        function previewTest(tid) {
-            // ... (Lógica de preview inalterada) ...
-        }
-
-        // ============================================
-        // 7. GESTIÓN DE EXPEDIENTE CLÍNICO Y CREACIÓN
-        // ============================================
+        const procedimientos = document.querySelectorAll('input[name="ci_proc"]');
+        procedimientos.forEach(input => {
+            const id = `ci_proc_${input.value.replace(/ /g, '_')}`; // Normalizar el ID
+            dataRecogida[id] = input.checked ? 'true' : '';
+        });
         
-        /**
-         * Función para crear un nuevo expediente desde el modal.
-         */
-        function crearNuevoExpediente() {
-            const n = document.getElementById('new-name').value.trim();
-            const g = document.getElementById('new-group').value.trim();
-            const age = document.getElementById('new-age').value.trim();
-            const sex = document.getElementById('new-sex').value.trim();
-            
-            if (!n || !g || !age || !sex) return alert("Por favor, completa Nombre, Grupo, Edad y Sexo.");
-
-            let db = getDB();
-            
-            const initialClinicalData = {};
-            for (const instId in CATALOGO_CLINICO) { initialClinicalData[instId] = {}; }
-
-            db.push({ 
-                nombre: n, 
-                grupo: g, 
-                edad: age, 
-                sexo: sex, 
-                resultados: {}, 
-                ultimaFecha: new Date().toLocaleDateString(),
-                dataClinica: initialClinicalData
-            });
-
-            saveDB(db);
-            toggleModal('new-expedient-modal');
-            renderizarTablaExpedientes();
-            
-            abrirEscritorioExpediente(db.length - 1);
-        }
-
-        /**
-         * Abre el Modal de Documento (Entrevista o Consentimiento)
-         * @param {string} instId - ID del instrumento ('ENTREVISTA' o 'CONSENTIMIENTO').
-         */
-        function abrirModalCaptura(instId) {
-            // Cierra el escritorio (detail-modal) si está abierto para evitar solapamiento
-            if (!document.getElementById('detail-modal').classList.contains('hidden')) {
-                toggleModal('detail-modal');
-            }
-            
-            const exp = getDB()[currentExpedientIndex];
-            const docMeta = CATALOGO_CLINICO[instId];
-            
-            document.getElementById('doc-title').innerText = docMeta.titulo;
-            document.getElementById('doc-icon').className = `ph-bold ${docMeta.icono}`;
-            
-            // Ocultar todos los botones de guardar y mostrar el correcto
-            document.getElementById('btn-save-ENTREVISTA').classList.add('hidden');
-            document.getElementById('btn-save-CONSENTIMIENTO').classList.add('hidden');
-            document.getElementById(`btn-save-${instId}`).classList.remove('hidden');
-
-            const contentArea = document.getElementById('document-content-area');
-            const data = exp.dataClinica[instId] || {};
-            
-            if (instId === 'ENTREVISTA') {
-                contentArea.innerHTML = renderEntrevista(exp, data);
-            } else if (instId === 'CONSENTIMIENTO') {
-                contentArea.innerHTML = renderConsentimiento(exp, data);
-            }
-            
-            toggleModal('document-modal');
-        }
-
-        // --- GENERADOR 1: ENTREVISTA CLÍNICA (Adaptado a tu formato) ---
-        function renderEntrevista(exp, data) {
-            const today = new Date().toLocaleDateString('es-MX', {day: 'numeric', month: 'short', year: 'numeric'}).replace(/\./g, '');
-            const defaultEntrevistador = 'Psic. Tu Nombre Aquí';
-            const defaultExpediente = exp.grupo.substring(0, 4).toUpperCase() + '/' + exp.id.substring(0, 4).toUpperCase();
-
-            // Rellena los valores si existen en la DB
-            const fill = (id) => data[id] || '';
-            
-            return `
-            <div class="bg-white p-8 border border-gray-300 shadow-xl max-w-3xl mx-auto space-y-6 text-sm">
-                <h1 class="text-center text-lg font-bold text-slate-800">CENTRO DE BACHILLERATO TECNOLÓGICO AGROPECUARIO No. 130</h1>
-                <p class="text-center text-xs font-semibold uppercase border-b-2 pb-2 mb-4">ENTREVISTA CLÍNICA PSICOPEDAGÓGICA INTEGRAL</p>
-
-                <div class="grid grid-cols-3 gap-4 text-xs font-semibold">
-                    <div class="space-y-1">
-                        <label class="text-slate-500 block">EXPEDIENTE:</label>
-                        <input type="text" id="ec_expediente" value="${fill('ec_expediente') || defaultExpediente}" class="w-full doc-field-line text-sm p-0.5 focus:outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-slate-500 block">FECHA:</label>
-                        <input type="text" id="ec_fecha" value="${fill('ec_fecha') || today}" class="w-full doc-field-line text-sm p-0.5 focus:outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-slate-500 block">ENTREVISTADOR:</label>
-                        <input type="text" id="ec_entrevistador" value="${fill('ec_entrevistador') || defaultEntrevistador}" class="w-full doc-field-line text-sm p-0.5 focus:outline-none">
-                    </div>
-                </div>
-
-                <div class="space-y-2 pt-4">
-                    <h2 class="font-bold doc-section-header">A. FICHA DE IDENTIFICACIÓN</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs text-slate-500 block">NOMBRE DEL ESTUDIANTE:</label>
-                            <input type="text" id="ec_nombre_estudiante" value="${fill('ec_nombre_estudiante') || exp.nombre}" class="w-full doc-field-line font-semibold p-0.5 focus:outline-none" readonly>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-500 block">EDAD:</label>
-                                <input type="number" id="ec_edad" value="${fill('ec_edad') || exp.edad}" class="w-full doc-field-line font-semibold p-0.5 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-500 block">SEMESTRE Y GRUPO:</label>
-                                <input type="text" id="ec_semestre_grupo" value="${fill('ec_semestre_grupo') || exp.grupo}" class="w-full doc-field-line font-semibold p-0.5 focus:outline-none">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-2 pt-4">
-                    <h2 class="font-bold doc-section-header">B. MOTIVO DE CONSULTA</h2>
-                    <label class="text-xs text-slate-500 block">MOTIVO MANIFIESTO (LO QUE DICE EL ESTUDIANTE):</label>
-                    <textarea id="ec_motivo_manifiesto" rows="2" class="w-full doc-field-textarea focus:border-brand-600 focus:ring-1 focus:ring-brand-600">${fill('ec_motivo_manifiesto')}</textarea>
-                    <label class="text-xs text-slate-500 block">HISTORIA DEL PROBLEMA (INICIO, EVOLUCIÓN, FACTORES DESENCADENANTES):</label>
-                    <textarea id="ec_historia_problema" rows="3" class="w-full doc-field-textarea focus:border-brand-600 focus:ring-1 focus:ring-brand-600">${fill('ec_historia_problema')}</textarea>
-                </div>
-
-                <div class="space-y-2 pt-4">
-                    <h2 class="font-bold doc-section-header">C. CONTEXTO FAMILIAR</h2>
-                    <label class="text-xs text-slate-500 block">DINÁMICA FAMILIAR (ESTRUCTURA, COMUNICACIÓN, CONFLICTOS):</label>
-                    <textarea id="ec_dinamica_familiar" rows="3" class="w-full doc-field-textarea focus:border-brand-600 focus:ring-1 focus:ring-brand-600">${fill('ec_dinamica_familiar')}</textarea>
-                </div>
-
-                <div class="space-y-2 pt-4">
-                    <h2 class="font-bold doc-section-header">D. HISTORIA ACADÉMICA</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs text-slate-500 block">PROMEDIO ACTUAL:</label>
-                            <input type="text" id="ec_promedio_actual" value="${fill('ec_promedio_actual')}" class="w-full doc-field-line font-semibold p-0.5 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500 block">MATERIAS CON DIFICULTAD:</label>
-                            <input type="text" id="ec_materias_dificultad" value="${fill('ec_materias_dificultad')}" class="w-full doc-field-line font-semibold p-0.5 focus:outline-none">
-                        </div>
-                    </div>
-                    <label class="text-xs text-slate-500 block pt-2">NOTAS SOBRE CONDUCTA Y RELACIÓN SOCIAL (Observaciones):</label>
-                    <textarea id="ec_notas_conducta" rows="3" class="w-full doc-field-textarea focus:border-brand-600 focus:ring-1 focus:ring-brand-600">${fill('ec_notas_conducta')}</textarea>
-                </div>
-
-                </div>
-            `;
-        }
-
-        // --- GENERADOR 2: CONSENTIMIENTO INFORMADO (Adaptado a tu formato) ---
-        function renderConsentimiento(exp, data) {
-            const today = new Date().toLocaleDateString('es-MX', {day: 'numeric', month: 'short', year: 'numeric'}).replace(/\./g, '');
-            const defaultResponsable = 'Psic. Tu Nombre Aquí';
-            
-            const fill = (id) => data[id] || '';
-            const checked = (id) => (fill(id) === 'true' ? 'checked' : '');
-            const radioChecked = (id, val) => (fill(id) === val ? 'checked' : '');
-
-            return `
-            <div class="bg-white p-8 border border-gray-300 shadow-xl max-w-3xl mx-auto space-y-6 text-sm">
-                <h1 class="text-center text-lg font-bold text-slate-800">Centro de Bachillerato Tecnológico Agropecuario No. 130</h1>
-                <p class="text-center text-xs italic text-slate-500">"Guadalupe Victoria", San Blas, Nayarit</p>
-                <p class="text-center text-sm font-semibold uppercase">CONSENTIMIENTO INFORMADO: ORIENTACIÓN EDUCATIVA</p>
-                
-                <div class="text-xs flex justify-end gap-6 border-b border-gray-400 pb-2">
-                    <span class="font-semibold">Folio: <input type="text" id="ci_folio" value="${fill('ci_folio') || 'EXP-0000'}" class="border-b border-gray-400 font-bold w-20 text-center"></span>
-                    <span class="font-semibold">Fecha: <input type="text" id="ci_fecha_doc" value="${fill('ci_fecha_doc') || today}" class="border-b border-gray-400 font-bold w-20 text-center"></span>
-                </div>
-
-                <div class="space-y-3">
-                    <h2 class="font-bold doc-section-header">I. DATOS DE IDENTIFICACIÓN</h2>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="col-span-1">
-                            <label class="text-xs text-slate-500 block">Estudiante:</label>
-                            <input type="text" id="ci_estudiante_nombre" value="${fill('ci_estudiante_nombre') || exp.nombre}" class="w-full doc-field-line p-0.5 focus:outline-none" readonly>
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500 block">Edad:</label>
-                            <input type="number" id="ci_edad" value="${fill('ci_edad') || exp.edad}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500 block">Grupo:</label>
-                            <input type="text" id="ci_grupo" value="${fill('ci_grupo') || exp.grupo.split(' ')[1]}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-4 gap-4">
-                        <div>
-                            <label class="text-xs text-slate-500 block">Especialidad:</label>
-                            <input type="text" id="ci_especialidad" value="${fill('ci_especialidad')}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500 block">Semestre:</label>
-                            <input type="text" id="ci_semestre" value="${fill('ci_semestre') || exp.grupo.split(' ')[0]}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500 block">CURP:</label>
-                            <input type="text" id="ci_curp" value="${fill('ci_curp')}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                        </div>
-                         <div>
-                            <label class="text-xs text-slate-500 block">Teléfono:</label>
-                            <input type="text" id="ci_telefono" value="${fill('ci_telefono')}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs text-slate-500 block">Padre/Madre/Tutor:</label>
-                            <input type="text" id="ci_responsable" value="${fill('ci_responsable')}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-500 block">Responsable (Orientador):</label>
-                                <input type="text" id="ci_evaluador" value="${fill('ci_evaluador') || defaultResponsable}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-500 block">Cédula:</label>
-                                <input type="text" id="ci_cedula" value="${fill('ci_cedula')}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="space-y-3 pt-4">
-                    <h2 class="font-bold doc-section-header">II. DETALLES DEL SERVICIO</h2>
-                    <p class="text-xs text-slate-700">Se informa que el estudiante recibirá atención del Departamento de Orientación Educativa con los siguientes fines:</p>
-                    
-                    <p class="font-semibold text-sm">MOTIVO DE ATENCIÓN:</p>
-                    <div class="grid grid-cols-3 text-xs gap-x-6 gap-y-2">
-                        <label><input type="checkbox" name="ci_motivo" value="Rendimiento Académico" id="ci_motivo_Rendimiento Académico" ${checked('ci_motivo_Rendimiento Académico')}> Rendimiento Académico</label>
-                        <label><input type="checkbox" name="ci_motivo" value="Orientación Vocacional" id="ci_motivo_Orientación Vocacional" ${checked('ci_motivo_Orientación Vocacional')}> Orientación Vocacional</label>
-                        <label><input type="checkbox" name="ci_motivo" value="Aspectos Emocionales" id="ci_motivo_Aspectos Emocionales" ${checked('ci_motivo_Aspectos Emocionales')}> Aspectos Emocionales</label>
-                        <label><input type="checkbox" name="ci_motivo" value="Tamizaje Preventivo" id="ci_motivo_Tamizaje Preventivo" ${checked('ci_motivo_Tamizaje Preventivo')}> Tamizaje Preventivo</label>
-                        <label><input type="checkbox" name="ci_motivo" value="Conducta Escolar" id="ci_motivo_Conducta Escolar" ${checked('ci_motivo_Conducta Escolar')}> Conducta Escolar</label>
-                        <label><input type="checkbox" name="ci_motivo" value="Solicitud Padres/Alumno" id="ci_motivo_Solicitud Padres/Alumno" ${checked('ci_motivo_Solicitud Padres/Alumno')}> Solicitud Padres/Alumno</label>
-                        <div class="col-span-3 flex items-center gap-2">
-                            <label><input type="checkbox" name="ci_motivo" value="Otro" id="ci_motivo_Otro" ${checked('ci_motivo_Otro')}> Otro:</label>
-                            <input type="text" id="ci_motivo_otro_text" value="${fill('ci_motivo_otro_text')}" class="w-full doc-field-line p-0.5 focus:outline-none">
-                        </div>
-                    </div>
-
-                    <p class="font-semibold text-sm pt-3">PROCEDIMIENTOS APLICABLES:</p>
-                    <div class="grid grid-cols-3 text-xs gap-x-6 gap-y-2">
-                        <label><input type="checkbox" name="ci_proc" value="Entrevista Clínica" id="ci_proc_Entrevista Clínica" ${checked('ci_proc_Entrevista Clínica')}> Entrevista Clínica</label>
-                        <label><input type="checkbox" name="ci_proc" value="Pruebas Psicológicas" id="ci_proc_Pruebas Psicológicas" ${checked('ci_proc_Pruebas Psicológicas')}> Pruebas Psicológicas</label>
-                        <label><input type="checkbox" name="ci_proc" value="Consejería Breve" id="ci_proc_Consejería Breve" ${checked('ci_proc_Consejería Breve')}> Consejería Breve</label>
-                        <label><input type="checkbox" name="ci_proc" value="Entrevista Padres" id="ci_proc_Entrevista Padres" ${checked('ci_proc_Entrevista Padres')}> Entrevista Padres</label>
-                        <label><input type="checkbox" name="ci_proc" value="Observación Áulica" id="ci_proc_Observación Áulica" ${checked('ci_proc_Observación Áulica')}> Observación Áulica</label>
-                        <label><input type="checkbox" name="ci_proc" value="Taller Grupal" id="ci_proc_Taller Grupal" ${checked('ci_proc_Taller Grupal')}> Taller Grupal</label>
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-4 bg-slate-100 p-4 rounded border border-gray-200">
-                     <h2 class="font-bold doc-section-header">III. CONFIDENCIALIDAD Y ACUERDO</h2>
-                    <p class="text-xs text-slate-700">La información recabada es CONFIDENCIAL y se resguarda bajo ética profesional. Solo se compartirá información estrictamente necesaria para el bienestar del alumno en casos de riesgo o requerimiento legal.</p>
-                    
-                    <p class="font-bold text-sm text-slate-800">DECLARACIÓN:</p>
-                    <div class="flex gap-10">
-                        <label class="font-semibold"><input type="radio" name="ci_autorizacion" id="ci_autorizacion_si" value="SI AUTORIZO" ${radioChecked('ci_autorizacion', 'SI AUTORIZO')}> SI AUTORIZO la evaluación e intervención.</label>
-                        <label class="font-semibold"><input type="radio" name="ci_autorizacion" id="ci_autorizacion_no" value="NO AUTORIZO" ${radioChecked('ci_autorizacion', 'NO AUTORIZO')}> NO AUTORIZO.</label>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-4 pt-6 text-center text-xs">
-                    <div><div class="doc-signature-line"></div><p>Firma del Estudiante</p></div>
-                    <div><div class="doc-signature-line"></div><p>Firma del Padre/Madre/Tutor</p></div>
-                    <div><div class="doc-signature-line"></div><p>Firma del Orientador(a)</p></div>
-                </div>
-            </div>
-            `;
-        }
+        dataRecogida['ci_autorizacion'] = autorizacion; // Asegurar que la autorización esté guardada
 
 
-        // ============================================
-        // 4. LÓGICA DE FLUJO Y GUARDADO (JavaScript)
-        // ============================================
-
-        // ... (El resto de las funciones de la v3.5 se mantienen) ...
-
-        /**
-         * Lógica para guardar los datos de un documento estructurado.
-         */
-        function guardarDocumento(instId) {
-            const db = getDB();
-            const idx = currentExpedientIndex;
-            if (idx === -1 || !db[idx]) return alert("Error: Expediente no identificado.");
-
-            const docMeta = CATALOGO_CLINICO[instId];
-            let dataRecogida = {};
-            let formularioCompleto = true;
-            
-            // 1. Recoger datos de los campos definidos en el catálogo
-            docMeta.campos.forEach(campoId => {
-                let valor = '';
-                const inputEl = document.getElementById(campoId);
-                
-                // Manejo de Checkboxes y Radio Buttons
-                if (campoId.startsWith('ci_motivo_') || campoId.startsWith('ci_proc_')) {
-                    // Si es un grupo de checkbox, solo verificamos si está marcado
-                    if (inputEl && inputEl.checked) {
-                        valor = 'true';
-                    } else if (inputEl && inputEl.type === 'radio') {
-                         // Manejo específico para el radio button de Consentimiento
-                        const radioGroup = 'ci_autorizacion'; // El nombre del grupo
-                        const checkedEl = document.querySelector(`input[name="${radioGroup}"]:checked`);
-                        valor = checkedEl ? checkedEl.value : '';
-                    } else if (campoId === 'ci_motivo_otro_text') {
-                        // Recoger el texto del campo "Otro" si existe
-                        valor = inputEl ? inputEl.value.trim() : '';
-                    } else {
-                        // Si es un checkbox y no está, lo marcamos como vacío para evitar errores
-                        valor = inputEl ? (inputEl.checked ? 'true' : '') : '';
-                    }
-
-                } else if (campoId === 'ci_autorizacion_si' || campoId === 'ci_autorizacion_no') {
-                     // Ignoramos los IDs de radio buttons aquí, se recogen con el radio group check
-                     return; 
-                } else {
-                    // Campos de texto, número, fecha
-                    if (inputEl) {
-                        valor = inputEl.value.trim();
-                    }
-                }
-                
-                // Si el campo es obligatorio (Entrevista Clínica: Motivo, Historia, Dinámica, etc.)
-                // No podemos saber cuáles son obligatorios de forma simple sin catalogarlos de nuevo.
-                // Por ahora, solo guardamos el valor. Si quieres validación, debemos añadir la propiedad `required: true`
-                // a esos campos en el `CATALOGO_CLINICO` y hacer la validación aquí.
-
-                dataRecogida[campoId] = valor;
-            });
-
-            // Validar Consentimiento Mínimo
-            if (instId === 'CONSENTIMIENTO' && dataRecogida['ci_autorizacion'] !== 'SI AUTORIZO') {
-                if (!confirm("ADVERTENCIA: El consentimiento no ha sido autorizado. ¿Desea guardar el documento en este estado?")) {
-                     return;
-                }
-            }
-
-
-            // 2. Guardar en la DB
-            db[idx].dataClinica[instId] = dataRecogida;
-            db[idx].ultimaFecha = new Date().toLocaleDateString();
-            
-            saveDB(db);
-            
-            toggleModal('document-modal');
-            alert(`✅ ${docMeta.titulo} guardado exitosamente en el expediente de ${db[idx].nombre}.`);
-            
-            // Volver a abrir el escritorio del expediente
-            abrirEscritorioExpediente(idx); 
-        }
-
-        // --- GESTIÓN DEL ESCRITORIO (Inalterado) ---
-        function abrirEscritorioExpediente(idx) {
-            const db = getDB();
-            const exp = db[idx];
-            currentExpedientIndex = idx;
-            
-            document.getElementById('detail-name').innerText = exp.nombre;
-            document.getElementById('detail-meta').innerText = `Grupo: ${exp.grupo} | Edad: ${exp.edad||'--'} | Sexo: ${exp.sexo||'--'} | Última Actualización: ${exp.ultimaFecha}`;
-            
-            toggleModal('detail-modal');
-            
-            cargarInstrumento('cuantitativo');
-        }
-
-        function cargarInstrumento(viewType) {
-            const exp = getDB()[currentExpedientIndex];
-            const content = document.getElementById('detail-content');
-            content.innerHTML = '';
-            
-            if (viewType === 'cuantitativo') {
-                // Generar Pruebas Psicometricas
-                content.innerHTML += `<h4 class="font-bold text-lg text-slate-700 mb-3 border-b border-slate-200 pb-1">Resultados Cuantitativos (${Object.keys(exp.resultados).length} Pruebas)</h4>`;
-                
-                if (Object.keys(exp.resultados).length === 0) {
-                     content.innerHTML += `<div class="p-8 text-center bg-white rounded-xl border border-dashed border-slate-200 text-slate-500"><i class="ph-duotone ph-chart-line-up text-3xl block mb-2"></i> No hay resultados psicométricos importados para este expediente.</div>`;
-                }
-
-                for(const [tid, res] of Object.entries(exp.resultados)) {
-                    // ... (Generación de tarjetas de resultados - Inalterado) ...
-                     const tMeta = CATALOGO_PRUEBAS[tid];
-                    const styles = COLOR_MAP[tid] || COLOR_MAP.default;
-                    
-                    let cardClass = "bg-white border-l-4 border-slate-400";
-                    const baseColor = styles.text.replace('text-', '').split('-')[0];
-                    const lightBg = `${baseColor}-50`;
-                    const darkBorder = `${baseColor}-500`;
-                    
-                    cardClass = `bg-${lightBg} border-l-4 border-${darkBorder}`;
-                    if(tid==='IDARE') cardClass = "bg-idare-50 border-l-4 border-idare-800";
-                    if(tid==='BHS' || tid==='PLUTCHIK' || tid==='SSI' || tid==='CSSRS') {
-                        if (String(res.score).includes("CRÍTICO") || String(res.score).includes("Alto")) {
-                            cardClass = "bg-red-50 border-l-4 border-red-500";
-                        }
-                    }
-
-                    content.innerHTML += `
-                    <div class="${cardClass} p-5 rounded-r-xl shadow-sm border-y border-r border-slate-100">
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="flex items-center gap-2">
-                                <i class="ph-fill ${tMeta.icono} text-xl opacity-70"></i>
-                                <h4 class="font-bold text-slate-700">${tMeta.titulo}</h4>
-                            </div>
-                            <span class="bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-slate-100">${res.score}</span>
-                        </div>
-                        <div class="bg-white/50 p-3 rounded-lg border border-slate-200/50">
-                            <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Respuestas Crudas:</p>
-                            <p class="font-mono text-xs text-slate-600 break-all leading-relaxed tracking-wide">${Array.isArray(res.raw) ? res.raw.join(' · ') : res.raw}</p>
-                        </div>
-                    </div>`;
-                }
-            } 
-        }
-
-        // --- Resto de funciones (omitidas por longitud, se asume que las mantienes) ---
-        // (iniciarModoAlumno, iniciarSecuencia, cargarPruebaActual, siguientePrueba, etc.)
-
-        // ============================================
-        // 6. IMPORTACION Y ALMACENAMIENTO LOCAL (Inalterado)
-        // ============================================
-        function getDB() { return JSON.parse(localStorage.getItem('cbta_suite_db') || '[]'); }
-        function saveDB(d) { localStorage.setItem('cbta_suite_db', JSON.stringify(d)); }
+        db[idx].dataClinica[instId] = dataRecogida;
+        db[idx].ultimaFecha = new Date().toLocaleDateString();
         
-        function procesarImportacion() { /* ... (Lógica de importación) ... */ }
-        function finalizar() { /* ... (Lógica de finalización) ... */ }
-        function columbiaLogic(input, triggers) { /* ... (Lógica CSSRS) ... */ }
+        saveDB(db);
         
-    </script>
-</body>
-</html>
+        document.getElementById('document-modal').classList.add('hidden'); // Ocultar modal de documento
+        abrirEscritorioExpediente(idx); // Regresar al escritorio del expediente
+        alert(`✅ ${docMeta.titulo} guardado exitosamente en el expediente de ${db[idx].nombre}.`);
+    }
+</script>
