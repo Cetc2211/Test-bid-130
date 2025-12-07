@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suite de Evaluación Psicopedagógica v2.9</title>
+    <title>Suite de Evaluación Psicopedagógica v3.0 (Mejorada)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
-                        <p class="text-sm text-slate-500">Suite Integral v2.9 (Formal)</p>
+                        <p class="text-sm text-slate-500">Suite Integral v3.0 (Formal)</p>
                     </div>
                 </div>
             </div>
@@ -288,57 +288,28 @@
         // 1. CATÁLOGO CON INSTRUCCIONES FORMALES
         // ============================================
         const CATALOGO_PRUEBAS = {
-            'PHQ9': {
-                id: 'PHQ9', titulo: 'Cuestionario de Salud (PHQ-9)', icono: 'ph-heartbeat', tipo: 'likert_0_3',
-                instrucciones: 'Durante las últimas 2 semanas, ¿qué tan seguido ha tenido molestias por los siguientes problemas?',
+            'PHQ9': { id: 'PHQ9', titulo: 'Cuestionario de Salud (PHQ-9)', icono: 'ph-heartbeat', tipo: 'likert_0_3', instrucciones: 'Durante las últimas 2 semanas, ¿qué tan seguido ha tenido molestias por los siguientes problemas?',
                 items: [
-                    "Poco interés o placer en hacer las cosas",
-                    "Se ha sentido decaído, deprimido o sin esperanza",
-                    "Ha tenido dificultad para conciliar o mantener el sueño",
-                    "Se ha sentido cansado o con poca energía",
-                    "Ha tenido poco apetito o ha comido demasiado",
-                    "Se ha sentido mal consigo mismo o como un fracaso",
-                    "Ha tenido dificultad para concentrarse",
-                    "Se ha movido o hablado lentamente o muy rápido",
-                    "Ha tenido pensamientos de que sería mejor estar muerto"
+                    "Poco interés o placer en hacer las cosas", "Se ha sentido decaído, deprimido o sin esperanza", "Ha tenido dificultad para conciliar o mantener el sueño",
+                    "Se ha sentido cansado o con poca energía", "Ha tenido poco apetito o ha comido demasiado", "Se ha sentido mal consigo mismo o como un fracaso",
+                    "Ha tenido dificultad para concentrarse", "Se ha movido o hablado lentamente o muy rápido", "Ha tenido pensamientos de que sería mejor estar muerto"
                 ]
             },
-            'GAD7': {
-                id: 'GAD7', titulo: 'Escala de Ansiedad Generalizada (GAD-7)', icono: 'ph-waves', tipo: 'likert_0_3',
-                instrucciones: 'Durante las últimas 2 semanas, ¿qué tan frecuentemente ha experimentado los siguientes síntomas?',
+            'GAD7': { id: 'GAD7', titulo: 'Escala de Ansiedad Generalizada (GAD-7)', icono: 'ph-waves', tipo: 'likert_0_3', instrucciones: 'Durante las últimas 2 semanas, ¿qué tan frecuentemente ha experimentado los siguientes síntomas?',
                 items: [
-                    "Nerviosismo o ansiedad",
-                    "No poder parar o controlar la preocupación",
-                    "Preocupación excesiva por diferentes cosas",
-                    "Dificultad para relajarse",
-                    "Inquietud (dificultad para permanecer quieto)",
-                    "Irritabilidad",
-                    "Miedo a que algo malo pueda suceder"
+                    "Nerviosismo o ansiedad", "No poder parar o controlar la preocupación", "Preocupación excesiva por diferentes cosas", "Dificultad para relajarse",
+                    "Inquietud (dificultad para permanecer quieto)", "Irritabilidad", "Miedo a que algo malo pueda suceder"
                 ]
             },
-            'HADS': {
-                id: 'HADS', titulo: 'Escala Hospitalaria de Ansiedad y Depresión (HADS)', icono: 'ph-hospital', tipo: 'likert_0_3',
-                instrucciones: 'Lea cada frase y marque la respuesta que mejor corresponda a cómo se ha sentido durante la última semana.',
+            'HADS': { id: 'HADS', titulo: 'Escala Hospitalaria de Ansiedad y Depresión (HADS)', icono: 'ph-hospital', tipo: 'likert_0_3', instrucciones: 'Lea cada frase y marque la respuesta que mejor corresponda a cómo se ha sentido durante la última semana.',
                 items: [
-                    "Me siento tenso/a o intranquilo/a",
-                    "Sigo disfrutando de las cosas como siempre",
-                    "Siento una sensación de miedo como si fuera a suceder algo horrible",
-                    "Soy capaz de reírme y ver el lado cómico de las cosas",
-                    "Me siento preocupado/a",
-                    "Me siento optimista respecto del futuro",
-                    "Experimento sensaciones de pánico",
-                    "Disfruto leyendo o viendo TV",
-                    "Me siento ansioso/a",
-                    "Me siento feliz",
-                    "Me siento confiado/a en mí mismo/a",
-                    "Me siento tan inquieto/a que me resulta difícil estar quieto/a",
-                    "Espero algo con ilusión",
-                    "Experimento sensaciones súbitas de pánico"
+                    "Me siento tenso/a o intranquilo/a", "Sigo disfrutando de las cosas como siempre", "Siento una sensación de miedo como si fuera a suceder algo horrible",
+                    "Soy capaz de reírme y ver el lado cómico de las cosas", "Me siento preocupado/a", "Me siento optimista respecto del futuro", "Experimento sensaciones de pánico",
+                    "Disfruto leyendo o viendo TV", "Me siento ansioso/a", "Me siento feliz", "Me siento confiado/a en mí mismo/a",
+                    "Me siento tan inquieto/a que me resulta difícil estar quieto/a", "Espero algo con ilusión", "Experimento sensaciones súbitas de pánico"
                 ]
             },
-            'SSI': {
-                id: 'SSI', titulo: 'Escala de Ideación Suicida de Beck (SSI)', icono: 'ph-warning-octagon', tipo: 'ssi_flow',
-                instrucciones: 'Elija la opción que mejor describa su actitud actual o más reciente. Responda con sinceridad.',
+            'SSI': { id: 'SSI', titulo: 'Escala de Ideación Suicida de Beck (SSI)', icono: 'ph-warning-octagon', tipo: 'ssi_flow', instrucciones: 'Elija la opción que mejor describa su actitud actual o más reciente. Responda con sinceridad.',
                 items: [
                     {t: "Deseo de vivir", o: [{v:0, t:"Moderado a Fuerte"}, {v:1, t:"Débil"}, {v:2, t:"Ninguno"}]},
                     {t: "Deseo de morir", o: [{v:0, t:"Ninguno"}, {v:1, t:"Débil"}, {v:2, t:"Moderado a Fuerte"}]},
@@ -347,30 +318,16 @@
                     {t: "Deseo suicida pasivo", o: [{v:0, t:"Tomaría precauciones para vivir"}, {v:1, t:"Dejaría al azar"}, {v:2, t:"Evitaría pasos para vivir"}]}
                 ]
             },
-            'PLUTCHIK': {
-                id: 'PLUTCHIK', titulo: 'Escala de Riesgo Suicida de Plutchik', icono: 'ph-shield-warning', tipo: 'verdadero_falso',
-                instrucciones: 'Responda SÍ o NO a las siguientes preguntas sobre cómo se ha sentido o sus conductas recientes.',
+            'PLUTCHIK': { id: 'PLUTCHIK', titulo: 'Escala de Riesgo Suicida de Plutchik', icono: 'ph-shield-warning', tipo: 'verdadero_falso', instrucciones: 'Responda SÍ o NO a las siguientes preguntas sobre cómo se ha sentido o sus conductas recientes.',
                 items: [
-                    "Toma medicamentos habituales (aspirinas, píldulas para dormir)",
-                    "Tiene dificultad para conciliar el sueño",
-                    "Ha notado que podría perder el control sobre sí mismo",
-                    "Tiene poco interés en relacionarse con la gente",
-                    "Ve el futuro con más pesimismo que optimismo",
-                    "Se ha sentido inútil o sin valor",
-                    "Ve su futuro sin ninguna esperanza",
-                    "Se ha sentido tan fracasado que quería abandonar todo",
-                    "¿Está deprimido/a ahora?",
-                    "¿Está separado, divorciado o viudo?",
-                    "¿Sabe si algún familiar ha intentado suicidarse?",
-                    "¿Ha estado tan enfadado que podría matar a alguien?",
-                    "¿Ha pensado alguna vez en suicidarse?",
-                    "¿Ha comentado a alguien que quería suicidarse?",
-                    "¿Ha intentado alguna vez quitarse la vida?"
+                    "Toma medicamentos habituales (aspirinas, píldoras para dormir)", "Tiene dificultad para conciliar el sueño", "Ha notado que podría perder el control sobre sí mismo",
+                    "Tiene poco interés en relacionarse con la gente", "Ve el futuro con más pesimismo que optimismo", "Se ha sentido inútil o sin valor", "Ve su futuro sin ninguna esperanza",
+                    "Se ha sentido tan fracasado que quería abandonar todo", "¿Está deprimido/a ahora?", "¿Está separado, divorciado o viudo?",
+                    "¿Sabe si algún familiar ha intentado suicidarse?", "¿Ha estado tan enfadado que podría matar a alguien?", "¿Ha pensado alguna vez en suicidarse?",
+                    "¿Ha comentado a alguien que quería suicidarse?", "¿Ha intentado alguna vez quitarse la vida?"
                 ]
             },
-            'IPA': {
-                id: 'IPA', titulo: 'Inventario de Pensamientos Automáticos (IPA)', icono: 'ph-brain', tipo: 'likert_0_3',
-                instrucciones: 'A continuación encontrará una lista de pensamientos que suele tener la gente. Lea cada uno de ellos y marque la frecuencia con la que ha tenido este pensamiento en la última semana. Asegúrese de responder a todos los ítems.',
+            'IPA': { id: 'IPA', titulo: 'Inventario de Pensamientos Automáticos (IPA)', icono: 'ph-brain', tipo: 'likert_0_3', instrucciones: 'A continuación encontrará una lista de pensamientos que suele tener la gente. Lea cada uno de ellos y marque la frecuencia con la que ha tenido este pensamiento en la última semana. Asegúrese de responder a todos los ítems.',
                 items: [
                     "No puedo soportar ciertas cosas.", "Solamente me pasan cosas malas.", "Todo lo que hago me sale mal.", "Sé que piensan mal de mí.", "¿Y si tengo alguna enfermedad grave?.",
                     "Soy inferior a la gente en casi todo.", "Si otros cambiaran su actitud yo me sentiría mejor.", "¡No hay derecho a que me traten así!.", "Si me siento triste es porque soy un enfermo mental.",
@@ -385,9 +342,7 @@
                     "Soy un neurótico.", "Lo que me pasa es un castigo que merezco.", "Debería recibir más atención y cariño de otros.", "Tengo razón, y voy a hacer lo que me da la gana.", "Tarde o temprano me irán las cosas mejor."
                 ]
             },
-            'BAI': {
-                id: 'BAI', titulo: 'Inventario de Ansiedad de Beck (BAI)', icono: 'ph-heartbeat', tipo: 'likert_0_3',
-                instrucciones: 'Indique cuánto le ha molestado cada síntoma durante la última semana (incluyendo hoy). 0=Nada, 1=Leve, 2=Moderado, 3=Severo.',
+            'BAI': { id: 'BAI', titulo: 'Inventario de Ansiedad de Beck (BAI)', icono: 'ph-heartbeat', tipo: 'likert_0_3', instrucciones: 'Indique cuánto le ha molestado cada síntoma durante la última semana (incluyendo hoy). 0=Nada, 1=Leve, 2=Moderado, 3=Severo.',
                 items: [
                     "Entumecimiento u hormigueo", "Sensación de calor", "Temblor en las piernas", "Incapacidad para relajarse", "Miedo a que suceda lo peor", 
                     "Mareo o aturdimiento", "Palpitaciones o taquicardia", "Sensación de inestabilidad", "Sensación de terror", "Nerviosismo", 
@@ -396,23 +351,19 @@
                     "Sudoración (no debida al calor)"
                 ]
             },
-            'IDARE': {
-                id: 'IDARE', titulo: 'Inventario de Ansiedad Rasgo-Estado (IDARE)', icono: 'ph-waves', tipo: 'likert_1_4',
-                instrucciones: 'El inventario consta de dos partes. En la primera parte (ítems 1-20), indique cómo se siente AHORA MISMO, en este momento. En la segunda parte (ítems 21-40), indique cómo se siente GENERALMENTE. No hay respuestas correctas o incorrectas. No emplee mucho tiempo en cada frase.',
+            'IDARE': { id: 'IDARE', titulo: 'Inventario de Ansiedad Rasgo-Estado (IDARE)', icono: 'ph-waves', tipo: 'likert_1_4', instrucciones: 'El inventario consta de dos partes. En la primera parte (ítems 1-20), indique cómo se siente AHORA MISMO, en este momento. En la segunda parte (ítems 21-40), indique cómo se siente GENERALMENTE. No hay respuestas correctas o incorrectas. No emplee mucho tiempo en cada frase.',
                 items: [
-                    "1. Me siento calmado", "2. Me siento seguro", "3. Estoy tenso", "4. Estoy contrariado", "5. Me siento a gusto",
-                    "6. Me siento alterado", "7. Estoy preocupado por posibles desgracias", "8. Me siento descansado", "9. Me siento ansioso", "10. Me siento cómodo",
-                    "11. Me siento con confianza", "12. Me siento nervioso", "13. Estoy agitado", "14. Me siento a punto de explotar", "15. Me siento relajado",
-                    "16. Me siento satisfecho", "17. Estoy preocupado", "18. Me siento aturdido", "19. Me siento alegre", "20. Me siento bien",
-                    "21. Me siento bien", "22. Me canso rápidamente", "23. Siento ganas de llorar", "24. Quisiera ser tan feliz como otros", "25. Pierdo oportunidades por no decidir",
-                    "26. Me siento descansado", "27. Soy una persona tranquila", "28. Siento que las dificultades se amontonan", "29. Me preocupo demasiado por cosas sin importancia", "30. Soy feliz",
-                    "31. Tomo las cosas muy a pecho", "32. Me falta confianza en mí mismo", "33. Me siento seguro", "34. Trato de evitar enfrentar crisis", "35. Me siento melancólico",
-                    "36. Me siento satisfecho", "37. Ideas poco importantes me molestan", "38. Me afectan tanto los desengaños", "39. Soy una persona estable", "40. Me pongo tenso cuando pienso en mis asuntos"
+                    "1. Me siento calmado", "2. Me siento seguro", "3. Estoy tenso", "4. Estoy contrariado", "5. Me siento a gusto", "6. Me siento alterado", "7. Estoy preocupado por posibles desgracias",
+                    "8. Me siento descansado", "9. Me siento ansioso", "10. Me siento cómodo", "11. Me siento con confianza", "12. Me siento nervioso", "13. Estoy agitado",
+                    "14. Me siento a punto de explotar", "15. Me siento relajado", "16. Me siento satisfecho", "17. Estoy preocupado", "18. Me siento aturdido", "19. Me siento alegre",
+                    "20. Me siento bien", "21. Me siento bien", "22. Me canso rápidamente", "23. Siento ganas de llorar", "24. Quisiera ser tan feliz como otros",
+                    "25. Pierdo oportunidades por no decidir", "26. Me siento descansado", "27. Soy una persona tranquila", "28. Siento que las dificultades se amontonan",
+                    "29. Me preocupo demasiado por cosas sin importancia", "30. Soy feliz", "31. Tomo las cosas muy a pecho", "32. Me falta confianza en mí mismo",
+                    "33. Me siento seguro", "34. Trato de evitar enfrentar crisis", "35. Me siento melancólico", "36. Me siento satisfecho",
+                    "37. Ideas poco importantes me molestan", "38. Me afectan tanto los desengaños", "39. Soy una persona estable", "40. Me pongo tenso cuando pienso en mis asuntos"
                 ]
             },
-            'VAK': {
-                id: 'VAK', titulo: 'Cuestionario de Estilos de Aprendizaje (VAK)', icono: 'ph-eye', tipo: 'opcion_multiple',
-                instrucciones: 'Elige la opción que mejor represente tu comportamiento o preferencia en cada situación. Esto nos ayudará a identificar si tu estilo de aprendizaje es visual, auditivo o kinestésico.',
+            'VAK': { id: 'VAK', titulo: 'Cuestionario de Estilos de Aprendizaje (VAK)', icono: 'ph-eye', tipo: 'opcion_multiple', instrucciones: 'Elige la opción que mejor represente tu comportamiento o preferencia en cada situación. Esto nos ayudará a identificar si tu estilo de aprendizaje es visual, auditivo o kinestésico.',
                 items: [
                     { p: "¿Qué prefieres hacer en tu tiempo libre?", ops: ["Ver películas (Visual)", "Escuchar música (Auditivo)", "Hacer deporte (Kinestésico)"] },
                     { p: "¿Cómo aprendes mejor?", ops: ["Viendo diagramas o videos", "Escuchando explicaciones", "Haciendo prácticas o maquetas"] },
@@ -421,9 +372,7 @@
                     { p: "Al comprar un coche te fijas en:", ops: ["El color y diseño", "El sonido del motor y equipo de audio", "La comodidad de los asientos"] }
                 ]
             },
-            'BHS': {
-                id: 'BHS', titulo: 'Escala de Desesperanza de Beck (BHS)', icono: 'ph-circle-half', tipo: 'verdadero_falso',
-                instrucciones: 'A continuación hay 20 afirmaciones sobre el futuro. Lea cada una y determine si aplica a usted. Si la afirmación describe su actitud la última semana, marque VERDADERO. Si no es así, marque FALSO.',
+            'BHS': { id: 'BHS', titulo: 'Escala de Desesperanza de Beck (BHS)', icono: 'ph-circle-half', tipo: 'verdadero_falso', instrucciones: 'A continuación hay 20 afirmaciones sobre el futuro. Lea cada una y determine si aplica a usted. Si la afirmación describe su actitud la última semana, marque VERDADERO. Si no es así, marque FALSO.',
                 items: [
                     "Veo el futuro con esperanza y entusiasmo.", "Tal vez debería abandonar todo, porque no puedo hacer que las cosas mejoren.", "Cuando las cosas van mal, me alivia saber que las cosas no pueden permanecer así siempre.",
                     "No puedo imaginar cómo será mi vida dentro de 10 años.", "Tengo tiempo suficiente para lograr las cosas que quiero hacer.", "En el futuro, espero conseguir lo que me pueda interesar.",
@@ -434,9 +383,7 @@
                     "Puedo esperar más épocas buenas que malas.", "No vale la pena tratar de conseguir algo que deseo, porque probablemente no lo lograré."
                 ]
             },
-            'CDFR': {
-                id: 'CDFR', titulo: 'Cuestionario de Detección de Factores de Riesgo (CDFR)', icono: 'ph-shield-warning', tipo: 'opcion_multiple_valorada',
-                instrucciones: 'Este cuestionario es confidencial y busca identificar factores que puedan afectar tu desempeño escolar o bienestar. Responde con total honestidad.',
+            'CDFR': { id: 'CDFR', titulo: 'Cuestionario de Detección de Factores de Riesgo (CDFR)', icono: 'ph-shield-warning', tipo: 'opcion_multiple_valorada', instrucciones: 'Este cuestionario es confidencial y busca identificar factores que puedan afectar tu desempeño escolar o bienestar. Responde con total honestidad.',
                 items: [
                     { p: "1. ¿Con quién vives?", ops: [{t:"Ambos padres", v:0}, {t:"Solo uno", v:1}, {t:"Familiares", v:1}, {t:"Solo/Amigos", v:3}] },
                     { p: "4. ¿Alguien más estudió bachillerato?", ops: [{t:"Sí", v:-1}, {t:"No, soy el primero", v:2}] },
@@ -461,9 +408,7 @@
                     { p: "46. ¿Deseas cita?", ops: [{t:"No por ahora", v:0}, {t:"Sí, me gustaría", v:0}] }
                 ]
             },
-            'CSSRS': {
-                id: 'CSSRS', titulo: 'Escala Columbia para Eval. del Riesgo Suicida (C-SSRS)', icono: 'ph-warning-octagon', tipo: 'columbia_flow',
-                instrucciones: 'Deseamos saber cómo te has sentido el ÚLTIMO MES. Por favor, responde con sí o no a las siguientes preguntas sobre pensamientos y conductas.',
+            'CSSRS': { id: 'CSSRS', titulo: 'Escala Columbia para Eval. del Riesgo Suicida (C-SSRS)', icono: 'ph-warning-octagon', tipo: 'columbia_flow', instrucciones: 'Deseamos saber cómo te has sentido el ÚLTIMO MES. Por favor, responde con sí o no a las siguientes preguntas sobre pensamientos y conductas.',
                 items: [
                     { p: "1. ¿Ha deseado estar muerto?", id: "q1" },
                     { p: "2. ¿Ha tenido pensamientos de suicidio?", id: "q2", triggers: ["q3", "q4", "q5"] },
@@ -474,9 +419,7 @@
                     { p: "6b. ¿En los últimos 3 meses?", id: "q6b", hidden: true }
                 ]
             },
-            'BDI': {
-                id: 'BDI', titulo: 'Inventario de Depresión de Beck (BDI-II)', icono: 'ph-cloud-rain', tipo: 'opcion_multiple_valorada',
-                instrucciones: 'Este cuestionario consta de 21 grupos de afirmaciones. Lea con atención cada uno de ellos cuidadosamente y elija uno de cada grupo que mejor describa cómo se ha sentido DURANTE LAS DOS ÚLTIMAS SEMANAS.',
+            'BDI': { id: 'BDI', titulo: 'Inventario de Depresión de Beck (BDI-II)', icono: 'ph-cloud-rain', tipo: 'opcion_multiple_valorada', instrucciones: 'Este cuestionario consta de 21 grupos de afirmaciones. Lea con atención cada uno de ellos cuidadosamente y elija uno de cada grupo que mejor describa cómo se ha sentido DURANTE LAS DOS ÚLTIMAS SEMANAS.',
                 items: [
                     { p: "1. Tristeza", ops: [{t:"No me siento triste.", v:0}, {t:"Me siento triste gran parte del tiempo.", v:1}, {t:"Me siento triste todo el tiempo.", v:2}, {t:"Me siento tan triste o desgraciado que no puedo soportarlo.", v:3}] },
                     { p: "2. Pesimismo", ops: [{t:"No estoy desalentado respecto a mi futuro.", v:0}, {t:"Me siento más desalentado respecto de mi futuro que lo habitual.", v:1}, {t:"No espero que las cosas funcionen para mi.", v:2}, {t:"Siento que no hay esperanza para mi futuro y que sólo puede empeorar.", v:3}] },
@@ -501,9 +444,7 @@
                     { p: "21. Pérdida de Interés en el Sexo", ops: [{t:"No he notado ningún cambio reciente en mi interés por el sexo.", v:0}, {t:"Estoy menos interesado en el sexo de lo que solía estar.", v:1}, {t:"Estoy mucho menos interesado en el sexo ahora.", v:2}, {t:"He perdido completamente el interés en el sexo.", v:3}] }
                 ]
             },
-            'EBMA': {
-                id: 'EBMA', titulo: 'Escala de Motivación Académica (EBMA)', icono: 'ph-lightning', tipo: 'likert_1_5',
-                instrucciones: 'A continuación hay 25 afirmaciones sobre tu motivación hacia la escuela. Indica qué tan de acuerdo estás con cada una (1=Totalmente en Desacuerdo, 5=Totalmente de Acuerdo).',
+            'EBMA': { id: 'EBMA', titulo: 'Escala de Motivación Académica (EBMA)', icono: 'ph-lightning', tipo: 'likert_1_5', instrucciones: 'A continuación hay 25 afirmaciones sobre tu motivación hacia la escuela. Indica qué tan de acuerdo estás con cada una (1=Totalmente en Desacuerdo, 5=Totalmente de Acuerdo).',
                 items: [
                     "Disfruto mucho aprendiendo cosas nuevas", "Me da satisfacción personal superar retos académicos difíciles", "Me gusta lo que estudio, especialmente las materias de mi especialidad", "Siento curiosidad por conocer más sobre los temas que vemos", "Me emociona descubrir cosas que no sabía",
                     "Sé que es importante para mi futuro profesional", "Me ayudará a conseguir el trabajo que quiero", "Quiero ser alguien preparado y con conocimientos", "Es el camino para lograr mis metas personales", "Me permitirá ayudar mejor a mi familia y comunidad",
@@ -512,18 +453,14 @@
                     "Honestamente, no sé para qué vengo", "Siento que pierdo el tiempo aquí", "No le veo sentido a seguir estudiando", "Creo que la escuela no me sirve para nada", "Ya no me importa si termino o no"
                 ]
             },
-            'GOCA': {
-                id: 'GOCA', titulo: 'Guía de Observación Conductual (GOCA - Docente)', icono: 'ph-binoculars', tipo: 'likert_0_3',
-                instrucciones: 'Instrumento para que docentes evalúen conductas observadas en el estudiante. Escala: 0=No observado, 1=Raramente, 2=Frecuentemente, 3=Constantemente.',
+            'GOCA': { id: 'GOCA', titulo: 'Guía de Observación Conductual (GOCA - Docente)', icono: 'ph-binoculars', tipo: 'likert_0_3', instrucciones: 'Instrumento para que docentes evalúen conductas observadas en el estudiante. Escala: 0=No observado, 1=Raramente, 2=Frecuentemente, 3=Constantemente.',
                 items: [
                     "Participa activamente en clase", "Completa tareas y trabajos asignados", "Sigue instrucciones del docente", "Se relaciona positivamente con compañeros", "Respeta las normas de convivencia",
                     "Muestra interés en los temas", "Tiene dificultad para concentrarse", "Presenta conductas disruptivas", "Falta frecuentemente a clase", "Presenta trabajos de calidad",
                     "Demuestra esfuerzo en sus actividades", "Solicita ayuda cuando la necesita", "Es responsable con sus compromisos", "Muestra respeto hacia la autoridad", "Colabora en trabajo grupal"
                 ]
             },
-            'LIRA': {
-                id: 'LIRA', titulo: 'Lista de Riesgo Académico (LIRA)', icono: 'ph-triangle-warning', tipo: 'opcion_multiple_valorada',
-                instrucciones: 'Cuestionario para identificar factores que puedan afectar el desempeño académico del estudiante.',
+            'LIRA': { id: 'LIRA', titulo: 'Lista de Riesgo Académico (LIRA)', icono: 'ph-triangle-warning', tipo: 'opcion_multiple_valorada', instrucciones: 'Cuestionario para identificar factores que puedan afectar el desempeño académico del estudiante.',
                 items: [
                     {t: "1. Situación económica familiar", o: [{v:-1, t:"Estable"}, {v:0, t:"Regular"}, {v:2, t:"Inestable"}, {v:3, t:"Crítica"}]},
                     {t: "2. Apoyo familiar para estudios", o: [{v:-1, t:"Fuerte"}, {v:0, t:"Moderado"}, {v:2, t:"Débil"}, {v:3, t:"Nulo"}]},
@@ -535,6 +472,25 @@
                     {t: "8. Ideación o conducta suicida", o: [{v:0, t:"No"}, {v:2, t:"Alguna vez"}, {v:3, t:"Frecuente"}]}
                 ]
             }
+        };
+
+        // ============================================
+        // 1.1. MAPEO CENTRALIZADO DE ESTILOS DE PRUEBA
+        // ============================================
+        const COLOR_MAP = {
+            'CSSRS': { icon: 'bg-red-100 text-red-700', text: 'text-red-600', hover: 'hover:bg-red-50' },
+            'SSI': { icon: 'bg-red-100 text-red-700', text: 'text-red-600', hover: 'hover:bg-red-50' },
+            'PLUTCHIK': { icon: 'bg-red-100 text-red-700', text: 'text-red-600', hover: 'hover:bg-red-50' },
+            'BDI': { icon: 'bg-blue-100 text-blue-700', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
+            'PHQ9': { icon: 'bg-blue-100 text-blue-700', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
+            'GAD7': { icon: 'bg-blue-100 text-blue-700', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
+            'HADS': { icon: 'bg-blue-100 text-blue-700', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
+            'EBMA': { icon: 'bg-teal-100 text-teal-700', text: 'text-teal-600', hover: 'hover:bg-teal-50' },
+            'IDARE': { icon: 'bg-idare-800 text-white', text: 'text-idare-800', hover: 'hover:bg-idare-50' },
+            'BAI': { icon: 'bg-yellow-100 text-yellow-700', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' },
+            'IPA': { icon: 'bg-yellow-100 text-yellow-700', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' },
+            // Default/Otras
+            'default': { icon: 'bg-slate-100 text-slate-600', text: 'text-brand-600', hover: 'hover:bg-brand-50' }
         };
 
         // ============================================
@@ -556,15 +512,16 @@
             let html = '';
             for (const key in CATALOGO_PRUEBAS) {
                 const t = CATALOGO_PRUEBAS[key];
+                const styles = COLOR_MAP[key] || COLOR_MAP.default;
                 html += `
-                <div class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all bg-white shadow-sm">
+                <div class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl ${styles.hover} transition-all bg-white shadow-sm">
                     <label class="flex-1 flex items-center cursor-pointer">
-                        <input type="checkbox" value="${key}" class="w-5 h-5 text-brand-600 rounded border-gray-300 admin-test-check">
+                        <input type="checkbox" value="${key}" class="w-5 h-5 ${styles.text.replace('text-', 'text-')} rounded border-gray-300 admin-test-check">
                         <div class="ml-3 flex-1">
                             <span class="block text-sm font-bold text-slate-700">${t.titulo}</span>
                             <span class="block text-[10px] text-slate-400">${t.items.length} preguntas</span>
                         </div>
-                        <i class="ph-bold ${t.icono} text-xl text-slate-300 mr-2"></i>
+                        <i class="ph-bold ${t.icono} text-xl ${styles.text} mr-2"></i>
                     </label>
                     <button onclick="previewTest('${key}')" class="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Ver Prueba">
                         <i class="ph-bold ph-eye text-lg"></i>
@@ -583,10 +540,13 @@
             const container = document.getElementById('preview-content');
             container.innerHTML = '';
             
+            const styles = COLOR_MAP[tid] || COLOR_MAP.default;
+            
             test.items.forEach((item, idx) => {
                 const num = idx + 1;
                 if(tid === 'IDARE' && idx === 20) container.innerHTML += `<div class="py-4 text-center"><span class="bg-idare-800 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">Parte 2: Generalmente</span></div>`;
 
+                // Renderizado simplificado para la vista previa
                 if (test.tipo === 'columbia_flow') {
                     container.innerHTML += `
                     <div id="${item.id}_block" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -602,14 +562,14 @@
                     if(test.tipo.includes('likert') || test.tipo === 'verdadero_falso') {
                         let scale = test.tipo==='likert_1_5'?[1,2,3,4,5] : test.tipo==='likert_1_4'?[1,2,3,4] : test.tipo==='verdadero_falso'?['V','F'] : [0,1,2,3];
                         optsHTML = `<div class="grid grid-cols-${scale.length} gap-1 mt-2">${scale.map(v=>`<div class="h-8 border rounded flex items-center justify-center text-xs text-slate-400 font-bold">${v}</div>`).join('')}</div>`;
-                    } else if (test.tipo === 'opcion_multiple' || test.tipo === 'opcion_multiple_valorada') {
-                        const ops = item.ops || [];
+                    } else if (test.tipo === 'opcion_multiple' || test.tipo === 'opcion_multiple_valorada' || test.tipo === 'ssi_flow') {
+                        const ops = (test.tipo === 'ssi_flow') ? item.o : (item.ops || item.o) ;
                         optsHTML = `<div class="mt-2 space-y-1">${ops.map(o => `<div class="p-2 border rounded bg-slate-50 text-xs text-slate-500">${o.t || o}</div>`).join('')}</div>`;
                     }
-                    const qTxt = item.p || item;
+                    const qTxt = item.p || item.t || item;
                     container.innerHTML += `
                     <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-                        <p class="text-xs font-bold text-slate-700"><span class="text-brand-600">${num}.</span> ${qTxt}</p>
+                        <p class="text-xs font-bold text-slate-700"><span class="${styles.text}">${num}.</span> ${qTxt}</p>
                         ${optsHTML}
                     </div>`;
                 }
@@ -617,7 +577,7 @@
             toggleModal('preview-modal');
         }
 
-        // --- EXPEDIENTES LOGIC ---
+        // --- EXPEDIENTES LOGIC (CORRECCIÓN CLAVE AQUÍ) ---
         function renderizarTablaExpedientes() {
             const db = getDB();
             const tbody = document.getElementById('db-body');
@@ -631,13 +591,16 @@
                 let tags = '';
                 for(const [tid, res] of Object.entries(exp.resultados)) {
                     let color = 'bg-slate-100 text-slate-600';
-                    let txt = `${tid}: ${res.score}`;
+                    // --- USAMOS EL DIAGNÓSTICO TEXTUAL COMPLETO ---
+                    let txt = `${tid}: ${res.score}`; 
                     
                     // Colores de Tags basados en Diagnóstico (Texto en res.score)
-                    if(tid==='CSSRS' && String(res.score).includes("CRÍTICO")) color = 'bg-red-600 text-white font-bold';
-                    else if(tid==='BDI' && String(res.score).includes("GRAVE")) color = 'bg-blue-600 text-white font-bold';
-                    else if(tid==='CDFR' && String(res.score).includes("Alto")) color = 'bg-orange-100 text-orange-800';
+                    if(String(res.score).includes("CRÍTICO") || String(res.score).includes("SUICIDA")) color = 'bg-red-600 text-white font-bold';
+                    else if(String(res.score).includes("GRAVE") || String(res.score).includes("Severa")) color = 'bg-blue-600 text-white font-bold';
+                    else if(String(res.score).includes("Alto")) color = 'bg-orange-100 text-orange-800';
                     else if(tid==='IDARE') color = 'bg-idare-100 text-idare-800 border border-idare-600';
+                    else if(String(res.score).includes("Moderada") || String(res.score).includes("Leve") || String(res.score).includes("BORDE")) color = 'bg-yellow-100 text-yellow-800';
+                    else if(String(res.score).includes("Intrínseca")) color = 'bg-green-100 text-green-800';
                     
                     tags += `<span class="inline-block px-2 py-0.5 rounded text-[10px] ${color} mr-1 mb-1 border border-transparent">${txt}</span>`;
                 }
@@ -667,13 +630,22 @@
             
             for(const [tid, res] of Object.entries(exp.resultados)) {
                 const tMeta = CATALOGO_PRUEBAS[tid];
+                const styles = COLOR_MAP[tid] || COLOR_MAP.default;
+                
                 let cardClass = "bg-white border-l-4 border-slate-400";
                 
-                // Color coding for cards
-                if(tid==='CSSRS') cardClass = String(res.score).includes("CRÍTICO") ? "bg-red-50 border-l-4 border-red-500" : "bg-white border-l-4 border-red-200";
-                if(tid==='BDI') cardClass = String(res.score).includes("GRAVE") ? "bg-blue-50 border-l-4 border-blue-500" : "bg-white border-l-4 border-blue-200";
+                // Color coding for cards (más simple usando los estilos del mapa)
+                const baseColor = styles.text.replace('text-', '').split('-')[0];
+                const lightBg = `${baseColor}-50`;
+                const darkBorder = `${baseColor}-500`;
+                
+                cardClass = `bg-${lightBg} border-l-4 border-${darkBorder}`;
                 if(tid==='IDARE') cardClass = "bg-idare-50 border-l-4 border-idare-800";
-                if(tid==='EBMA') cardClass = "bg-teal-50 border-l-4 border-teal-500";
+                if(tid==='BHS' || tid==='PLUTCHIK' || tid==='SSI' || tid==='CSSRS') {
+                    if (String(res.score).includes("CRÍTICO") || String(res.score).includes("Alto")) {
+                        cardClass = "bg-red-50 border-l-4 border-red-500";
+                    }
+                }
 
                 content.innerHTML += `
                 <div class="${cardClass} p-5 rounded-r-xl shadow-sm border-y border-r border-slate-100">
@@ -724,7 +696,7 @@
         }
 
         // ============================================
-        // 4. LOGICA ALUMNO ACTUALIZADA (BIO DATA)
+        // 4. LOGICA ALUMNO ACTUALIZADA (FLUJO)
         // ============================================
         let sessionData = { nombre: '', grupo: '', edad: '', sexo: '', testsIds: [], respuestas: {} };
         let currentTestIndex = 0;
@@ -741,7 +713,8 @@
                 const list = document.getElementById('test-list-preview');
                 c.ts.forEach(tid => {
                     const t = CATALOGO_PRUEBAS[tid];
-                    list.innerHTML += `<div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm"><i class="ph-bold ${t.icono} text-brand-600"></i><span class="text-sm font-bold text-slate-700">${t.titulo}</span></div>`;
+                    const styles = COLOR_MAP[tid] || COLOR_MAP.default;
+                    list.innerHTML += `<div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm"><i class="ph-bold ${t.icono} ${styles.text}"></i><span class="text-sm font-bold text-slate-700">${t.titulo}</span></div>`;
                 });
             } catch (e) { alert("Link inválido"); }
         }
@@ -770,19 +743,10 @@
         function cargarPruebaActual() {
             const testId = sessionData.testsIds[currentTestIndex];
             const test = CATALOGO_PRUEBAS[testId];
+            const styles = COLOR_MAP[testId] || COLOR_MAP.default;
             
-            // Estilos de tarjeta según tipo de prueba (para el header de título)
-            const iconParent = document.getElementById('current-test-icon-box');
-            let iconClass = "bg-slate-100 text-slate-600"; // Default
-
-            if(['CSSRS','SSI','PLUTCHIK'].includes(testId)) iconClass="bg-red-100 text-red-700";
-            else if (['BDI','PHQ9','GAD7','HADS'].includes(testId)) iconClass="bg-blue-100 text-blue-700";
-            else if (testId === 'EBMA') iconClass="bg-teal-100 text-teal-700";
-            else if (testId === 'IDARE') iconClass="bg-idare-800 text-white";
-            else if (['BAI','IPA'].includes(testId)) iconClass="bg-yellow-100 text-yellow-700";
-            
-            iconParent.className = `p-3 rounded-lg ${iconClass}`;
-
+            // Aplicar estilos del mapa
+            document.getElementById('current-test-icon-box').className = `p-3 rounded-lg ${styles.icon}`;
             document.getElementById('current-test-title').innerText = test.titulo;
             document.getElementById('current-test-desc').innerText = test.instrucciones;
             document.getElementById('current-test-icon').className = `ph-fill ${test.icono} text-2xl`;
@@ -793,11 +757,12 @@
             const pct = Math.round((currentTestIndex / sessionData.testsIds.length) * 100);
             document.getElementById('progress-bar').style.width = `${pct}%`;
             document.getElementById('st-progress').innerText = `${pct}%`;
-
+            
+            const mainColor = styles.text.replace('text-', ''); // Ej: brand-600
+            
             test.items.forEach((item, idx) => {
                 const num = idx + 1;
                 
-                // Separador Visual para IDARE Parte 2
                 if(testId === 'IDARE' && idx === 20) {
                      container.innerHTML += `<div class="py-4 text-center"><span class="bg-idare-800 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">Parte 2: Generalmente</span></div>`;
                 }
@@ -809,12 +774,11 @@
                     <div id="${item.id}_block" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm ${hidden}">
                         <p class="text-lg font-bold text-slate-800 mb-4">${item.p}</p>
                         <div class="flex gap-4">
-                            <label class="columbia-btn flex-1 cursor-pointer"><input type="radio" name="${item.id}" value="1" class="peer sr-only" onchange='columbiaLogic(this, ${trig})'><div class="h-14 rounded-xl border-2 border-slate-100 bg-red-50 text-red-700 font-bold flex items-center justify-center peer-checked:bg-red-600 peer-checked:text-white">SI</div></label>
-                            <label class="columbia-btn flex-1 cursor-pointer"><input type="radio" name="${item.id}" value="0" class="peer sr-only" onchange='columbiaLogic(this, ${trig})'><div class="h-14 rounded-xl border-2 border-slate-100 bg-green-50 text-green-700 font-bold flex items-center justify-center peer-checked:bg-green-600 peer-checked:text-white">NO</div></label>
+                            <label class="columbia-btn flex-1 cursor-pointer"><input type="radio" name="${item.id}" value="1" class="peer sr-only" onchange='columbiaLogic(this, ${trig})'><div class="h-14 rounded-xl border-2 border-slate-100 bg-red-50 text-red-700 font-bold flex items-center justify-center peer-checked:bg-red-600 peer-checked:text-white transition-colors">SI</div></label>
+                            <label class="columbia-btn flex-1 cursor-pointer"><input type="radio" name="${item.id}" value="0" class="peer sr-only" onchange='columbiaLogic(this, ${trig})'><div class="h-14 rounded-xl border-2 border-slate-100 bg-green-50 text-green-700 font-bold flex items-center justify-center peer-checked:bg-green-600 peer-checked:text-white transition-colors">NO</div></label>
                         </div>
                     </div>`;
                 } else if (test.tipo === 'ssi_flow') {
-                    // SSI - Preguntas de opción múltiple con valores
                     const opts = item.o || [];
                     let html = `<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                         <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-red-600 font-bold">${num}.</span> ${item.t}</p>
@@ -830,9 +794,9 @@
                 } else if (test.tipo === 'likert_0_3') {
                     container.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${item}</p>
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="${mainColor} font-bold">${num}.</span> ${item}</p>
                         <div class="grid grid-cols-4 gap-2 bg-slate-50 p-2 rounded-xl">
-                            ${[0,1,2,3].map(v => `<label class="cursor-pointer relative group"><input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only"><div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-brand-600 peer-checked:text-white transition-all shadow-sm">${v}</div></label>`).join('')}
+                            ${[0,1,2,3].map(v => `<label class="cursor-pointer relative group"><input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only"><div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-${mainColor} peer-checked:text-white transition-all shadow-sm">${v}</div></label>`).join('')}
                         </div>
                     </div>`;
                 } else if (test.tipo === 'likert_1_4') { 
@@ -846,57 +810,40 @@
                          <div class="flex justify-between px-2 mt-1 text-[9px] text-gray-400 font-medium"><span>No / Casi Nunca</span><span>Mucho / Casi Siempre</span></div>
                     </div>`;
                 } else if (test.tipo === 'likert_1_5') { 
+                    const tealColor = COLOR_MAP.EBMA.text.replace('text-', '');
                     container.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-teal-600 font-bold">${num}.</span> ${item}</p>
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="${tealColor} font-bold">${num}.</span> ${item}</p>
                         <div class="grid grid-cols-5 gap-2 bg-slate-50 p-2 rounded-xl">
-                            ${[1,2,3,4,5].map(v => `<label class="cursor-pointer relative group"><input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only"><div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-teal-600 peer-checked:text-white transition-all shadow-sm">${v}</div></label>`).join('')}
+                            ${[1,2,3,4,5].map(v => `<label class="cursor-pointer relative group"><input type="radio" name="q_${testId}_${idx}" value="${v}" class="peer sr-only"><div class="h-10 w-full rounded-lg border border-slate-200 bg-white text-slate-400 font-bold text-sm flex items-center justify-center peer-checked:bg-${tealColor} peer-checked:text-white transition-all shadow-sm">${v}</div></label>`).join('')}
                         </div>
                         <div class="flex justify-between px-2 mt-1 text-[9px] text-gray-400 font-medium"><span>T.Desacuerdo</span><span>T.Acuerdo</span></div>
                     </div>`;
                 } else if (test.tipo === 'verdadero_falso') {
                     container.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${item}</p>
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="${mainColor} font-bold">${num}.</span> ${item}</p>
                         <div class="flex gap-4 bg-slate-50 p-3 rounded-xl">
-                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="V" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-green-600 peer-checked:text-white">SÍ</div></label>
-                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="F" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-red-500 peer-checked:text-white">NO</div></label>
+                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="V" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-green-600 peer-checked:text-white transition-colors">SÍ</div></label>
+                            <label class="cursor-pointer flex-1"><input type="radio" name="q_${testId}_${idx}" value="F" class="peer sr-only"><div class="h-12 rounded-xl border border-slate-300 bg-white text-slate-500 font-bold flex items-center justify-center gap-2 peer-checked:bg-red-500 peer-checked:text-white transition-colors">NO</div></label>
                         </div>
                     </div>`;
-                } else if (test.tipo === 'opcion_multiple_valorada') {
-                    // Múltiples opciones con valores ponderados
-                    const qTxt = item.t || item;
-                    const ops = item.o || [];
+                } else if (test.tipo === 'opcion_multiple_valorada' || test.tipo === 'opcion_multiple') {
+                    const qTxt = item.t || item.p || item;
+                    const ops = item.o || item.ops || [];
                     let html = `<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${qTxt}</p>
+                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="${mainColor} font-bold">${num}.</span> ${qTxt}</p>
                         <div class="space-y-2">`;
                     ops.forEach((opt, opIdx) => {
                         const txt = opt.t || opt;
                         const val = opt.v !== undefined ? opt.v : opIdx;
-                        html += `<label class="flex items-start gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50 transition-all bg-slate-50/50">
-                            <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border border-slate-300 bg-white shrink-0"><input type="radio" name="q_${testId}_${idx}" value="${val}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0"><div class="w-3 h-3 rounded-full bg-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity"></div></div>
+                        html += `<label class="flex items-start gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer ${styles.hover} transition-all bg-slate-50/50">
+                            <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border border-slate-300 bg-white shrink-0"><input type="radio" name="q_${testId}_${idx}" value="${val}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0"><div class="w-3 h-3 rounded-full bg-${mainColor} opacity-0 peer-checked:opacity-100 transition-opacity"></div></div>
                             <span class="text-xs font-medium text-slate-600">${txt}</span>
                         </label>`;
                     });
                     html += `</div></div>`;
                     container.innerHTML += html;
-                } else { 
-                    const qTxt = item.p || item;
-                    const ops = item.ops || [];
-                    container.innerHTML += `
-                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                        <p class="text-sm font-semibold text-slate-800 mb-4 flex gap-2"><span class="text-brand-600 font-bold">${num}.</span> ${qTxt}</p>
-                        <div class="space-y-2">
-                            ${ops.map((op, opIdx) => {
-                                const txt = op.t || op;
-                                const val = (op.v !== undefined) ? op.v : opIdx;
-                                return `<label class="flex items-start gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-brand-50 transition-all bg-slate-50/50">
-                                    <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border border-slate-300 bg-white shrink-0"><input type="radio" name="q_${testId}_${idx}" value="${val}" class="peer appearance-none w-full h-full cursor-pointer absolute z-10 opacity-0"><div class="w-3 h-3 rounded-full bg-brand-600 opacity-0 peer-checked:opacity-100 transition-opacity"></div></div>
-                                    <span class="text-xs font-medium text-slate-600">${txt}</span>
-                                </label>`;
-                            }).join('')}
-                        </div>
-                    </div>`;
                 }
             });
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -909,36 +856,37 @@
             const testId = sessionData.testsIds[currentTestIndex];
             const test = CATALOGO_PRUEBAS[testId];
             
-            // Recopilar respuestas del test actual
             let respuestas = [];
             let todoResponder = true;
             
             test.items.forEach((item, idx) => {
                 let respondido = false;
-                
+                let el;
+
                 if(test.tipo === 'columbia_flow') {
-                    const el = document.querySelector(`input[name="${item.id}"]:checked`);
-                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
-                } else if(test.tipo === 'ssi_flow') {
-                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
-                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
-                } else if(['likert_0_3', 'likert_1_4', 'likert_1_5'].includes(test.tipo)) {
-                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
-                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
-                } else if(test.tipo === 'verdadero_falso') {
-                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
-                    if(el) { respuestas.push(el.value); respondido = true; }
-                } else if(test.tipo === 'opcion_multiple_valorada') {
-                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
-                    if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
+                    const block = document.getElementById(`${item.id}_block`);
+                    // Solo si la pregunta está visible, se debe requerir respuesta y se debe recopilar
+                    if (!block || !block.classList.contains('hidden')) {
+                        el = document.querySelector(`input[name="${item.id}"]:checked`);
+                        if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
+                        else { todoResponder = false; }
+                    } else {
+                        // Si está oculta, asumimos respuesta '0' (NO) para mantener la longitud del array
+                        respuestas.push(0); 
+                        respondido = true;
+                    }
                 } else {
-                    const el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
-                    if(el) { respuestas.push(el.value); respondido = true; }
-                }
-                
-                // Excepción: en Columbia (CSSRS), solo las preguntas visibles deben checarse como respondidas.
-                if(!respondido && test.tipo !== 'columbia_flow' && (test.tipo === 'columbia_flow' && !document.getElementById(`${item.id}_block`).classList.contains('hidden'))) {
-                    todoResponder = false;
+                    el = document.querySelector(`input[name="q_${testId}_${idx}"]:checked`);
+                    if(el) { 
+                        if (['likert_0_3', 'likert_1_4', 'likert_1_5', 'ssi_flow', 'opcion_multiple_valorada'].includes(test.tipo)) {
+                            respuestas.push(parseInt(el.value)); 
+                        } else {
+                            respuestas.push(el.value); 
+                        }
+                        respondido = true; 
+                    } else { 
+                        todoResponder = false; 
+                    }
                 }
             });
             
@@ -947,10 +895,7 @@
                 return;
             }
             
-            // Guardar respuestas
             sessionData.respuestas[testId] = respuestas;
-            
-            // Pasar a siguiente prueba
             currentTestIndex++;
             
             if(currentTestIndex < sessionData.testsIds.length) {
@@ -964,15 +909,16 @@
         // Columbia Logic for CSSRS
         // ============================================
         function columbiaLogic(input, triggers) {
-            // Si la respuesta es SÍ (1), muestra las preguntas relacionadas (triggers)
-            if (input.value === '1' && triggers && triggers.length > 0) {
-                triggers.forEach(tid => {
+            // Convierte el array de strings a un array de ids
+            const triggerIds = Array.isArray(triggers) ? triggers : JSON.parse(triggers);
+            
+            if (input.value === '1' && triggerIds.length > 0) {
+                triggerIds.forEach(tid => {
                     const block = document.getElementById(tid + '_block');
                     if (block) block.classList.remove('hidden');
                 });
-            } else if (input.value === '0' && triggers && triggers.length > 0) {
-                // Si la respuesta es NO (0), oculta las preguntas relacionadas y deselecciona sus respuestas
-                triggers.forEach(tid => {
+            } else if (input.value === '0' && triggerIds.length > 0) {
+                triggerIds.forEach(tid => {
                     const block = document.getElementById(tid + '_block');
                     if (block) {
                         block.classList.add('hidden');
@@ -983,7 +929,7 @@
         }
 
         // ============================================
-        // 5. FINALIZACIÓN Y CÁLCULO DE DIAGNÓSTICOS (CORREGIDO)
+        // 5. FINALIZACIÓN Y CÁLCULO DE DIAGNÓSTICOS (CORRECCIONES APLICADAS)
         // ============================================
         function enviarTokenWhatsapp() {
             const token = document.getElementById("final-token-display").innerText;
@@ -1012,32 +958,32 @@
             sessionData.testsIds.forEach(tid => {
                 const r = sessionData.respuestas[tid];
                 let score = 0;
-                let interpretacion = "Puntuación no procesada"; // Variable para el diagnóstico textual
+                let interpretacion = "Puntuación no procesada";
                 
-                // --- LOGICA DE CALIFICACIÓN Y DIAGNÓSTICO ---
+                // --- LOGICA DE CALIFICACIÓN Y DIAGNÓSTICO (MEJORADO) ---
                 if(tid === 'PHQ9') {
-                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    score = r.reduce((a,b)=>a+b,0);
                     let nivel = score>=20?"Depresión Grave":score>=15?"Depresión Moderada":score>=10?"Depresión Leve":"Síntomas Depresivos Mínimos";
                     interpretacion = `${score} (${nivel})`; 
                 } else if(tid === 'GAD7') {
-                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    score = r.reduce((a,b)=>a+b,0);
                     let nivel = score>=15?"Ansiedad Grave":score>=10?"Ansiedad Moderada":score>=5?"Ansiedad Leve":"Síntomas de Ansiedad Mínimos";
                     interpretacion = `${score} (${nivel})`; 
                 } else if(tid === 'HADS') {
                     let ans = 0, dep = 0;
                     r.forEach((v, i) => {
-                        const val = parseInt(v);
+                        const val = v;
                         if([0,2,4,6,8,10,12,13].includes(i)) {
-                            ans += val;
+                            ans += val; // Ansiedad (ítems directos)
                         } else {
-                            dep += (3 - val); // Invertidos
+                            dep += (3 - val); // Depresión (ítems inversos)
                         }
                     });
-                    let ansN = ans>11?"CASO CLÍNICO (Ans.)":ans>8?"BORDE (Ans.)":"Normal (Ans.)";
-                    let depN = dep>11?"CASO CLÍNICO (Dep.)":dep>8?"BORDE (Dep.)":"Normal (Dep.)";
+                    let ansN = ans>10?"CASO CLÍNICO (Ans.)":ans>7?"BORDE (Ans.)":"Normal (Ans.)";
+                    let depN = dep>10?"CASO CLÍNICO (Dep.)":dep>7?"BORDE (Dep.)":"Normal (Dep.)";
                     interpretacion = `A:${ans} (${ansN}) | D:${dep} (${depN})`; 
                 } else if(tid === 'SSI') {
-                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    score = r.reduce((a,b)=>a+b,0);
                     let nivel = score>=6?"RIESGO SUICIDA CRÍTICO":score>=3?"Riesgo Suicida Moderado":"Riesgo Suicida Bajo";
                     interpretacion = `${score} (${nivel})`; 
                 } else if(tid === 'PLUTCHIK') {
@@ -1045,16 +991,24 @@
                     let nivel = score>=9?"Riesgo Suicida Alto":score>=5?"Riesgo Suicida Moderado":"Riesgo Suicida Bajo";
                     interpretacion = `${score}/15 (${nivel})`; 
                 } else if(tid === 'IPA') {
-                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    score = r.reduce((a,b)=>a+b,0);
                     let nivel = score>=100?"Distorsión Cognitiva Severa":score>=50?"Distorsión Cognitiva Moderada":"Bajo Nivel de Distorsión";
                     interpretacion = `${score} (${nivel})`; 
                 } else if(tid === 'BAI') {
-                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    score = r.reduce((a,b)=>a+b,0);
                     let nivel = score>=30?"Ansiedad Severa":score>=16?"Ansiedad Moderada":score>=8?"Ansiedad Leve":"Ansiedad Mínima";
                     interpretacion = `${score} (${nivel})`; 
                 } else if(tid === 'BHS') {
-                    const key = [2,4,7,9,11,12,14,16,17,18,20];
-                    score = r.reduce((acc,v,i) => acc + (key.includes(i+1)?(v==='V'?1:0):(v==='F'?1:0)), 0);
+                    // CORRECCIÓN BHS: Puntuación de desesperanza
+                    const directos = [2, 4, 7, 9, 11, 12, 14, 16, 17, 18, 20]; // Ítems que puntúan con FALSO (indican esperanza)
+                    score = r.reduce((acc, v, i) => {
+                        const qNum = i + 1;
+                        if (directos.includes(qNum)) {
+                            return acc + (v === 'F' ? 1 : 0);
+                        } else {
+                            return acc + (v === 'V' ? 1 : 0);
+                        }
+                    }, 0);
                     let nivel = score>=10?"Desesperanza Alta":score>=5?"Desesperanza Moderada":"Desesperanza Baja";
                     interpretacion = `${score}/20 (${nivel})`; 
                 } else if(tid === 'CDFR') {
@@ -1062,9 +1016,8 @@
                     let niv = sum>24?"Riesgo CRÍTICO":sum>16?"Riesgo Alto":sum>8?"Riesgo Moderado":"Riesgo Bajo";
                     interpretacion = `${sum} (${niv})`; 
                 } else if(tid === 'CSSRS') {
-                    // Solo usamos las respuestas recogidas (1=SI, 0=NO)
-                    // Las preguntas 3, 4, 5 y 6b podrían ser 0 si se ocultaron.
-                    interpretacion = r[5]===1 ? "CRÍTICO (Conducta de Intento)" : r[4]===1 ? "ALTO (Plan Específico)" : r[1]===1 ? "Moderado (Ideación)" : "Bajo Riesgo";
+                    // Se recopilan 7 respuestas (q1, q2, q3, q4, q5, q6, q6b) con 1=SI o 0=NO.
+                    interpretacion = r[5]===1 ? "RIESGO CRÍTICO (Conducta de Intento)" : r[4]===1 ? "RIESGO ALTO (Plan Específico)" : r[1]===1 ? "Riesgo Moderado (Ideación)" : "Bajo Riesgo";
                 } else if (tid === 'BDI') {
                     let sum = r.reduce((a,b)=>a+b,0);
                     let niv = sum<=13?"Depresión Mínima":sum<=19?"Depresión Leve":sum<=28?"Depresión Moderada":"Depresión GRAVE";
@@ -1075,14 +1028,14 @@
                     let A=getAvg(0,4), B=getAvg(5,9), C=getAvg(10,14), D=getAvg(15,19), E=getAvg(20,24);
                     let iar = (2*A + 1*B - 1*C - 2*D).toFixed(1);
                     let p = "Motivación Mixta";
-                    if(A>=4 && B>=3.5 && D<2.5) p="Motivación Intrínseca"; else if(A<2.5 && D>=4) p="Motivación Externa"; else if(E>=3.5) p="Desmotivado/Amotivación";
-                    interpretacion = `IAR:${iar} (${p})`; 
+                    if(A>=4 && B>=3.5 && D<2.5) p="Motivación Intrínseca": p="Motivación Intrínseca"; else if(A<2.5 && D>=4) p="Motivación Externa"; else if(E>=3.5) p="Desmotivado/Amotivación";
+                    interpretacion = `IAR: ${iar} (${p})`; 
                 } else if (tid === 'IDARE') {
-                    const invE = [0,1,4,7,9,10,14,15,18,19];
-                    const invR = [20,25,26,29,32,35,38];
+                    const invE = [0,1,4,7,9,10,14,15,18,19]; // Índices 0-19
+                    const invR = [20,25,26,29,32,35,38]; // Índices 20-39
                     let sE = 0, sR = 0;
                     r.forEach((v, i) => {
-                        const val = parseInt(v);
+                        const val = v;
                         if(i<20) sE += invE.includes(i) ? (5-val) : val;
                         else sR += invR.includes(i-20) ? (5-val) : val;
                     });
@@ -1100,17 +1053,17 @@
                     let estilo = v===max?"Visual":a===max?"Auditivo":"Kinestésico";
                     interpretacion = `${estilo} (V:${v}, A:${a}, K:${k})`; 
                 } else if (tid === 'GOCA') {
-                    score = r.reduce((a,b)=>a+parseInt(b),0);
+                    score = r.reduce((a,b)=>a+b,0);
                     let nivel = score>=36?"Excelente":score>=24?"Bueno":score>=12?"Regular":"Requiere apoyo";
                     interpretacion = `${score}/45 (${nivel})`; 
                 } else if (tid === 'LIRA') {
-                    let sum = r.reduce((a,b)=>a+parseInt(b),0);
+                    let sum = r.reduce((a,b)=>a+b,0);
                     if(sum<0) sum = 0;
                     let niv = sum>20?"Riesgo CRÍTICO":sum>12?"Riesgo Alto":sum>5?"Riesgo Moderado":"Riesgo Bajo";
                     interpretacion = `${sum} (${niv})`; 
                 } else interpretacion = r.join(',');
                 
-                // CORRECCIÓN CLAVE: Guarda el diagnóstico textual en 'score'
+                // CLAVE: Guarda el diagnóstico textual en 'score'
                 result.resultados[tid] = { score: interpretacion, raw: r }; 
             });
 
@@ -1128,10 +1081,12 @@
 
         function procesarImportacion() {
             try {
-                const d = JSON.parse(decodeURIComponent(atob(document.getElementById('import-token-input').value.trim())));
+                const token = document.getElementById('import-token-input').value.trim();
+                if (!token) return alert("Por favor, pega el código completo de resultados.");
+                
+                const d = JSON.parse(decodeURIComponent(atob(token)));
                 let db = getDB();
                 
-                // Buscar expediente existente para actualizar o crear uno nuevo
                 let idx = db.findIndex(e => e.nombre === d.alumno && e.grupo === d.grupo);
                 
                 if(idx >= 0) { 
@@ -1150,9 +1105,15 @@
                     });
                 }
                 
-                saveDB(db); renderizarTablaExpedientes(); toggleModal('import-modal'); document.getElementById('import-token-input').value = "";
-                alert("✅ Datos guardados.");
-            } catch (e) { alert("Código inválido. Asegúrate de pegar el código completo."); console.error(e); }
+                saveDB(db); 
+                renderizarTablaExpedientes(); 
+                toggleModal('import-modal'); 
+                document.getElementById('import-token-input').value = "";
+                alert("✅ Datos guardados. Verifica la tabla de expedientes.");
+            } catch (e) { 
+                alert("Código inválido. Asegúrate de pegar el código completo generado al finalizar la evaluación."); 
+                console.error("Error al procesar importación:", e); 
+            }
         }
     </script>
 </body>
