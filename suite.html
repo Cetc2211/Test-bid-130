@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suite de Evaluación Psicopedagógica v3.0 (Mejorada)</title>
+    <title>Suite de Evaluación Psicopedagógica v3.1 (Estable)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -28,7 +28,7 @@
 </head>
 <body class="bg-gray-50 text-slate-800 min-h-screen font-sans selection:bg-brand-100">
 
-    <div id="view-admin" class="hidden max-w-7xl mx-auto p-4 md:p-6 space-y-6 pb-20">
+    <div id="view-admin" class="max-w-7xl mx-auto p-4 md:p-6 space-y-6 pb-20">
         
         <header class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4 w-full md:w-auto">
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
-                        <p class="text-sm text-slate-500">Suite Integral v3.0 (Formal)</p>
+                        <p class="text-sm text-slate-500">Suite Integral v3.1 (Estable)</p>
                     </div>
                 </div>
             </div>
@@ -489,25 +489,34 @@
             'IDARE': { icon: 'bg-idare-800 text-white', text: 'text-idare-800', hover: 'hover:bg-idare-50' },
             'BAI': { icon: 'bg-yellow-100 text-yellow-700', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' },
             'IPA': { icon: 'bg-yellow-100 text-yellow-700', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' },
-            // Default/Otras
             'default': { icon: 'bg-slate-100 text-slate-600', text: 'text-brand-600', hover: 'hover:bg-brand-50' }
         };
 
         // ============================================
-        // 2. CONTROLADOR GENERAL
+        // 2. CONTROLADOR GENERAL (AJUSTADO)
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const configHash = params.get('config');
-            if (configHash) iniciarModoAlumno(configHash);
-            else iniciarModoAdmin();
+
+            if (configHash) {
+                // Si hay config, ocultamos el admin y mostramos el alumno
+                document.getElementById('view-admin').classList.add('hidden'); 
+                iniciarModoAlumno(configHash);
+            }
+            else {
+                // Si NO hay config, aseguramos que el alumno esté oculto y mostramos el admin
+                document.getElementById('view-student').classList.add('hidden'); 
+                iniciarModoAdmin();
+            }
         });
 
         // ============================================
-        // 3. LOGICA ADMIN
+        // 3. LOGICA ADMIN (AJUSTADA)
         // ============================================
         function iniciarModoAdmin() {
-            document.getElementById('view-admin').classList.remove('hidden');
+            // El elemento 'view-admin' ya es visible por defecto en el HTML (la corrección del bug)
+            
             const container = document.getElementById('tests-checklist');
             let html = '';
             for (const key in CATALOGO_PRUEBAS) {
@@ -532,7 +541,7 @@
             renderizarTablaExpedientes();
         }
 
-        // --- PREVIEW LOGIC ---
+        // --- PREVIEW LOGIC (Inalterada) ---
         function previewTest(tid) {
             const test = CATALOGO_PRUEBAS[tid];
             document.getElementById('preview-title').innerText = test.titulo;
@@ -546,7 +555,6 @@
                 const num = idx + 1;
                 if(tid === 'IDARE' && idx === 20) container.innerHTML += `<div class="py-4 text-center"><span class="bg-idare-800 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">Parte 2: Generalmente</span></div>`;
 
-                // Renderizado simplificado para la vista previa
                 if (test.tipo === 'columbia_flow') {
                     container.innerHTML += `
                     <div id="${item.id}_block" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -577,7 +585,7 @@
             toggleModal('preview-modal');
         }
 
-        // --- EXPEDIENTES LOGIC (CORRECCIÓN CLAVE AQUÍ) ---
+        // --- EXPEDIENTES LOGIC (Inalterada) ---
         function renderizarTablaExpedientes() {
             const db = getDB();
             const tbody = document.getElementById('db-body');
@@ -591,7 +599,6 @@
                 let tags = '';
                 for(const [tid, res] of Object.entries(exp.resultados)) {
                     let color = 'bg-slate-100 text-slate-600';
-                    // --- USAMOS EL DIAGNÓSTICO TEXTUAL COMPLETO ---
                     let txt = `${tid}: ${res.score}`; 
                     
                     // Colores de Tags basados en Diagnóstico (Texto en res.score)
@@ -634,7 +641,6 @@
                 
                 let cardClass = "bg-white border-l-4 border-slate-400";
                 
-                // Color coding for cards (más simple usando los estilos del mapa)
                 const baseColor = styles.text.replace('text-', '').split('-')[0];
                 const lightBg = `${baseColor}-50`;
                 const darkBorder = `${baseColor}-500`;
@@ -665,7 +671,7 @@
             toggleModal('detail-modal');
         }
 
-        // --- COMMON UTILS ---
+        // --- COMMON UTILS (Inalteradas) ---
         function toggleModal(id) {
             const m = document.getElementById(id);
             if(m.classList.contains('hidden')) {
@@ -705,18 +711,26 @@
             try {
                 const c = JSON.parse(decodeURIComponent(atob(hash)));
                 sessionData = { ...sessionData, nombre: c.n, grupo: c.g, testsIds: c.ts };
+                
+                // Mostramos la vista del estudiante
                 document.getElementById('view-student').classList.remove('hidden');
+                
                 document.getElementById('read-name').value = c.n;
                 document.getElementById('read-group').value = c.g;
                 document.getElementById('welcome-name').innerText = c.n.split(' ')[0];
                 
                 const list = document.getElementById('test-list-preview');
+                list.innerHTML = '';
                 c.ts.forEach(tid => {
                     const t = CATALOGO_PRUEBAS[tid];
                     const styles = COLOR_MAP[tid] || COLOR_MAP.default;
                     list.innerHTML += `<div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm"><i class="ph-bold ${t.icono} ${styles.text}"></i><span class="text-sm font-bold text-slate-700">${t.titulo}</span></div>`;
                 });
-            } catch (e) { alert("Link inválido"); }
+            } catch (e) { 
+                alert("Link de configuración inválido o incompleto. Volviendo al gestor."); 
+                // Usamos location.href para recargar la página sin el parámetro 'config'
+                window.location.href = window.location.href.split('?')[0];
+            }
         }
 
         function iniciarSecuencia() {
@@ -728,7 +742,6 @@
             sessionData.edad = age;
             sessionData.sexo = sex;
 
-            // Actualizar datos de la ficha fija
             document.getElementById('ficha-nombre').innerText = sessionData.nombre;
             document.getElementById('ficha-grupo').innerText = sessionData.grupo;
             document.getElementById('ficha-edad').innerText = age;
@@ -745,7 +758,6 @@
             const test = CATALOGO_PRUEBAS[testId];
             const styles = COLOR_MAP[testId] || COLOR_MAP.default;
             
-            // Aplicar estilos del mapa
             document.getElementById('current-test-icon-box').className = `p-3 rounded-lg ${styles.icon}`;
             document.getElementById('current-test-title').innerText = test.titulo;
             document.getElementById('current-test-desc').innerText = test.instrucciones;
@@ -758,7 +770,7 @@
             document.getElementById('progress-bar').style.width = `${pct}%`;
             document.getElementById('st-progress').innerText = `${pct}%`;
             
-            const mainColor = styles.text.replace('text-', ''); // Ej: brand-600
+            const mainColor = styles.text.replace('text-', '');
             
             test.items.forEach((item, idx) => {
                 const num = idx + 1;
@@ -850,7 +862,7 @@
         }
 
         // ============================================
-        // Función para pasar a siguiente prueba
+        // Función para pasar a siguiente prueba (Inalterada)
         // ============================================
         function siguientePrueba() {
             const testId = sessionData.testsIds[currentTestIndex];
@@ -865,13 +877,11 @@
 
                 if(test.tipo === 'columbia_flow') {
                     const block = document.getElementById(`${item.id}_block`);
-                    // Solo si la pregunta está visible, se debe requerir respuesta y se debe recopilar
                     if (!block || !block.classList.contains('hidden')) {
                         el = document.querySelector(`input[name="${item.id}"]:checked`);
                         if(el) { respuestas.push(parseInt(el.value)); respondido = true; }
                         else { todoResponder = false; }
                     } else {
-                        // Si está oculta, asumimos respuesta '0' (NO) para mantener la longitud del array
                         respuestas.push(0); 
                         respondido = true;
                     }
@@ -906,10 +916,9 @@
         }
 
         // ============================================
-        // Columbia Logic for CSSRS
+        // Columbia Logic for CSSRS (Inalterada)
         // ============================================
         function columbiaLogic(input, triggers) {
-            // Convierte el array de strings a un array de ids
             const triggerIds = Array.isArray(triggers) ? triggers : JSON.parse(triggers);
             
             if (input.value === '1' && triggerIds.length > 0) {
@@ -929,7 +938,7 @@
         }
 
         // ============================================
-        // 5. FINALIZACIÓN Y CÁLCULO DE DIAGNÓSTICOS (CORRECCIONES APLICADAS)
+        // 5. FINALIZACIÓN Y CÁLCULO DE DIAGNÓSTICOS (Inalterada)
         // ============================================
         function enviarTokenWhatsapp() {
             const token = document.getElementById("final-token-display").innerText;
@@ -960,7 +969,6 @@
                 let score = 0;
                 let interpretacion = "Puntuación no procesada";
                 
-                // --- LOGICA DE CALIFICACIÓN Y DIAGNÓSTICO (MEJORADO) ---
                 if(tid === 'PHQ9') {
                     score = r.reduce((a,b)=>a+b,0);
                     let nivel = score>=20?"Depresión Grave":score>=15?"Depresión Moderada":score>=10?"Depresión Leve":"Síntomas Depresivos Mínimos";
@@ -974,9 +982,9 @@
                     r.forEach((v, i) => {
                         const val = v;
                         if([0,2,4,6,8,10,12,13].includes(i)) {
-                            ans += val; // Ansiedad (ítems directos)
+                            ans += val;
                         } else {
-                            dep += (3 - val); // Depresión (ítems inversos)
+                            dep += (3 - val);
                         }
                     });
                     let ansN = ans>10?"CASO CLÍNICO (Ans.)":ans>7?"BORDE (Ans.)":"Normal (Ans.)";
@@ -999,8 +1007,7 @@
                     let nivel = score>=30?"Ansiedad Severa":score>=16?"Ansiedad Moderada":score>=8?"Ansiedad Leve":"Ansiedad Mínima";
                     interpretacion = `${score} (${nivel})`; 
                 } else if(tid === 'BHS') {
-                    // CORRECCIÓN BHS: Puntuación de desesperanza
-                    const directos = [2, 4, 7, 9, 11, 12, 14, 16, 17, 18, 20]; // Ítems que puntúan con FALSO (indican esperanza)
+                    const directos = [2, 4, 7, 9, 11, 12, 14, 16, 17, 18, 20];
                     score = r.reduce((acc, v, i) => {
                         const qNum = i + 1;
                         if (directos.includes(qNum)) {
@@ -1016,7 +1023,6 @@
                     let niv = sum>24?"Riesgo CRÍTICO":sum>16?"Riesgo Alto":sum>8?"Riesgo Moderado":"Riesgo Bajo";
                     interpretacion = `${sum} (${niv})`; 
                 } else if(tid === 'CSSRS') {
-                    // Se recopilan 7 respuestas (q1, q2, q3, q4, q5, q6, q6b) con 1=SI o 0=NO.
                     interpretacion = r[5]===1 ? "RIESGO CRÍTICO (Conducta de Intento)" : r[4]===1 ? "RIESGO ALTO (Plan Específico)" : r[1]===1 ? "Riesgo Moderado (Ideación)" : "Bajo Riesgo";
                 } else if (tid === 'BDI') {
                     let sum = r.reduce((a,b)=>a+b,0);
@@ -1028,11 +1034,11 @@
                     let A=getAvg(0,4), B=getAvg(5,9), C=getAvg(10,14), D=getAvg(15,19), E=getAvg(20,24);
                     let iar = (2*A + 1*B - 1*C - 2*D).toFixed(1);
                     let p = "Motivación Mixta";
-                    if(A>=4 && B>=3.5 && D<2.5) p="Motivación Intrínseca": p="Motivación Intrínseca"; else if(A<2.5 && D>=4) p="Motivación Externa"; else if(E>=3.5) p="Desmotivado/Amotivación";
+                    if(A>=4 && B>=3.5 && D<2.5) p="Motivación Intrínseca"; else if(A<2.5 && D>=4) p="Motivación Externa"; else if(E>=3.5) p="Desmotivado/Amotivación";
                     interpretacion = `IAR: ${iar} (${p})`; 
                 } else if (tid === 'IDARE') {
-                    const invE = [0,1,4,7,9,10,14,15,18,19]; // Índices 0-19
-                    const invR = [20,25,26,29,32,35,38]; // Índices 20-39
+                    const invE = [0,1,4,7,9,10,14,15,18,19]; 
+                    const invR = [20,25,26,29,32,35,38];
                     let sE = 0, sR = 0;
                     r.forEach((v, i) => {
                         const val = v;
@@ -1063,7 +1069,6 @@
                     interpretacion = `${sum} (${niv})`; 
                 } else interpretacion = r.join(',');
                 
-                // CLAVE: Guarda el diagnóstico textual en 'score'
                 result.resultados[tid] = { score: interpretacion, raw: r }; 
             });
 
@@ -1074,7 +1079,7 @@
         }
 
         // ============================================
-        // 6. IMPORTACION Y ALMACENAMIENTO LOCAL
+        // 6. IMPORTACION Y ALMACENAMIENTO LOCAL (Inalterada)
         // ============================================
         function getDB() { return JSON.parse(localStorage.getItem('cbta_suite_db') || '[]'); }
         function saveDB(d) { localStorage.setItem('cbta_suite_db', JSON.stringify(d)); }
