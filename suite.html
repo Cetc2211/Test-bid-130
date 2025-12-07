@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suite de Evaluación Psicopedagógica v3.2 (Expediente Completo)</title>
+    <title>Suite de Evaluación Psicopedagógica v3.3 (Clínico Estructurado)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
-                        <p class="text-sm text-slate-500">Suite Integral v3.2 (Expediente Completo)</p>
+                        <p class="text-sm text-slate-500">Suite Integral v3.3 (Clínico Estructurado)</p>
                     </div>
                 </div>
             </div>
@@ -286,44 +286,11 @@
     <div id="direct-capture-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
         <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full flex flex-col overflow-hidden">
             <div class="bg-slate-800 text-white px-6 py-4 border-b border-slate-700 flex justify-between items-center shrink-0">
-                <h3 class="text-lg font-bold"><i class="ph-bold ph-user-list"></i> Captura/Edición del Expediente: <span id="capture-nombre" class="text-brand-300"></span></h3>
+                <h3 class="text-lg font-bold"><i class="ph-bold ph-user-list"></i> Expediente Clínico: <span id="capture-nombre" class="text-brand-300"></span></h3>
                 <button onclick="toggleModal('direct-capture-modal')" class="text-slate-400 hover:text-white transition-colors bg-slate-700 p-2 rounded-lg"><i class="ph-bold ph-x text-lg"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto space-y-5">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Edad</label>
-                        <input type="number" id="capture-edad" placeholder="Años" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Sexo</label>
-                        <select id="capture-sexo" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
-                            <option value="">Elegir...</option>
-                            <option value="H">Hombre</option>
-                            <option value="M">Mujer</option>
-                        </select>
-                    </div>
+            <div id="capture-content" class="p-6 overflow-y-auto space-y-5">
                 </div>
-
-                <h4 class="text-sm font-bold text-slate-700 mt-4 border-b border-slate-100 pb-2">Instrumentos Cualitativos</h4>
-                
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2"><i class="ph-bold ph-file-text text-brand-600"></i> Entrevista Clínica / Motivo de Consulta</label>
-                    <textarea id="capture-entrevista" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 outline-none resize-none"></textarea>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2"><i class="ph-bold ph-notebook text-brand-600"></i> Notas y Observaciones Clínicas</label>
-                    <textarea id="capture-notas" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 outline-none resize-none"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2"><i class="ph-bold ph-check-square text-green-600"></i> Consentimiento Informado</label>
-                    <textarea id="capture-consentimiento" rows="2" placeholder="Ej: Consentimiento verbal y escrito obtenido. Notas sobre el proceso." class="w-full bg-green-50 border border-green-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 outline-none resize-none"></textarea>
-                </div>
-
-                <button onclick="guardarCapturaDirecta()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20"><i class="ph-bold ph-floppy-disk"></i> Guardar y Cerrar</button>
-            </div>
         </div>
     </div>
 
@@ -520,6 +487,41 @@
         };
 
         // ============================================
+        // 1.2. CATÁLOGO DE INSTRUMENTOS CLÍNICOS ESTRUCTURADOS (NUEVO)
+        // ============================================
+        const CATALOGO_CLINICO = {
+            'CONSENTIMIENTO': {
+                titulo: 'Consentimiento Informado (Datos Clave)',
+                icono: 'ph-check-square',
+                campos: [
+                    { id: 'fecha_firma', label: 'Fecha de Firma del CI', type: 'date', required: true },
+                    { id: 'evaluador_nombre', label: 'Nombre del Evaluador', type: 'text', required: true, placeholder: 'Tu nombre completo' },
+                    { id: 'procedimiento', label: 'Procedimiento y Confidencialidad Explicada', type: 'textarea', placeholder: 'Resumen de los procedimientos, límites de confidencialidad y riesgos comunicados.' },
+                    { id: 'firma_status', label: 'Estatus de la Firma', type: 'select', options: ['Firmado (Físico)', 'Aceptación Digital', 'Pendiente'], required: true },
+                ]
+            },
+            'ENTREVISTA': {
+                titulo: 'Entrevista Clínica Inicial (Formato Estructurado)',
+                icono: 'ph-clipboard-text',
+                campos: [
+                    { id: 'motivo_consulta', label: 'Motivo de Consulta (Textual del Paciente)', type: 'textarea', rows: 3, required: true },
+                    { id: 'antecedentes_personales', label: 'Antecedentes Personales Relevantes (Salud, Desarrollo, Académicos)', type: 'textarea', rows: 2 },
+                    { id: 'antecedentes_familiares', label: 'Antecedentes Familiares Relevantes (Dinámica, Historial de Salud Mental)', type: 'textarea', rows: 2 },
+                    { id: 'impresion_diagnostica', label: 'Impresión Diagnóstica/Clínica Inicial (Evaluador)', type: 'textarea', rows: 4, required: true },
+                    { id: 'plan_seguimiento', label: 'Plan de Evaluación y/o Seguimiento', type: 'textarea', rows: 2 },
+                ]
+            },
+            'OBSERVACIONES': {
+                titulo: 'Observaciones Conductuales y Notas Adicionales',
+                icono: 'ph-binoculars',
+                campos: [
+                    { id: 'observaciones_generales', label: 'Observaciones del Evaluador durante la Sesión', type: 'textarea', rows: 4, placeholder: 'Ej: Actitud, lenguaje, afecto, contacto visual, cooperación.' },
+                ]
+            }
+        };
+
+
+        // ============================================
         // 1.1. MAPEO CENTRALIZADO DE ESTILOS DE PRUEBA (Inalterado)
         // ============================================
         const COLOR_MAP = {
@@ -537,7 +539,7 @@
             'default': { icon: 'bg-slate-100 text-slate-600', text: 'text-brand-600', hover: 'hover:bg-brand-50' }
         };
 
-        let currentExpedientIndex = -1; // Índice global para el manejo de captura directa
+        let currentExpedientIndex = -1; 
 
         // ============================================
         // 2. CONTROLADOR GENERAL (Ajustado por corrección de visibilidad)
@@ -630,7 +632,7 @@
             toggleModal('preview-modal');
         }
 
-        // --- EXPEDIENTES LOGIC (Ajustado para el nuevo botón y dataCualitativa) ---
+        // --- EXPEDIENTES LOGIC (Ajustado para el nuevo botón y dataClinica) ---
         function renderizarTablaExpedientes() {
             const db = getDB();
             const tbody = document.getElementById('db-body');
@@ -682,22 +684,48 @@
             const content = document.getElementById('detail-content');
             content.innerHTML = '';
             
-            // Sección de Datos Cualitativos
-            const cdata = exp.dataCualitativa || {};
+            // --- Sección de Datos Clínicos Estructurados (NUEVO) ---
+            const cdata = exp.dataClinica || {};
             if(Object.keys(cdata).length > 0) {
-                content.innerHTML += `
-                <div class="bg-slate-100 border-l-4 border-slate-400 p-5 rounded-r-xl shadow-sm border-y border-r border-slate-200">
-                    <h4 class="font-bold text-slate-700 mb-3 flex items-center gap-2"><i class="ph-fill ph-notebook text-xl"></i> Datos Clínicos / Entrevista</h4>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Consentimiento Informado:</p>
-                    <p class="text-sm text-slate-700 mb-3">${cdata.consentimiento || 'No registrado.'}</p>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Entrevista / Motivo de Consulta:</p>
-                    <p class="text-sm text-slate-700 mb-3">${cdata.entrevista || 'No registrada.'}</p>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Notas Clínicas y Observaciones:</p>
-                    <p class="text-sm text-slate-700">${cdata.notas || 'No registradas.'}</p>
-                </div>`;
+                let clinicalHtml = '';
+
+                for(const instId in CATALOGO_CLINICO) {
+                    const instMeta = CATALOGO_CLINICO[instId];
+                    const instData = cdata[instId] || {};
+                    let fieldsHtml = '';
+                    let instEmpty = true;
+
+                    instMeta.campos.forEach(campo => {
+                        const valor = instData[campo.id];
+                        if (valor && valor.trim() !== '') {
+                            instEmpty = false;
+                            fieldsHtml += `
+                                <div class="mb-3">
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">${campo.label}:</p>
+                                    <p class="text-sm whitespace-pre-wrap text-slate-700">${valor}</p>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    if (!instEmpty) {
+                         clinicalHtml += `
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <h5 class="font-bold text-slate-800 mb-3 flex items-center gap-2 border-b pb-2"><i class="ph-fill ${instMeta.icono} text-xl text-brand-600"></i> ${instMeta.titulo}</h5>
+                                ${fieldsHtml}
+                            </div>
+                        `;
+                    }
+                }
+                
+                if (clinicalHtml !== '') {
+                    content.innerHTML += `<h4 class="font-bold text-lg text-slate-700 mb-3 border-b border-slate-200 pb-1">Documentación Clínica</h4>` + clinicalHtml;
+                }
             }
 
-            // Sección de Resultados Cuantitativos
+
+            // --- Sección de Resultados Cuantitativos ---
+            content.innerHTML += `<h4 class="font-bold text-lg text-slate-700 mt-4 mb-3 border-b border-slate-200 pb-1">Pruebas Psicometricas</h4>`;
             for(const [tid, res] of Object.entries(exp.resultados)) {
                 const tMeta = CATALOGO_PRUEBAS[tid];
                 const styles = COLOR_MAP[tid] || COLOR_MAP.default;
@@ -1135,7 +1163,7 @@
         }
 
         // ============================================
-        // 6. IMPORTACION Y ALMACENAMIENTO LOCAL (Ajustado para dataCualitativa)
+        // 6. IMPORTACION Y ALMACENAMIENTO LOCAL (Ajustado para dataClinica)
         // ============================================
         function getDB() { return JSON.parse(localStorage.getItem('cbta_suite_db') || '[]'); }
         function saveDB(d) { localStorage.setItem('cbta_suite_db', JSON.stringify(d)); }
@@ -1150,14 +1178,19 @@
                 
                 let idx = db.findIndex(e => e.nombre === d.alumno && e.grupo === d.grupo);
                 
+                // Estructura vacía para iniciar los datos clínicos
+                const initialClinicalData = {};
+                for (const instId in CATALOGO_CLINICO) { initialClinicalData[instId] = {}; }
+
                 if(idx >= 0) { 
                     db[idx].resultados = { ...db[idx].resultados, ...d.resultados }; 
                     db[idx].ultimaFecha = d.fecha;
                     db[idx].edad = d.edad; 
                     db[idx].sexo = d.sexo; 
-                    // Inicializar dataCualitativa si no existe (para expedientes antiguos)
-                    if (!db[idx].dataCualitativa) {
-                        db[idx].dataCualitativa = { entrevista: "", notas: "", consentimiento: "" };
+                    
+                    // Inicializar dataClinica si no existe
+                    if (!db[idx].dataClinica) {
+                        db[idx].dataClinica = initialClinicalData;
                     }
                 } else {
                     db.push({ 
@@ -1167,8 +1200,8 @@
                         sexo: d.sexo, 
                         resultados: d.resultados, 
                         ultimaFecha: d.fecha,
-                        // Inicializar dataCualitativa al crear
-                        dataCualitativa: { entrevista: "", notas: "", consentimiento: "" } 
+                        // Inicializar dataClinica al crear
+                        dataClinica: initialClinicalData
                     });
                 }
                 
@@ -1188,6 +1221,36 @@
         // ============================================
 
         /**
+         * Función auxiliar para generar el campo de formulario basado en el catálogo.
+         */
+        function renderCampo(instId, campoMeta, valorActual = "") {
+            let inputHtml = '';
+            const nameId = `${instId}_${campoMeta.id}`;
+            const requiredAttr = campoMeta.required ? 'required' : '';
+            const rowsAttr = campoMeta.rows || 3;
+            const placeholder = campoMeta.placeholder || '';
+            
+            const labelHtml = `<label for="${nameId}" class="block text-sm font-bold text-slate-700 mb-1">${campoMeta.label} ${campoMeta.required ? '<span class="text-red-500">*</span>' : ''}</label>`;
+            
+            if (campoMeta.type === 'textarea') {
+                inputHtml = `<textarea id="${nameId}" rows="${rowsAttr}" ${requiredAttr} placeholder="${placeholder}" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 outline-none resize-none">${valorActual}</textarea>`;
+            } else if (campoMeta.type === 'select' && campoMeta.options) {
+                inputHtml = `<select id="${nameId}" ${requiredAttr} class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 outline-none">`;
+                inputHtml += `<option value="">Seleccionar...</option>`;
+                campoMeta.options.forEach(opt => {
+                    const selected = (opt === valorActual) ? 'selected' : '';
+                    inputHtml += `<option value="${opt}" ${selected}>${opt}</option>`;
+                });
+                inputHtml += `</select>`;
+            } else { 
+                inputHtml = `<input type="${campoMeta.type}" id="${nameId}" value="${valorActual}" ${requiredAttr} placeholder="${placeholder}" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 outline-none">`;
+            }
+
+            return `<div class="relative">${labelHtml}${inputHtml}</div>`;
+        }
+
+
+        /**
          * Abre el modal para capturar datos cualitativos de un expediente existente.
          * @param {number} idx - Índice del expediente en el array de la DB.
          */
@@ -1195,25 +1258,47 @@
             const db = getDB();
             const exp = db[idx];
             currentExpedientIndex = idx; 
-
-            // 1. Cargar metadatos editables
-            document.getElementById('capture-nombre').innerText = `${exp.nombre} (${exp.grupo})`;
-            document.getElementById('capture-edad').value = exp.edad || '';
-            document.getElementById('capture-sexo').value = exp.sexo || '';
             
-            // 2. Cargar datos cualitativos existentes
-            const data = exp.dataCualitativa || { entrevista: "", notas: "", consentimiento: "" };
+            document.getElementById('capture-nombre').innerText = `${exp.nombre} (${exp.grupo})`;
+            
+            const contentContainer = document.getElementById('capture-content');
+            let htmlContent = '';
+            
+            // Ficha Básica editable (Metadatos)
+            htmlContent += `
+                <h4 class="text-sm font-bold text-slate-700 mt-4 border-b border-slate-100 pb-2"><i class="ph-bold ph-identification-card"></i> Ficha de Identificación</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    ${renderCampo('meta', { id: 'edad', label: 'Edad', type: 'number' }, exp.edad || '')}
+                    ${renderCampo('meta', { id: 'sexo', label: 'Sexo', type: 'select', options: ['H', 'M'] }, exp.sexo || '')}
+                </div>`;
 
-            document.getElementById('capture-entrevista').value = data.entrevista || '';
-            document.getElementById('capture-notas').value = data.notas || '';
-            document.getElementById('capture-consentimiento').value = data.consentimiento || '';
+            // Renderizar Instrumentos Clínicos Estructurados
+            const dataClinica = exp.dataClinica || {};
+            
+            for (const instId in CATALOGO_CLINICO) {
+                const inst = CATALOGO_CLINICO[instId];
+                const currentData = dataClinica[instId] || {};
+                
+                htmlContent += `
+                    <h4 class="text-sm font-bold text-slate-700 mt-4 border-b border-slate-100 pb-2 flex items-center gap-2"><i class="ph-bold ${inst.icono}"></i> ${inst.titulo}</h4>
+                    <div class="space-y-3">`;
+                
+                inst.campos.forEach(campo => {
+                    const valor = currentData[campo.id] || '';
+                    htmlContent += renderCampo(instId, campo, valor);
+                });
+                
+                htmlContent += `</div>`;
+            }
 
+            // Botón de Guardado
+            htmlContent += `<button onclick="guardarCapturaDirecta()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20 mt-5"><i class="ph-bold ph-floppy-disk"></i> Guardar Expediente Completo</button>`;
+
+            contentContainer.innerHTML = htmlContent;
             toggleModal('direct-capture-modal');
         }
 
-        /**
-         * Guarda los datos capturados en el modal en el expediente activo.
-         */
+
         function guardarCapturaDirecta() {
             const db = getDB();
             const idx = currentExpedientIndex;
@@ -1222,23 +1307,50 @@
                 alert("Error: No se pudo identificar el expediente para guardar.");
                 return;
             }
+            
+            // 1. Recoger metadatos de la ficha
+            const edadInput = document.getElementById('meta_edad');
+            const sexoInput = document.getElementById('meta_sexo');
 
-            // 1. Recoger datos de la ficha (si fueron editados)
-            db[idx].edad = document.getElementById('capture-edad').value.trim();
-            db[idx].sexo = document.getElementById('capture-sexo').value.trim();
+            db[idx].edad = edadInput.value.trim();
+            db[idx].sexo = sexoInput.value.trim();
             db[idx].ultimaFecha = new Date().toLocaleDateString();
 
-            // 2. Recoger y estructurar los datos cualitativos
-            db[idx].dataCualitativa = {
-                entrevista: document.getElementById('capture-entrevista').value.trim(),
-                notas: document.getElementById('capture-notas').value.trim(),
-                consentimiento: document.getElementById('capture-consentimiento').value.trim()
-            };
+            // 2. Recoger datos de los instrumentos estructurados
+            let nuevaDataClinica = {};
+            let formularioCompleto = true;
+
+            for (const instId in CATALOGO_CLINICO) {
+                nuevaDataClinica[instId] = {};
+                CATALOGO_CLINICO[instId].campos.forEach(campo => {
+                    const inputId = `${instId}_${campo.id}`;
+                    const inputElement = document.getElementById(inputId);
+                    const valor = inputElement ? inputElement.value.trim() : '';
+
+                    if (campo.required) {
+                        if (valor === '' || (campo.type === 'select' && valor === '')) {
+                            formularioCompleto = false;
+                            inputElement.classList.add('border-red-500', 'ring-2', 'ring-red-200'); 
+                        } else {
+                            inputElement.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                        }
+                    }
+                    
+                    nuevaDataClinica[instId][campo.id] = valor;
+                });
+            }
+            
+            if (!formularioCompleto) {
+                alert("🚨 Faltan campos requeridos en los formatos clínicos. Por favor, revísalos.");
+                return;
+            }
+
+            db[idx].dataClinica = nuevaDataClinica;
             
             saveDB(db);
             toggleModal('direct-capture-modal');
-            renderizarTablaExpedientes(); 
-            alert(`✅ Expediente de ${db[idx].nombre} actualizado con datos de entrevista.`);
+            renderizarTablaExpedientes();
+            alert(`✅ Expediente de ${db[idx].nombre} actualizado con formatos clínicos completos.`);
             currentExpedientIndex = -1;
         }
     </script>
