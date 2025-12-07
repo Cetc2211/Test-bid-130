@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suite de Evaluación Psicopedagógica v3.1 (Estable)</title>
+    <title>Suite de Evaluación Psicopedagógica v3.2 (Expediente Completo)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-xl text-slate-800">Gestor de Evaluaciones</h1>
-                        <p class="text-sm text-slate-500">Suite Integral v3.1 (Estable)</p>
+                        <p class="text-sm text-slate-500">Suite Integral v3.2 (Expediente Completo)</p>
                     </div>
                 </div>
             </div>
@@ -282,10 +282,55 @@
             <div id="detail-content" class="p-6 overflow-y-auto bg-slate-50 flex-1 space-y-4"></div>
         </div>
     </div>
+    
+    <div id="direct-capture-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full flex flex-col overflow-hidden">
+            <div class="bg-slate-800 text-white px-6 py-4 border-b border-slate-700 flex justify-between items-center shrink-0">
+                <h3 class="text-lg font-bold"><i class="ph-bold ph-user-list"></i> Captura/Edición del Expediente: <span id="capture-nombre" class="text-brand-300"></span></h3>
+                <button onclick="toggleModal('direct-capture-modal')" class="text-slate-400 hover:text-white transition-colors bg-slate-700 p-2 rounded-lg"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Edad</label>
+                        <input type="number" id="capture-edad" placeholder="Años" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Sexo</label>
+                        <select id="capture-sexo" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="">Elegir...</option>
+                            <option value="H">Hombre</option>
+                            <option value="M">Mujer</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h4 class="text-sm font-bold text-slate-700 mt-4 border-b border-slate-100 pb-2">Instrumentos Cualitativos</h4>
+                
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2"><i class="ph-bold ph-file-text text-brand-600"></i> Entrevista Clínica / Motivo de Consulta</label>
+                    <textarea id="capture-entrevista" rows="5" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 outline-none resize-none"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2"><i class="ph-bold ph-notebook text-brand-600"></i> Notas y Observaciones Clínicas</label>
+                    <textarea id="capture-notas" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-600 outline-none resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2"><i class="ph-bold ph-check-square text-green-600"></i> Consentimiento Informado</label>
+                    <textarea id="capture-consentimiento" rows="2" placeholder="Ej: Consentimiento verbal y escrito obtenido. Notas sobre el proceso." class="w-full bg-green-50 border border-green-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 outline-none resize-none"></textarea>
+                </div>
+
+                <button onclick="guardarCapturaDirecta()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20"><i class="ph-bold ph-floppy-disk"></i> Guardar y Cerrar</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         // ============================================
-        // 1. CATÁLOGO CON INSTRUCCIONES FORMALES
+        // 1. CATÁLOGO CON INSTRUCCIONES FORMALES (Inalterado)
         // ============================================
         const CATALOGO_PRUEBAS = {
             'PHQ9': { id: 'PHQ9', titulo: 'Cuestionario de Salud (PHQ-9)', icono: 'ph-heartbeat', tipo: 'likert_0_3', instrucciones: 'Durante las últimas 2 semanas, ¿qué tan seguido ha tenido molestias por los siguientes problemas?',
@@ -339,7 +384,7 @@
                     "No quiere reconocer que estoy en lo cierto.", "Ya vendrán mejores tiempos.", "Es insoportable, no puedo aguantar más.", "Soy incompetente e inútil.", "Nunca podré salir de esta situación.",
                     "Quieren hacerme daño.", "¿Y si les pasa algo malo a las personas a quienes quiero?.", "La gente hace las cosas mejor que yo.", "Soy una víctima de mis circunstancias.",
                     "No me tratan como deberían hacerlo y me merezco.", "Si tengo estos síntomas es porque soy un enfermo.", "Si tuviera mejor situación económica no tendría estos problemas.",
-                    "Soy un neurótico.", "Lo que me pasa es un castigo que merezco.", "Debería recibir más atención y cariño de otros.", "Tengo razón, y voy a hacer lo que me da la gana.", "Tarde o temprano me irán las cosas mejor."
+                    "Soy un neurótico.", "Lo que me pasa es un castigo que merezco.", "Debería recibir más atención y cariño de otros.", "Tengo razón, y voy a hacer lo que me da gana.", "Tarde o temprano me irán las cosas mejor."
                 ]
             },
             'BAI': { id: 'BAI', titulo: 'Inventario de Ansiedad de Beck (BAI)', icono: 'ph-heartbeat', tipo: 'likert_0_3', instrucciones: 'Indique cuánto le ha molestado cada síntoma durante la última semana (incluyendo hoy). 0=Nada, 1=Leve, 2=Moderado, 3=Severo.',
@@ -475,7 +520,7 @@
         };
 
         // ============================================
-        // 1.1. MAPEO CENTRALIZADO DE ESTILOS DE PRUEBA
+        // 1.1. MAPEO CENTRALIZADO DE ESTILOS DE PRUEBA (Inalterado)
         // ============================================
         const COLOR_MAP = {
             'CSSRS': { icon: 'bg-red-100 text-red-700', text: 'text-red-600', hover: 'hover:bg-red-50' },
@@ -492,30 +537,30 @@
             'default': { icon: 'bg-slate-100 text-slate-600', text: 'text-brand-600', hover: 'hover:bg-brand-50' }
         };
 
+        let currentExpedientIndex = -1; // Índice global para el manejo de captura directa
+
         // ============================================
-        // 2. CONTROLADOR GENERAL (AJUSTADO)
+        // 2. CONTROLADOR GENERAL (Ajustado por corrección de visibilidad)
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const configHash = params.get('config');
 
             if (configHash) {
-                // Si hay config, ocultamos el admin y mostramos el alumno
                 document.getElementById('view-admin').classList.add('hidden'); 
                 iniciarModoAlumno(configHash);
             }
             else {
-                // Si NO hay config, aseguramos que el alumno esté oculto y mostramos el admin
                 document.getElementById('view-student').classList.add('hidden'); 
                 iniciarModoAdmin();
             }
         });
 
         // ============================================
-        // 3. LOGICA ADMIN (AJUSTADA)
+        // 3. LOGICA ADMIN (Ajustado)
         // ============================================
         function iniciarModoAdmin() {
-            // El elemento 'view-admin' ya es visible por defecto en el HTML (la corrección del bug)
+            // El elemento 'view-admin' es ahora visible por defecto en el HTML.
             
             const container = document.getElementById('tests-checklist');
             let html = '';
@@ -541,7 +586,7 @@
             renderizarTablaExpedientes();
         }
 
-        // --- PREVIEW LOGIC (Inalterada) ---
+        // --- PREVIEW LOGIC (Inalterado) ---
         function previewTest(tid) {
             const test = CATALOGO_PRUEBAS[tid];
             document.getElementById('preview-title').innerText = test.titulo;
@@ -585,7 +630,7 @@
             toggleModal('preview-modal');
         }
 
-        // --- EXPEDIENTES LOGIC (Inalterada) ---
+        // --- EXPEDIENTES LOGIC (Ajustado para el nuevo botón y dataCualitativa) ---
         function renderizarTablaExpedientes() {
             const db = getDB();
             const tbody = document.getElementById('db-body');
@@ -601,7 +646,6 @@
                     let color = 'bg-slate-100 text-slate-600';
                     let txt = `${tid}: ${res.score}`; 
                     
-                    // Colores de Tags basados en Diagnóstico (Texto en res.score)
                     if(String(res.score).includes("CRÍTICO") || String(res.score).includes("SUICIDA")) color = 'bg-red-600 text-white font-bold';
                     else if(String(res.score).includes("GRAVE") || String(res.score).includes("Severa")) color = 'bg-blue-600 text-white font-bold';
                     else if(String(res.score).includes("Alto")) color = 'bg-orange-100 text-orange-800';
@@ -619,6 +663,9 @@
                     </td>
                     <td class="px-6 py-4">${tags}</td>
                     <td class="px-6 py-4 text-right flex justify-end gap-2">
+                        <button onclick="abrirModalCaptura(${i})" class="bg-white border border-slate-200 text-slate-600 hover:text-green-600 hover:border-green-200 p-2 rounded-lg transition-all shadow-sm" title="Capturar Entrevista/Notas">
+                            <i class="ph-bold ph-pencil-simple text-lg"></i>
+                        </button>
                         <button onclick="verExpediente(${i})" class="bg-white border border-slate-200 text-slate-600 hover:text-brand-600 hover:border-brand-200 p-2 rounded-lg transition-all shadow-sm" title="Ver Detalles"><i class="ph-bold ph-folder-open text-lg"></i></button>
                         <button onclick="if(confirm('¿Borrar expediente permanentemente?')) { let d=getDB(); d.splice(${i},1); saveDB(d); renderizarTablaExpedientes(); }" class="bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 p-2 rounded-lg transition-all shadow-sm"><i class="ph-bold ph-trash text-lg"></i></button>
                     </td>
@@ -635,6 +682,22 @@
             const content = document.getElementById('detail-content');
             content.innerHTML = '';
             
+            // Sección de Datos Cualitativos
+            const cdata = exp.dataCualitativa || {};
+            if(Object.keys(cdata).length > 0) {
+                content.innerHTML += `
+                <div class="bg-slate-100 border-l-4 border-slate-400 p-5 rounded-r-xl shadow-sm border-y border-r border-slate-200">
+                    <h4 class="font-bold text-slate-700 mb-3 flex items-center gap-2"><i class="ph-fill ph-notebook text-xl"></i> Datos Clínicos / Entrevista</h4>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Consentimiento Informado:</p>
+                    <p class="text-sm text-slate-700 mb-3">${cdata.consentimiento || 'No registrado.'}</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Entrevista / Motivo de Consulta:</p>
+                    <p class="text-sm text-slate-700 mb-3">${cdata.entrevista || 'No registrada.'}</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Notas Clínicas y Observaciones:</p>
+                    <p class="text-sm text-slate-700">${cdata.notas || 'No registradas.'}</p>
+                </div>`;
+            }
+
+            // Sección de Resultados Cuantitativos
             for(const [tid, res] of Object.entries(exp.resultados)) {
                 const tMeta = CATALOGO_PRUEBAS[tid];
                 const styles = COLOR_MAP[tid] || COLOR_MAP.default;
@@ -702,7 +765,7 @@
         }
 
         // ============================================
-        // 4. LOGICA ALUMNO ACTUALIZADA (FLUJO)
+        // 4. LOGICA ALUMNO (Inalterada)
         // ============================================
         let sessionData = { nombre: '', grupo: '', edad: '', sexo: '', testsIds: [], respuestas: {} };
         let currentTestIndex = 0;
@@ -712,7 +775,6 @@
                 const c = JSON.parse(decodeURIComponent(atob(hash)));
                 sessionData = { ...sessionData, nombre: c.n, grupo: c.g, testsIds: c.ts };
                 
-                // Mostramos la vista del estudiante
                 document.getElementById('view-student').classList.remove('hidden');
                 
                 document.getElementById('read-name').value = c.n;
@@ -728,7 +790,6 @@
                 });
             } catch (e) { 
                 alert("Link de configuración inválido o incompleto. Volviendo al gestor."); 
-                // Usamos location.href para recargar la página sin el parámetro 'config'
                 window.location.href = window.location.href.split('?')[0];
             }
         }
@@ -861,9 +922,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ============================================
-        // Función para pasar a siguiente prueba (Inalterada)
-        // ============================================
+        // --- FUNCIONES DE CONTROL (Inalteradas) ---
         function siguientePrueba() {
             const testId = sessionData.testsIds[currentTestIndex];
             const test = CATALOGO_PRUEBAS[testId];
@@ -915,9 +974,6 @@
             }
         }
 
-        // ============================================
-        // Columbia Logic for CSSRS (Inalterada)
-        // ============================================
         function columbiaLogic(input, triggers) {
             const triggerIds = Array.isArray(triggers) ? triggers : JSON.parse(triggers);
             
@@ -1079,7 +1135,7 @@
         }
 
         // ============================================
-        // 6. IMPORTACION Y ALMACENAMIENTO LOCAL (Inalterada)
+        // 6. IMPORTACION Y ALMACENAMIENTO LOCAL (Ajustado para dataCualitativa)
         // ============================================
         function getDB() { return JSON.parse(localStorage.getItem('cbta_suite_db') || '[]'); }
         function saveDB(d) { localStorage.setItem('cbta_suite_db', JSON.stringify(d)); }
@@ -1099,6 +1155,10 @@
                     db[idx].ultimaFecha = d.fecha;
                     db[idx].edad = d.edad; 
                     db[idx].sexo = d.sexo; 
+                    // Inicializar dataCualitativa si no existe (para expedientes antiguos)
+                    if (!db[idx].dataCualitativa) {
+                        db[idx].dataCualitativa = { entrevista: "", notas: "", consentimiento: "" };
+                    }
                 } else {
                     db.push({ 
                         nombre: d.alumno, 
@@ -1106,7 +1166,9 @@
                         edad: d.edad, 
                         sexo: d.sexo, 
                         resultados: d.resultados, 
-                        ultimaFecha: d.fecha 
+                        ultimaFecha: d.fecha,
+                        // Inicializar dataCualitativa al crear
+                        dataCualitativa: { entrevista: "", notas: "", consentimiento: "" } 
                     });
                 }
                 
@@ -1119,6 +1181,65 @@
                 alert("Código inválido. Asegúrate de pegar el código completo generado al finalizar la evaluación."); 
                 console.error("Error al procesar importación:", e); 
             }
+        }
+
+        // ============================================
+        // 7. GESTIÓN DE EXPEDIENTE COMPLETO (Captura Directa - NUEVO)
+        // ============================================
+
+        /**
+         * Abre el modal para capturar datos cualitativos de un expediente existente.
+         * @param {number} idx - Índice del expediente en el array de la DB.
+         */
+        function abrirModalCaptura(idx) {
+            const db = getDB();
+            const exp = db[idx];
+            currentExpedientIndex = idx; 
+
+            // 1. Cargar metadatos editables
+            document.getElementById('capture-nombre').innerText = `${exp.nombre} (${exp.grupo})`;
+            document.getElementById('capture-edad').value = exp.edad || '';
+            document.getElementById('capture-sexo').value = exp.sexo || '';
+            
+            // 2. Cargar datos cualitativos existentes
+            const data = exp.dataCualitativa || { entrevista: "", notas: "", consentimiento: "" };
+
+            document.getElementById('capture-entrevista').value = data.entrevista || '';
+            document.getElementById('capture-notas').value = data.notas || '';
+            document.getElementById('capture-consentimiento').value = data.consentimiento || '';
+
+            toggleModal('direct-capture-modal');
+        }
+
+        /**
+         * Guarda los datos capturados en el modal en el expediente activo.
+         */
+        function guardarCapturaDirecta() {
+            const db = getDB();
+            const idx = currentExpedientIndex;
+
+            if (idx === -1 || !db[idx]) {
+                alert("Error: No se pudo identificar el expediente para guardar.");
+                return;
+            }
+
+            // 1. Recoger datos de la ficha (si fueron editados)
+            db[idx].edad = document.getElementById('capture-edad').value.trim();
+            db[idx].sexo = document.getElementById('capture-sexo').value.trim();
+            db[idx].ultimaFecha = new Date().toLocaleDateString();
+
+            // 2. Recoger y estructurar los datos cualitativos
+            db[idx].dataCualitativa = {
+                entrevista: document.getElementById('capture-entrevista').value.trim(),
+                notas: document.getElementById('capture-notas').value.trim(),
+                consentimiento: document.getElementById('capture-consentimiento').value.trim()
+            };
+            
+            saveDB(db);
+            toggleModal('direct-capture-modal');
+            renderizarTablaExpedientes(); 
+            alert(`✅ Expediente de ${db[idx].nombre} actualizado con datos de entrevista.`);
+            currentExpedientIndex = -1;
         }
     </script>
 </body>
